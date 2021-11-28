@@ -1,0 +1,2 @@
+INSERT INTO public.client (email, password, first_name, last_name, is_enabled, is_not_locked) VALUES ('novmik@gmail.com', '$2a$12$R55vdbphZBV/Ndyhl7heD.69/fjsTk2idnG3RiWmXNiwLMgEX6RfK
+', 'Михаил', 'Семёнов', true, true);
