@@ -7,4 +7,5 @@ public class ClientConstant {
     public static final String EMAIL_ADDRESS_EXISTS = "Запись уже существует с электронной почтой: ";
     public static final String CLIENT_NOT_CORRECT = "Некорректные данные о Клиенте.";
     public static final String CLIENT_NOT_EXISTS = "Клиента с таким id/email не существует: ";
+    public static final String CLIENT_OR_ROLE_NOT_EXISTS = "Клиента или роли не существует.";
 }

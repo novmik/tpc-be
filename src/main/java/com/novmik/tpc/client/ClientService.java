@@ -7,6 +7,7 @@ import com.novmik.tpc.exception.ResourceAlreadyInUseException;
 import com.novmik.tpc.refreshtoken.RefreshTokenService;
 import com.novmik.tpc.role.Role;
 import com.novmik.tpc.role.RoleRepository;
+import com.novmik.tpc.role.RoleService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,7 @@ import static com.novmik.tpc.subject.SubjectConstant.SUBJECT_NOT_EXISTS;
 public class ClientService {
 
     private final ClientRepository clientRepository;
-    private final RoleRepository roleRepository;
+    private final RoleService roleService;
     private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
 
@@ -48,18 +49,6 @@ public class ClientService {
 
     public Client saveClient(Client client) {
         return clientRepository.save(client);
-    }
-
-    public Role saveRole(Role role) {
-        return roleRepository.save(role);
-    }
-
-    public void addRoleToClient(String email, String roleName) {
-        Optional<Client> clientByEmail = this.getClient(email);
-        Optional<Role> roleByName = roleRepository.findRoleByName(roleName);
-        if (clientByEmail.isPresent() && roleByName.isPresent()) {
-            clientByEmail.get().getRoles().add(roleByName.get());
-        }
     }
 
     public Optional<Client> getClient(String email) {
@@ -96,6 +85,16 @@ public class ClientService {
             throw new NotFoundException(CLIENT_NOT_EXISTS + idClient);
         }
         clientRepository.deleteById(idClient);
+    }
+
+    public void addRoleToClient(String email, String roleName) {
+        Optional<Client> clientByEmail = this.getClient(email);
+        Optional<Role> roleByName = roleService.getRoleByName(roleName);
+        if (clientByEmail.isPresent() && roleByName.isPresent()) {
+            clientByEmail.get().getRoles().add(roleByName.get());
+        } else {
+            throw new NotFoundException(CLIENT_OR_ROLE_NOT_EXISTS);
+        }
     }
 
     public void logoutUser(CustomUserDetails currentUser, String refreshToken) {

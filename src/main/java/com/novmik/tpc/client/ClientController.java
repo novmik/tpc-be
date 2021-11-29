@@ -45,22 +45,13 @@ public class ClientController {
                 .orElseThrow(() -> new UserRegistrationException(registrationRequest.getEmail(), "В БД отсутствует пользователь"));
     }
 
+    @PostMapping("/addrole")
+    public void addRoleToClient(@RequestBody AddRoleToClientRequest addRoleToClientRequest) {
+        clientService.addRoleToClient(addRoleToClientRequest.getEmail(), addRoleToClientRequest.getRoleName());
+    }
+
     @DeleteMapping("/{idClient}")
     public void deleteClient(@PathVariable("idClient") Long idClient) {
         clientService.deleteClient(idClient);
     }
-
-
-//    @PostMapping("/role")
-//    public ResponseEntity<Role> saveRole(@RequestBody Role role) {
-//        return new ResponseEntity<>(clientService.saveRole(role), CREATED);
-//    }
-//
-//    @PostMapping("/role/addtoclient")
-//    public void addRoleToClient(
-//            @RequestParam("email") String email,
-//            @RequestParam("roleName") String roleName
-//    ) {
-//        clientService.addRoleToClient(email, roleName);
-//    }
 }
