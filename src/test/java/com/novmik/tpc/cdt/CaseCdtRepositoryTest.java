@@ -1,19 +1,15 @@
 package com.novmik.tpc.cdt;
 
+import com.novmik.tpc.IntegrationTestBase;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = NONE)
-class CaseCdtRepositoryTest {
+class CaseCdtRepositoryTest extends IntegrationTestBase {
 
     @Autowired
     private CaseCdtRepository underTest;
