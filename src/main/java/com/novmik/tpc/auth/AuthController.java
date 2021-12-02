@@ -25,14 +25,14 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<JwtAuthenticationResponse> authenticateUser(@RequestBody final LoginRequest loginRequest) {
         Authentication authentication = authService.authenticateUser(loginRequest)
                 .orElseThrow(() -> new UserLoginException("Не удалось войти пользователю [" + loginRequest + "]"));
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         log.info("Авторизованный пользователь [API]: " + customUserDetails.getUsername());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return authService.createAndPersistRefreshTokenForDevice(authentication, loginRequest)
+        return authService.createAndPersistRefreshToken(authentication)
                 .map(RefreshToken::getToken)
                 .map(refreshToken -> {
                     String jwtToken = authService.generateToken(customUserDetails);
@@ -42,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<JwtAuthenticationResponse> refreshJwtToken(@RequestBody TokenRefreshRequest tokenRefreshRequest) {
+    public ResponseEntity<JwtAuthenticationResponse> refreshJwtToken(@RequestBody final TokenRefreshRequest tokenRefreshRequest) {
 
         return authService.refreshJwtToken(tokenRefreshRequest)
                 .map(updatedToken -> {

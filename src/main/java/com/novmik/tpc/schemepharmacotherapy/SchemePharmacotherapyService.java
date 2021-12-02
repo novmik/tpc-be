@@ -14,7 +14,7 @@ public class SchemePharmacotherapyService {
 
     private final SchemePharmacotherapyRepository schemePharmacotherapyRepository;
 
-    public Optional<SchemePharmacotherapy> findByCodeScheme(String codeScheme) {
+    public Optional<SchemePharmacotherapy> findByCodeScheme(final String codeScheme) {
         Optional<SchemePharmacotherapy> byCodeScheme = schemePharmacotherapyRepository.findByCodeScheme(codeScheme);
         if (byCodeScheme.isEmpty()) {
             throw new NotFoundException(SCHEME_PHARMACOTHERAPY_NOT_EXISTS + codeScheme);

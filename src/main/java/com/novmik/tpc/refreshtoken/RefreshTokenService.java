@@ -18,11 +18,11 @@ public class RefreshTokenService {
     @Value("${jwt.token.refresh.duration}")
     private Long refreshTokenDurationMs;
 
-    public Optional<RefreshToken> findRefreshTokenByToken(String token) {
+    public Optional<RefreshToken> findRefreshTokenByToken(final String token) {
         return refreshTokenRepository.findRefreshTokenByToken(token);
     }
 
-    public RefreshToken save(RefreshToken refreshToken) {
+    public RefreshToken save(final RefreshToken refreshToken) {
         return refreshTokenRepository.save(refreshToken);
     }
 
@@ -34,14 +34,14 @@ public class RefreshTokenService {
         return refreshToken;
     }
 
-    public void verifyExpiration(RefreshToken token) {
+    public void verifyExpiration(final RefreshToken token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
 
             throw new TokenRefreshException(token.getToken(), "Expired token. Please issue a new request");
         }
     }
 
-    public void deleteByRefreshToken(String refreshToken) {
+    public void deleteByRefreshToken(final String refreshToken) {
         refreshTokenRepository.deleteByToken(refreshToken);
     }
 

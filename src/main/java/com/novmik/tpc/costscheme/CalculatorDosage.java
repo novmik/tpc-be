@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Optional;
 
 import static com.novmik.tpc.medicament.UnitOfMeasurementExtractorConstant.*;
 
@@ -19,25 +18,28 @@ import static com.novmik.tpc.medicament.UnitOfMeasurementExtractorConstant.*;
 @Component
 public class CalculatorDosage {
 
-    BigDecimal getRequiredDose(Medicament medicament, Double weight, Double bsa) {
+    protected static BigDecimal getRequiredDose(final Medicament medicament, final Double weight, final Double bsa) {
+        String unitOfMeasurement = medicament.getUnitOfMeasurement();
+        BigDecimal requiredDose;
         double unitDose = 0D;
-        if (medicament.getUnitOfMeasurement().equals(MG) || medicament.getUnitOfMeasurement().equals(MILLION_ME)) {
+        if (unitOfMeasurement.equals(MG) || unitOfMeasurement.equals(MILLION_ME)) {
             unitDose = 1D;
         }
-        if (medicament.getUnitOfMeasurement().equals(MG_DIVIDE_KG) || medicament.getUnitOfMeasurement().equals(MGK_DIVIDE_KG)) {
+        if (unitOfMeasurement.equals(MG_DIVIDE_KG) || unitOfMeasurement.equals(MGK_DIVIDE_KG)) {
             unitDose = weight;
         }
-        if (medicament.getUnitOfMeasurement().equals(MG_DIVIDE_M_SQUARED) || medicament.getUnitOfMeasurement().equals(MILLION_ME_DIVIDE_M_SQUARED)) {
+        if (unitOfMeasurement.equals(MG_DIVIDE_M_SQUARED) || unitOfMeasurement.equals(MILLION_ME_DIVIDE_M_SQUARED)) {
             unitDose = bsa;
         }
         if (unitDose == 0) {
-            log.error("Не определена единица измерения дозировки: " + medicament.getUnitOfMeasurement());
-            return BigDecimal.ZERO;
+            log.error("Не определена единица измерения дозировки: " + unitOfMeasurement);
+            requiredDose = BigDecimal.ZERO;
+        } else {
+            float valueDose = medicament.getDose() == 0 ? ((medicament.getDose_min() + medicament.getDose_max()) / 2) : medicament.getDose();
+            requiredDose = BigDecimal.valueOf(valueDose * (medicament.getNumberDaysDrug()) * unitDose)
+                    .setScale(0, RoundingMode.CEILING);
         }
-
-        float valueDose = medicament.getDose() == 0 ? ((medicament.getDose_min() + medicament.getDose_max()) / 2) : medicament.getDose();
-        return BigDecimal.valueOf(valueDose * (medicament.getNumberDaysDrug()) * unitDose)
-                .setScale(0, RoundingMode.CEILING);
+        return requiredDose;
     }
 
 }

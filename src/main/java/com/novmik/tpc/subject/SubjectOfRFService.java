@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.novmik.tpc.subject.SubjectConstant.*;
+import static com.novmik.tpc.subject.SubjectConstant.SUBJECT_EXISTS;
+import static com.novmik.tpc.subject.SubjectConstant.SUBJECT_NOT_CORRECT;
+import static com.novmik.tpc.subject.SubjectConstant.SUBJECT_NOT_EXISTS;
 
 @AllArgsConstructor
 @Service
@@ -19,35 +21,39 @@ public class SubjectOfRFService {
 
     private final SubjectOfRFRepository subjectOfRFRepository;
 
-    public Optional<SubjectOfRF> findByNameSubject(String nameSubject) {
+    public Optional<SubjectOfRF> findByNameSubject(final String nameSubject) {
         return subjectOfRFRepository.findByNameSubject(nameSubject);
     }
 
-    SubjectOfRF save(SubjectOfRF subjectOfRF) {
+    protected SubjectOfRF save(final SubjectOfRF subjectOfRF) {
         return subjectOfRFRepository.save(subjectOfRF);
     }
 
-    public boolean existsById(Long idSubject) {
+    public boolean existsById(final Long idSubject) {
         return subjectOfRFRepository.existsById(idSubject);
     }
 
-    List<NameSubjectAndId> getIdAndNameSubjectFromTable() {
+    protected List<NameSubjectAndId> getIdAndNameSubjectFromTable() {
         return subjectOfRFRepository.getIdAndNameSubjectFromTable();
     }
 
     public List<SubjectOfRF> getAllSubject() {
-        return subjectOfRFRepository.findAll().stream().sorted(Comparator.comparing(SubjectOfRF::getId)).collect(Collectors.toList());
+        return subjectOfRFRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparing(SubjectOfRF::getId))
+                .collect(Collectors.toList());
     }
 
-    public Optional<SubjectOfRF> getSubjectById(Long idSubject) {
-        Optional<SubjectOfRF> subjectOfRFRepositoryById = subjectOfRFRepository.findById(idSubject);
+    public Optional<SubjectOfRF> getSubjectById(final Long idSubject) {
+        Optional<SubjectOfRF> subjectOfRFRepositoryById = subjectOfRFRepository
+                .findById(idSubject);
         if (subjectOfRFRepositoryById.isEmpty()) {
             throw new NotFoundException(SUBJECT_NOT_EXISTS + idSubject);
         }
         return subjectOfRFRepositoryById;
     }
 
-    SubjectOfRF addNewSubject(SubjectOfRF subjectOfRF) {
+    protected SubjectOfRF addNewSubject(final SubjectOfRF subjectOfRF) {
         if (ObjectUtils.anyNull(
                 subjectOfRF,
                 subjectOfRF.getNameSubject(),
@@ -56,13 +62,15 @@ public class SubjectOfRFService {
         )) {
             throw new BadRequestException(SUBJECT_NOT_CORRECT + subjectOfRF);
         }
-        if (findByNameSubject(subjectOfRF.getNameSubject()).isPresent()) {
-            throw new BadRequestException(SUBJECT_EXISTS + subjectOfRF.getNameSubject());
+        if (findByNameSubject(
+                subjectOfRF.getNameSubject()).isPresent()) {
+            throw new BadRequestException(
+                    SUBJECT_EXISTS + subjectOfRF.getNameSubject());
         }
         return save(subjectOfRF);
     }
 
-    SubjectOfRF updateSubject(SubjectOfRF subjectOfRF) {
+    protected SubjectOfRF updateSubject(final SubjectOfRF subjectOfRF) {
         if (ObjectUtils.anyNull(
                 subjectOfRF,
                 subjectOfRF.getId(),
@@ -73,12 +81,13 @@ public class SubjectOfRFService {
             throw new BadRequestException(SUBJECT_NOT_CORRECT + subjectOfRF);
         }
         if (!existsById(subjectOfRF.getId())) {
-            throw new NotFoundException(SUBJECT_NOT_EXISTS + subjectOfRF.getId());
+            throw new NotFoundException(
+                    SUBJECT_NOT_EXISTS + subjectOfRF.getId());
         }
         return save(subjectOfRF);
     }
 
-    void deleteSubjectById(Long idSubject) {
+    protected void deleteSubjectById(final Long idSubject) {
         if (idSubject == null || idSubject < 1) {
             throw new BadRequestException(SUBJECT_NOT_CORRECT);
         }

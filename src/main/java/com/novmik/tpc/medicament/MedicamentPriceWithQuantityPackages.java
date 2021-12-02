@@ -13,12 +13,17 @@ import java.util.stream.Collectors;
 public class MedicamentPriceWithQuantityPackages extends MedicamentPrice {
     private Integer quantityPackage;
 
-    public MedicamentPriceWithQuantityPackages(Long id, String inn, Float dosage, Double priceWithVAT, Integer quantityPackage) {
+    public MedicamentPriceWithQuantityPackages(final Long id,
+                                               final String inn,
+                                               final Float dosage,
+                                               final Double priceWithVAT,
+                                               final Integer quantityPackage) {
         super(id, inn, dosage, priceWithVAT);
         this.quantityPackage = quantityPackage;
     }
 
-    public static List<MedicamentPriceWithQuantityPackages> fromMedicamentPriceListToWithQuantityPackagesList(List<MedicamentPrice> medicamentPriceList, Integer quantityPackage) {
+    public static List<MedicamentPriceWithQuantityPackages> fromMedicamentPriceListToWithQuantityPackagesList(final List<MedicamentPrice> medicamentPriceList,
+                                                                                                              final Integer quantityPackage) {
         return medicamentPriceList.stream().map(medicamentPrice -> new MedicamentPriceWithQuantityPackages(
                         medicamentPrice.getId(),
                         medicamentPrice.getInn(),

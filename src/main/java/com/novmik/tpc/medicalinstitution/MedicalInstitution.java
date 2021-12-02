@@ -1,13 +1,24 @@
 package com.novmik.tpc.medicalinstitution;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /*
 Таблица: Медицинская организация (МО)
-Колонки: Наименование медицинской организации, Коэффициент дифференциации,
-Уровень МО КС, Коэффициент уровня медицинской организации КС (КУС КС), Уровень МО ДС, Коэффициент уровня медицинской организации ДС (КУС ДС), Тип МО
+Колонки: Наименование медицинской организации,
+Коэффициент дифференциации, Уровень МО КС,
+Коэффициент уровня медицинской организации КС (КУС КС),
+Уровень МО ДС, Коэффициент уровня медицинской организации ДС (КУС ДС), Тип МО
 */
 
 @NoArgsConstructor
@@ -39,7 +50,14 @@ public class MedicalInstitution {
     @Column(name = "type_medical_institution")
     private Integer typeMedicalInstitution;
 
-    public MedicalInstitution(String nameSubject, String nameMedicalInstitution, Float differentiationCoefficient, String levelMoRTCCF, Float coefficientOfLevel_MO_rtccf, String levelMoDCF, Float coefficientOfLevel_MO_dcf, Integer typeMedicalInstitution) {
+    public MedicalInstitution(final String nameSubject,
+                              final String nameMedicalInstitution,
+                              final Float differentiationCoefficient,
+                              final String levelMoRTCCF,
+                              final Float coefficientOfLevel_MO_rtccf,
+                              final String levelMoDCF,
+                              final Float coefficientOfLevel_MO_dcf,
+                              final Integer typeMedicalInstitution) {
         this.nameSubject = nameSubject;
         this.nameMedicalInstitution = nameMedicalInstitution;
         this.differentiationCoefficient = differentiationCoefficient;

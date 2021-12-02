@@ -29,23 +29,23 @@ public class SubjectController {
     }
 
     @GetMapping("/{idSubject}")
-    public ResponseEntity<Optional<SubjectOfRF>> getSubjectById(@PathVariable("idSubject") Long idSubject) {
+    public ResponseEntity<Optional<SubjectOfRF>> getSubjectById(@PathVariable("idSubject") final Long idSubject) {
         return new ResponseEntity<>(subjectOfRFService.getSubjectById(idSubject), OK);
     }
 
     @PostMapping
-    public ResponseEntity<SubjectOfRF> addNewSubject(@RequestBody SubjectOfRF subjectOfRF) {
+    public ResponseEntity<SubjectOfRF> addNewSubject(@RequestBody final SubjectOfRF subjectOfRF) {
         return new ResponseEntity<>(subjectOfRFService.addNewSubject(subjectOfRF), CREATED);
     }
 
     @PutMapping
-    public ResponseEntity<SubjectOfRF> updateSubject(@RequestBody SubjectOfRF subjectOfRF) {
+    public ResponseEntity<SubjectOfRF> updateSubject(@RequestBody final SubjectOfRF subjectOfRF) {
         return new ResponseEntity<>(subjectOfRFService.updateSubject(subjectOfRF), OK);
     }
 
     @DeleteMapping("/{idSubject}")
     @PreAuthorize("hasAuthority('DELETE')")
-    public void deleteSubjectById(@PathVariable("idSubject") Long idSubject) {
+    public void deleteSubjectById(@PathVariable("idSubject") final Long idSubject) {
         subjectOfRFService.deleteSubjectById(idSubject);
     }
 }

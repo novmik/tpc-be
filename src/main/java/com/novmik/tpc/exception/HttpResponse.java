@@ -3,8 +3,6 @@ package com.novmik.tpc.exception;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -17,7 +15,10 @@ public class HttpResponse {
     private String reason;
     private String message;
 
-    public HttpResponse(int httpStatusCode, HttpStatus httpStatus, String reason, String message) {
+    public HttpResponse(final int httpStatusCode,
+                        final HttpStatus httpStatus,
+                        final String reason,
+                        final String message) {
         this.timeStamp = new SimpleDateFormat("dd.MM.yyyy H:mm:ss zzz").format(new Date());
         this.httpStatusCode = httpStatusCode;
         this.httpStatus = httpStatus;

@@ -6,10 +6,8 @@ import com.novmik.tpc.exception.NotFoundException;
 import com.novmik.tpc.exception.ResourceAlreadyInUseException;
 import com.novmik.tpc.refreshtoken.RefreshTokenService;
 import com.novmik.tpc.role.Role;
-import com.novmik.tpc.role.RoleRepository;
 import com.novmik.tpc.role.RoleService;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,8 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.novmik.tpc.client.ClientConstant.*;
-import static com.novmik.tpc.subject.SubjectConstant.SUBJECT_NOT_CORRECT;
-import static com.novmik.tpc.subject.SubjectConstant.SUBJECT_NOT_EXISTS;
 
 @Slf4j
 @AllArgsConstructor
@@ -31,7 +27,7 @@ public class ClientService {
     private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
 
-    public Optional<Client> registerUser(RegistrationRequest newRegistrationRequest) {
+    public Optional<Client> registerUser(final RegistrationRequest newRegistrationRequest) {
         String newRegistrationRequestEmail = newRegistrationRequest.getEmail();
         if (emailAlreadyExists(newRegistrationRequestEmail)) {
             log.error(EMAIL_ADDRESS_EXISTS + newRegistrationRequestEmail);
@@ -43,15 +39,15 @@ public class ClientService {
         return Optional.ofNullable(registeredNewUser);
     }
 
-    public Boolean emailAlreadyExists(String email) {
+    public Boolean emailAlreadyExists(final String email) {
         return existsByEmail(email);
     }
 
-    public Client saveClient(Client client) {
+    public Client saveClient(final Client client) {
         return clientRepository.save(client);
     }
 
-    public Optional<Client> getClient(String email) {
+    public Optional<Client> getClient(final String email) {
         return clientRepository.findByEmail(email);
     }
 
@@ -59,15 +55,15 @@ public class ClientService {
         return clientRepository.findAll();
     }
 
-    public boolean existsByEmail(String email) {
+    public boolean existsByEmail(final String email) {
         return clientRepository.existsByEmail(email);
     }
 
-    public boolean existsById(Long idClient) {
+    public boolean existsById(final Long idClient) {
         return clientRepository.existsById(idClient);
     }
 
-    public Client createUser(RegistrationRequest registrationRequest) {
+    public Client createUser(final RegistrationRequest registrationRequest) {
         return new Client(
                 registrationRequest.getEmail(),
                 passwordEncoder.encode(registrationRequest.getPassword()),
@@ -77,7 +73,7 @@ public class ClientService {
                 true);
     }
 
-    public void deleteClient(Long idClient) {
+    public void deleteClient(final Long idClient) {
         if (idClient == null || idClient < 1) {
             throw new BadRequestException(CLIENT_NOT_CORRECT);
         }
@@ -87,7 +83,7 @@ public class ClientService {
         clientRepository.deleteById(idClient);
     }
 
-    public void addRoleToClient(String email, String roleName) {
+    public void addRoleToClient(final String email, final String roleName) {
         Optional<Client> clientByEmail = this.getClient(email);
         Optional<Role> roleByName = roleService.getRoleByName(roleName);
         if (clientByEmail.isPresent() && roleByName.isPresent()) {
@@ -97,7 +93,7 @@ public class ClientService {
         }
     }
 
-    public void logoutUser(CustomUserDetails currentUser, String refreshToken) {
+    public void logoutUser(final CustomUserDetails currentUser, final String refreshToken) {
         log.info("Removing refresh token associated with User [" + currentUser + "]");
         refreshTokenService.deleteByRefreshToken(refreshToken);
     }

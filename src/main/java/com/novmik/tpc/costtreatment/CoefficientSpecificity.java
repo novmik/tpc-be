@@ -25,26 +25,29 @@ import lombok.extern.slf4j.Slf4j;
 import static com.novmik.tpc.costtreatment.CostOfCompletedCaseOfTreatmentConstant.COEFFICIENT_SPECIFICITY_NOT_CORRECT;
 
 @Slf4j
-public class CoefficientSpecificity {
+public abstract class CoefficientSpecificity {
 
-    public static float calculate(float rateRelativeIntensity, Integer typeMedicalInstitution) {
+    public static float calculate(final float rateRelativeIntensity, final Integer typeMedicalInstitution) {
+        float coefficientSpecificity = 0;
         if (typeMedicalInstitution == 1) {
-            return rateRelativeIntensity >= 1.7 ? 1.4F : 1F;
+            coefficientSpecificity = rateRelativeIntensity >= 1.7 ? 1.4F : 1F;
         }
         if (typeMedicalInstitution == 2) {
-            return rateRelativeIntensity < 2 ? 1.2F : 1.4F;
+            coefficientSpecificity = rateRelativeIntensity < 2 ? 1.2F : 1.4F;
         }
         if (typeMedicalInstitution == 3) {
-            return rateRelativeIntensity < 2 ? 1.0F : 1.4F;
+            coefficientSpecificity = rateRelativeIntensity < 2 ? 1.0F : 1.4F;
         }
         if (typeMedicalInstitution == 4) {
-            return rateRelativeIntensity < 1.7 ? 1.0F : 1.4F;
+            coefficientSpecificity = rateRelativeIntensity < 1.7 ? 1.0F : 1.4F;
         }
         if (typeMedicalInstitution == 5) {
-            return rateRelativeIntensity >= 2 ? 1.4F : 0.8F;
+            coefficientSpecificity = rateRelativeIntensity >= 2 ? 1.4F : 0.8F;
         }
-        log.error(COEFFICIENT_SPECIFICITY_NOT_CORRECT, rateRelativeIntensity, typeMedicalInstitution);
-        return 0;
+        if (coefficientSpecificity == 0) {
+            log.error(COEFFICIENT_SPECIFICITY_NOT_CORRECT, rateRelativeIntensity, typeMedicalInstitution);
+        }
+        return coefficientSpecificity;
     }
 
 }

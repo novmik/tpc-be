@@ -9,29 +9,32 @@ import static com.novmik.tpc.medicament.UnitOfMeasurementExtractorConstant.*;
 @Component
 public class UnitOfMeasurementExtractor {
 
-    String getUnit(String medicamentWithDoseAndNumberDaysDrug) {
+    protected static String getUnit(final String medicamentWithDoseAndNumberDaysDrug) {
+        String unit = "";
         if (medicamentWithDoseAndNumberDaysDrug.contains(" " + MG + " ")) {
-            return MG;
+            unit = MG;
         }
         if (medicamentWithDoseAndNumberDaysDrug.contains(" " + MG_DIVIDE_M_SQUARED + " ")) {
-            return MG_DIVIDE_M_SQUARED;
+            unit = MG_DIVIDE_M_SQUARED;
         }
         if (medicamentWithDoseAndNumberDaysDrug.contains(" " + MG_DIVIDE_KG + " ")) {
-            return MG_DIVIDE_KG;
+            unit = MG_DIVIDE_KG;
         }
         if (medicamentWithDoseAndNumberDaysDrug.contains(" " + AUC + " ")) {
-            return AUC;
+            unit = AUC;
         }
         if (medicamentWithDoseAndNumberDaysDrug.contains(" " + MILLION_ME_DIVIDE_M_SQUARED + " ")) {
-            return MILLION_ME_DIVIDE_M_SQUARED;
+            unit = MILLION_ME_DIVIDE_M_SQUARED;
         }
         if (medicamentWithDoseAndNumberDaysDrug.contains(" " + MILLION_ME + " ")) {
-            return MILLION_ME;
+            unit = MILLION_ME;
         }
         if (medicamentWithDoseAndNumberDaysDrug.contains(" " + MGK_DIVIDE_KG + " ")) {
-            return MGK_DIVIDE_KG;
+            unit = MGK_DIVIDE_KG;
         }
-        log.error("Режим дозирования лекарственного препарата не определён.");
-        return "";
+        if (unit.equals("")) {
+            log.error("Режим дозирования лекарственного препарата не определён.");
+        }
+        return unit;
     }
 }

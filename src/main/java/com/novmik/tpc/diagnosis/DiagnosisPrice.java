@@ -29,7 +29,9 @@ public class DiagnosisPrice {
     @Column(name = "price_medical_care")
     private Double priceMedicalCare;
 
-    public DiagnosisPrice(String nameSubject, NomenclatureMedicalCare nomenclatureMedicalCare, Double priceMedicalCare) {
+    public DiagnosisPrice(final String nameSubject,
+                          final NomenclatureMedicalCare nomenclatureMedicalCare,
+                          final Double priceMedicalCare) {
         this.nameSubject = nameSubject;
         this.nomenclatureMedicalCare = nomenclatureMedicalCare;
         this.priceMedicalCare = priceMedicalCare;

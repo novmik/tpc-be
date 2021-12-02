@@ -23,12 +23,12 @@ public class PrivilegeController {
     }
 
     @PostMapping
-    public ResponseEntity<Privilege> addNewPrivilege(@RequestBody Privilege privilege) {
+    public ResponseEntity<Privilege> addNewPrivilege(@RequestBody final Privilege privilege) {
         return new ResponseEntity<>(privilegeService.addNewPrivilege(privilege), CREATED);
     }
 
     @DeleteMapping("/{idPrivilege}")
-    public void deletePrivilegeById(@PathVariable("idPrivilege") Long idPrivilege) {
+    public void deletePrivilegeById(@PathVariable("idPrivilege") final Long idPrivilege) {
         privilegeService.deletePrivilegeById(idPrivilege);
     }
 }

@@ -20,10 +20,8 @@ public class CostSchemePharmacotherapyService {
 
     private final MedicamentService medicamentService;
     private final MedicamentPriceService medicamentPriceService;
-    private final CalculatorDosage calcDosage;
-    private final CalculatorResidual calcResidual;
 
-    CostSchemePharmacotherapyResponse getCostSchemePharmacotherapy(CostSchemePharmacotherapyRequest costSchemeRequest) {
+    protected CostSchemePharmacotherapyResponse getCostSchemePharmacotherapy(final CostSchemePharmacotherapyRequest costSchemeRequest) {
         if (ObjectUtils.allNotNull(
                 costSchemeRequest.getMedicamentList(),
                 costSchemeRequest.getRegionalMarkup(),
@@ -63,10 +61,10 @@ public class CostSchemePharmacotherapyService {
     }
 
     private CostSchemePharmacotherapyResponse getCostSchemePharmacotherapy(
-            String codeScheme,
-            Double regionalMarkup,
-            Double weight,
-            Double bsa
+            final String codeScheme,
+            final Double regionalMarkup,
+            final Double weight,
+            final Double bsa
     ) {
         List<Medicament> medicamentList = medicamentService.getMedicamentListBySchemePharmacotherapy(codeScheme);
         return getCostSchemePharmacotherapy(
@@ -78,15 +76,15 @@ public class CostSchemePharmacotherapyService {
     }
 
     private CostSchemePharmacotherapyResponse getCostSchemePharmacotherapy(
-            List<Medicament> medicamentList,
-            Double regionalMarkup,
-            Double weight,
-            Double bsa
+            final List<Medicament> medicamentList,
+            final Double regionalMarkup,
+            final Double weight,
+            final Double bsa
     ) {
         List<MedicamentPriceWithQuantityPackages> listAllMedicamentPriceWithQuantityPackages = new ArrayList<>();
         BigDecimal costScheme = BigDecimal.ZERO;
         for (Medicament medicament : medicamentList) {
-            BigDecimal requiredDose = calcDosage.getRequiredDose(medicament, weight, bsa);
+            BigDecimal requiredDose = CalculatorDosage.getRequiredDose(medicament, weight, bsa);
             medicament.setRequiredDose(requiredDose);
             List<MedicamentPrice> medicalPriceList = medicamentPriceService.getMedicalPriceList(StringUtils.capitalize(medicament.getInnMedicament()));
             medicalPriceList = medicalPriceList.stream().sorted(Comparator.comparing(MedicamentPrice::getDosage).reversed()).toList();
@@ -97,7 +95,7 @@ public class CostSchemePharmacotherapyService {
                     .map(MedicamentPrice::getDosage)
                     .sorted(Comparator.reverseOrder())
                     .collect(Collectors.toList());
-            SortedMap<Double, Map<Float, Integer>> mapResidual = calcResidual.getMapResidual(dosagesMedicamentList, requiredDose);
+            SortedMap<Double, Map<Float, Integer>> mapResidual = CalculatorResidual.getMapResidual(dosagesMedicamentList, requiredDose);
             Map<Float, Integer> requiredDoseQuantityPackageMap = mapResidual.get(mapResidual.firstKey());
             for (Float dose : requiredDoseQuantityPackageMap.keySet()) {
                 Integer quantityPackage = requiredDoseQuantityPackageMap.get(dose);

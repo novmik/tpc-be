@@ -19,7 +19,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 public class JwtAuthenticationEntryPoint  extends Http403ForbiddenEntryPoint {
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
+    public void commence(final HttpServletRequest request, HttpServletResponse response, final AuthenticationException exception) throws IOException {
         HttpResponse httpResponse = new HttpResponse(FORBIDDEN.value(), FORBIDDEN, FORBIDDEN.getReasonPhrase().toUpperCase(), FORBIDDEN_MESSAGE);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(FORBIDDEN.value());

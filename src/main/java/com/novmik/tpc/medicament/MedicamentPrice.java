@@ -28,7 +28,7 @@ public class MedicamentPrice {
     @Column(name = "price_with_VAT")
     private Double priceWithVAT;
 
-    public MedicamentPrice(String inn, Float dosage, Double priceWithVAT) {
+    public MedicamentPrice(final String inn, final Float dosage, final Double priceWithVAT) {
         this.inn = inn;
         this.dosage = dosage;
         this.priceWithVAT = priceWithVAT;

@@ -10,7 +10,7 @@ public class OnUserRegistrationCompleteEvent extends ApplicationEvent {
     private transient UriComponentsBuilder redirectUrl;
     private Client user;
 
-    public OnUserRegistrationCompleteEvent(Client user, UriComponentsBuilder redirectUrl) {
+    public OnUserRegistrationCompleteEvent(final Client user, final UriComponentsBuilder redirectUrl) {
         super(user);
         this.redirectUrl = redirectUrl;
         this.user = user;

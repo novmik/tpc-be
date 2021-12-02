@@ -31,7 +31,10 @@ public class CoefficientDifficultyTreating {
     @Column(name = "care_facility")
     private String careFacility;
 
-    public CoefficientDifficultyTreating(CaseCdt caseCdt, String nameSubject, Float valueNominationCaseCdt, String careFacility) {
+    public CoefficientDifficultyTreating(final CaseCdt caseCdt,
+                                         final String nameSubject,
+                                         final Float valueNominationCaseCdt,
+                                         final String careFacility) {
         this.caseCdt = caseCdt;
         this.nameSubject = nameSubject;
         this.valueNominationCaseCdt = valueNominationCaseCdt;

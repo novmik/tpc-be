@@ -31,7 +31,10 @@ public class DiagnosisRelatedGroups {
     @Column(name = "wage_share")
     private Float wageShare;
 
-    public DiagnosisRelatedGroups(String numberDrg, String nominationDrg, Float rateRelativeIntensity, Float wageShare) {
+    public DiagnosisRelatedGroups(final String numberDrg,
+                                  final String nominationDrg,
+                                  final Float rateRelativeIntensity,
+                                  final Float wageShare) {
         this.numberDrg = numberDrg;
         this.nominationDrg = nominationDrg;
         this.rateRelativeIntensity = rateRelativeIntensity;

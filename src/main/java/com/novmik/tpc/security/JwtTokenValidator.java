@@ -2,6 +2,7 @@ package com.novmik.tpc.security;
 
 import com.novmik.tpc.exception.InvalidTokenRequestException;
 import io.jsonwebtoken.*;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,23 +23,23 @@ public class JwtTokenValidator {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
 
-        } catch (SignatureException ex) {
+        } catch (final SignatureException ex) {
             log.error("Invalid JWT signature");
             throw new InvalidTokenRequestException("JWT", authToken, "Incorrect signature");
 
-        } catch (MalformedJwtException ex) {
+        } catch (final MalformedJwtException ex) {
             log.error("Invalid JWT token");
             throw new InvalidTokenRequestException("JWT", authToken, "Malformed jwt token");
 
-        } catch (ExpiredJwtException ex) {
+        } catch (final ExpiredJwtException ex) {
             log.error("Expired JWT token");
             throw new InvalidTokenRequestException("JWT", authToken, "Token expired. Refresh required");
 
-        } catch (UnsupportedJwtException ex) {
+        } catch (final UnsupportedJwtException ex) {
             log.error("Unsupported JWT token");
             throw new InvalidTokenRequestException("JWT", authToken, "Unsupported JWT token");
 
-        } catch (IllegalArgumentException ex) {
+        } catch (final IllegalArgumentException ex) {
             log.error("JWT claims string is empty.");
             throw new InvalidTokenRequestException("JWT", authToken, "Illegal argument token");
         }

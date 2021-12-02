@@ -22,7 +22,7 @@ public class MedicalInstitutionService {
     private final MedicalInstitutionRepository medicalInstitutionRepository;
     private final SubjectOfRFService subjectOfRFService;
 
-    List<NameMedicalInstitutionAndId> getMedicalInstitutionList(Long idSubject) {
+    protected List<NameMedicalInstitutionAndId> getMedicalInstitutionList(final Long idSubject) {
         List<NameMedicalInstitutionAndId> allMedicalInstitutionBySubjectId = medicalInstitutionRepository.listIdAndMedicalInstitutionNameBySubjectId(idSubject);
         if (allMedicalInstitutionBySubjectId.isEmpty()) {
             throw new NotFoundException(MEDICAL_INSTITUTIONS_NOT_EXISTS_BY_ID_SUBJECT + idSubject);
@@ -30,7 +30,7 @@ public class MedicalInstitutionService {
         return allMedicalInstitutionBySubjectId;
     }
 
-    public Optional<MedicalInstitution> getMedicalInstitutionById(Long idMedicalInstitution) {
+    public Optional<MedicalInstitution> getMedicalInstitutionById(final Long idMedicalInstitution) {
         Optional<MedicalInstitution> medicalInstitutionRepositoryById = medicalInstitutionRepository.findById(idMedicalInstitution);
         if (medicalInstitutionRepositoryById.isEmpty()) {
             throw new NotFoundException(MEDICAL_INSTITUTIONS_NOT_EXISTS + idMedicalInstitution);
@@ -38,13 +38,13 @@ public class MedicalInstitutionService {
         return medicalInstitutionRepositoryById;
     }
 
-    public List<MedicalInstitution> getAllMedicalInstitutionsBySubjectId(Long idSubject) {
+    public List<MedicalInstitution> getAllMedicalInstitutionsBySubjectId(final Long idSubject) {
         String nameSubject = subjectOfRFService.getSubjectById(idSubject).orElseThrow().getNameSubject();
         List<MedicalInstitution> allMedicalInstitutionBySubjectId = medicalInstitutionRepository.findMedicalInstitutionsByNameSubject(nameSubject);
         return allMedicalInstitutionBySubjectId.stream().sorted(Comparator.comparing(MedicalInstitution::getId)).collect(Collectors.toList());
     }
 
-    MedicalInstitution addNewMedicalInstitution(MedicalInstitution medicalInstitution) {
+    protected MedicalInstitution addNewMedicalInstitution(final MedicalInstitution medicalInstitution) {
         if (ObjectUtils.anyNull(
                 medicalInstitution,
                 medicalInstitution.getNameMedicalInstitution(),
@@ -65,7 +65,7 @@ public class MedicalInstitutionService {
         return medicalInstitutionRepository.save(medicalInstitution);
     }
 
-    MedicalInstitution updateMedicalInstitution(MedicalInstitution medicalInstitution) {
+    protected MedicalInstitution updateMedicalInstitution(final MedicalInstitution medicalInstitution) {
         if (ObjectUtils.anyNull(
                 medicalInstitution,
                 medicalInstitution.getId(),
@@ -80,7 +80,7 @@ public class MedicalInstitutionService {
         return medicalInstitutionRepository.save(medicalInstitution);
     }
 
-    void deleteMedicalInstitutionById(Long idMedicalInstitution) {
+    protected void deleteMedicalInstitutionById(final Long idMedicalInstitution) {
         if (idMedicalInstitution == null || idMedicalInstitution < 1) {
             throw new BadRequestException(MEDICAL_INSTITUTION_NOT_CORRECT);
         }

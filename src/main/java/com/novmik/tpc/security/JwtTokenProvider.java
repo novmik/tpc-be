@@ -4,6 +4,7 @@ import com.novmik.tpc.client.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -41,14 +42,14 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String getSubjectFromJWT(String token) {
+    public String getSubjectFromJWT(final String token) {
         return Jwts.parser()
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody().getSubject();
     }
 
-    public List<GrantedAuthority> getPermissionsFromJWT(String token) {
+    public List<GrantedAuthority> getPermissionsFromJWT(final String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
@@ -58,7 +59,7 @@ public class JwtTokenProvider {
                 .collect(Collectors.toList());
     }
 
-    private String getClientPermissions(CustomUserDetails customUserDetails) {
+    private String getClientPermissions(final CustomUserDetails customUserDetails) {
         return customUserDetails
                 .getAuthorities()
                 .stream()

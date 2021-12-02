@@ -19,7 +19,7 @@ public class DiagnosisPriceController {
     private final DiagnosisPriceService diagnosisPriceService;
 
     @GetMapping("/{idSubject}/dp")
-    public ResponseEntity<List<DiagnosisPrice>> getDiagnosisPriceList(@PathVariable("idSubject") Long idSubject) {
+    public ResponseEntity<List<DiagnosisPrice>> getDiagnosisPriceList(@PathVariable("idSubject") final Long idSubject) {
         return new ResponseEntity<>(diagnosisPriceService.getDiagnosisPriceList(idSubject), OK);
     }
 }

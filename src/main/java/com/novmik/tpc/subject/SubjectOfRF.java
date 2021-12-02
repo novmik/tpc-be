@@ -1,13 +1,23 @@
 package com.novmik.tpc.subject;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /*
 Таблица: Субъект РФ
-Колонки: Субъект, Базовая ставка круглосуточного стационара, Базовая ставка дневного стационара
-(размер средней стоимости законченного случая лечения без учета коэффициента дифференциации)
+Колонки: Субъект, Базовая ставка круглосуточного стационара,
+Базовая ставка дневного стационара(размер средней стоимости
+законченного случая лечения без учета коэффициента дифференциации)
 */
 
 @NoArgsConstructor
@@ -29,7 +39,9 @@ public class SubjectOfRF {
     @Column(name = "baserate_dcf")
     private Double baseRateDayCareFacility;
 
-    public SubjectOfRF(String nameSubject, Double baseRateRoundTheClockCareFacility, Double baseRateDayCareFacility) {
+    public SubjectOfRF(final String nameSubject,
+                       final Double baseRateRoundTheClockCareFacility,
+                       final Double baseRateDayCareFacility) {
         this.nameSubject = nameSubject;
         this.baseRateRoundTheClockCareFacility = baseRateRoundTheClockCareFacility;
         this.baseRateDayCareFacility = baseRateDayCareFacility;

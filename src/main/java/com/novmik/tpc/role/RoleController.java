@@ -23,12 +23,12 @@ public class RoleController {
     }
 
     @PostMapping
-    public ResponseEntity<Role> addNewRole(@RequestBody Role role) {
+    public ResponseEntity<Role> addNewRole(@RequestBody final Role role) {
         return new ResponseEntity<>(roleService.addNewRole(role), CREATED);
     }
 
     @PostMapping("/addprivilege")
-    public void addPrivilegeToRole(@RequestBody AddPrivilegeToRoleRequest addPrivilegeToRoleRequest) {
+    public void addPrivilegeToRole(@RequestBody final AddPrivilegeToRoleRequest addPrivilegeToRoleRequest) {
         roleService.addPrivilegeToRole(addPrivilegeToRoleRequest.getRoleName(), addPrivilegeToRoleRequest.getPrivilegeName());
     }
 

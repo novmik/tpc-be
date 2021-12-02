@@ -21,19 +21,19 @@ public class PrivilegeService {
         return privilegeRepository.findAll();
     }
 
-    public Optional<Privilege> findByPrivilegeName(String privilegeName) {
+    public Optional<Privilege> findByPrivilegeName(final String privilegeName) {
         return privilegeRepository.findByName(privilegeName);
     }
 
-    public boolean existById(Long idPrivilege) {
+    public boolean existById(final Long idPrivilege) {
         return privilegeRepository.existsById(idPrivilege);
     }
 
-    Privilege save(Privilege privilege) {
+    protected Privilege save(final Privilege privilege) {
         return privilegeRepository.save(privilege);
     }
 
-    Privilege addNewPrivilege(Privilege privilege) {
+    protected Privilege addNewPrivilege(final Privilege privilege) {
         if (ObjectUtils.anyNull(
                 privilege,
                 privilege.getName()
@@ -46,7 +46,7 @@ public class PrivilegeService {
         return save(privilege);
     }
 
-    void deletePrivilegeById(Long idPrivilege) {
+    protected void deletePrivilegeById(final Long idPrivilege) {
         if (idPrivilege == null || idPrivilege <1){
             throw new BadRequestException(PRIVILEGE_NOT_CORRECT);
         }

@@ -11,13 +11,13 @@ public class CaseCdtService {
 
     private final CaseCdtRepository caseCdtRepository;
 
-    Optional<CaseCdt> findByNominationCaseCdt(String nominationCaseCdt) {
+    protected Optional<CaseCdt> findByNominationCaseCdt(final String nominationCaseCdt) {
         return caseCdtRepository.findByNominationCaseCdt(nominationCaseCdt);
     }
 
-    CaseCdt save(CaseCdt caseCdt) { return caseCdtRepository.save(caseCdt); }
+    protected CaseCdt save(final CaseCdt caseCdt) { return caseCdtRepository.save(caseCdt); }
 
-    CaseCdt save(String nominationCaseCdt) {
+    protected CaseCdt save(final String nominationCaseCdt) {
         Optional<CaseCdt> byNominationCaseCdt = findByNominationCaseCdt(nominationCaseCdt);
         return byNominationCaseCdt.orElseGet(() -> save(new CaseCdt(nominationCaseCdt)));
     }

@@ -10,31 +10,24 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class BsaServiceTest {
 
-    private BsaService underTest;
-
-    @BeforeEach
-    void setUp() {
-        underTest = new BsaService();
-    }
-
     @Test
     void canGetMapWithAllBsaMethodsWhenTwoOptions() {
         BsaRequest bsaRequest = new BsaRequest(170,70.0);
-        assertThat(underTest.allMethods(bsaRequest)).isNotEmpty();
-        assertThat(underTest.allMethods(bsaRequest).size()).isGreaterThanOrEqualTo(10);
+        assertThat(BsaService.allMethods(bsaRequest)).isNotEmpty();
+        assertThat(BsaService.allMethods(bsaRequest).size()).isGreaterThanOrEqualTo(10);
     }
 
     @Test
     void canGetMapWithAllBsaMethodsWhenHeightIsNull() {
         BsaRequest bsaRequest = new BsaRequest(null,70.0);
-        assertThat(underTest.allMethods(bsaRequest)).isNotEmpty();
-        assertThat(underTest.allMethods(bsaRequest).size()).isGreaterThanOrEqualTo(2);
+        assertThat(BsaService.allMethods(bsaRequest)).isNotEmpty();
+        assertThat(BsaService.allMethods(bsaRequest).size()).isGreaterThanOrEqualTo(2);
     }
 
     @Test
     void canGetMapWithAllBsaMethodsWhenOneOptions() {
         BsaRequest bsaRequest = new BsaRequest(null,-70.0);
-        assertThatThrownBy(() -> underTest.allMethods(bsaRequest))
+        assertThatThrownBy(() -> BsaService.allMethods(bsaRequest))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessageContaining(BSA_NOT_CORRECT_1_OPTION);
     }
@@ -42,7 +35,7 @@ class BsaServiceTest {
     @Test
     void canGetMapWithAllBsaMethodsWhenWeightIsZero() {
         BsaRequest bsaRequest = new BsaRequest(170,0.0);
-        assertThatThrownBy(() -> underTest.allMethods(bsaRequest))
+        assertThatThrownBy(() -> BsaService.allMethods(bsaRequest))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessageContaining(BSA_NOT_CORRECT_2_OPTIONS);
     }
@@ -50,7 +43,7 @@ class BsaServiceTest {
     @Test
     void willThrowWhenGetMapWithAllBsaMethodsWithNullOptions() {
         BsaRequest bsaRequest = new BsaRequest();
-        assertThatThrownBy(() -> underTest.allMethods(bsaRequest))
+        assertThatThrownBy(() -> BsaService.allMethods(bsaRequest))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessageContaining(BSA_REQUEST_NOT_CORRECT);
     }
@@ -58,7 +51,7 @@ class BsaServiceTest {
     @Test
     void willThrowWhenGetMapWithAllBsaMethodsWithNullWeight() {
         BsaRequest bsaRequest = new BsaRequest(170,null);
-        assertThatThrownBy(() -> underTest.allMethods(bsaRequest))
+        assertThatThrownBy(() -> BsaService.allMethods(bsaRequest))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessageContaining(BSA_REQUEST_NOT_CORRECT);
     }

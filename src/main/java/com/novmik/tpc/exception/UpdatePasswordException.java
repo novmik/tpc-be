@@ -4,7 +4,7 @@ public class UpdatePasswordException extends RuntimeException{
     private final String user;
     private final String message;
 
-    public UpdatePasswordException(String user, String message) {
+    public UpdatePasswordException(final String user, final String message) {
         super(String.format("Couldn't update password for [%s]: [%s])", user, message));
         this.user = user;
         this.message = message;

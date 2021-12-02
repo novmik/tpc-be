@@ -18,17 +18,17 @@ public class CoefficientDifficultyTreatingController {
     private final CoefficientDifficultyTreatingService cdtService;
 
     @GetMapping("/{idSubject}/" + ROUND_THE_CLOCK_CARE_FACILITY + "/")
-    public ResponseEntity<List<CoefficientDifficultyTreating>> getRoundTheClockCareFacilityCdtpListBySubjectId(@PathVariable("idSubject") Long idSubject) {
+    public ResponseEntity<List<CoefficientDifficultyTreating>> getRoundTheClockCareFacilityCdtpListBySubjectId(@PathVariable("idSubject") final Long idSubject) {
         return new ResponseEntity<>(cdtService.getCareFacilityCdtpListBySubjectId(idSubject, ROUND_THE_CLOCK_CARE_FACILITY), OK);
     }
 
     @GetMapping("/{idSubject}/" + DAY_CARE_FACILITY + "/")
-    public ResponseEntity<List<CoefficientDifficultyTreating>> getDayCareFacilityCdtpListBySubjectId(@PathVariable("idSubject") Long idSubject) {
+    public ResponseEntity<List<CoefficientDifficultyTreating>> getDayCareFacilityCdtpListBySubjectId(@PathVariable("idSubject") final Long idSubject) {
         return new ResponseEntity<>(cdtService.getCareFacilityCdtpListBySubjectId(idSubject, DAY_CARE_FACILITY), OK);
     }
 
     @PostMapping()
-    public ResponseEntity<CoefficientDifficultyTreating> addNewCDTP(@RequestBody CoefficientDifficultyTreating cdt) {
+    public ResponseEntity<CoefficientDifficultyTreating> addNewCDTP(@RequestBody final CoefficientDifficultyTreating cdt) {
         return new ResponseEntity<>(cdtService.addNewCoefficientDifficultyTreating(cdt), OK);
     }
 }

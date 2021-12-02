@@ -24,7 +24,7 @@ public class CaseCdt {
     @Column(name = "nomination_case_cdt")
     private String nominationCaseCdt;
 
-    public CaseCdt(String nominationCaseCdt) {
+    public CaseCdt(final String nominationCaseCdt) {
         this.nominationCaseCdt = nominationCaseCdt;
     }
 }

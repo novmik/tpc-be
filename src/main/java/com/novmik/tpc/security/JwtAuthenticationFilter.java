@@ -1,9 +1,7 @@
 package com.novmik.tpc.security;
 
 import com.novmik.tpc.client.CustomUserDetailsService;
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,13 +33,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private CustomUserDetailsService customUserDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(final HttpServletRequest request,
+                                    @NonNull final HttpServletResponse response,
+                                    @NonNull final FilterChain filterChain) throws ServletException, IOException {
         if (!request.getServletPath().equals("/api/v1/auth/login") && !request.getServletPath().equals("/api/v1/auth/refresh")) {
             try {
                 String jwt = getJwtFromRequest(request);
-
                 if (StringUtils.hasText(jwt) && jwtTokenValidator.validateToken(jwt)) {
                     String clientEmail = jwtTokenProvider.getSubjectFromJWT(jwt);
                     UserDetails userDetails = customUserDetailsService.loadUserByUsername(clientEmail);
@@ -58,12 +55,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String getJwtFromRequest(HttpServletRequest request) {
+    private String getJwtFromRequest(final HttpServletRequest request) {
+        String jwtFromRequest = null;
         String bearerToken = request.getHeader(AUTHORIZATION);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(TOKEN_REQUEST_HEADER_PREFIX)) {
             log.info("Extracted Token: " + bearerToken);
-            return bearerToken.substring(TOKEN_REQUEST_HEADER_PREFIX.length());
+            jwtFromRequest = bearerToken.substring(TOKEN_REQUEST_HEADER_PREFIX.length());
         }
-        return null;
+        return jwtFromRequest;
     }
 }

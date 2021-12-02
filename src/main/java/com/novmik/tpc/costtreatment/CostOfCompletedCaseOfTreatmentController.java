@@ -14,7 +14,7 @@ public class CostOfCompletedCaseOfTreatmentController {
     private final CostOfCompletedCaseOfTreatmentService costTreatmentService;
 
     @PostMapping
-    public ResponseEntity<CostTreatmentResponse> getCostTreatment(@RequestBody CostTreatmentRequest ctRequest) {
+    public ResponseEntity<CostTreatmentResponse> getCostTreatment(@RequestBody final CostTreatmentRequest ctRequest) {
         return new ResponseEntity<>(costTreatmentService.getCostTreatmentWithDrg(ctRequest), OK);
     }
 

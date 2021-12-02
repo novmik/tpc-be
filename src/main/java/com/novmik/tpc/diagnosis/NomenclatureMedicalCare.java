@@ -26,7 +26,7 @@ public class NomenclatureMedicalCare {
     @Column(name = "name_medical_care")
     private String nameMedicalCare;
 
-    public NomenclatureMedicalCare(String codeMedicalCara, String nameMedicalCare) {
+    public NomenclatureMedicalCare(final String codeMedicalCara, final String nameMedicalCare) {
         this.codeMedicalCara = codeMedicalCara;
         this.nameMedicalCare = nameMedicalCare;
     }

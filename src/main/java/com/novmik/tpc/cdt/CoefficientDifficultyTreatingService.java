@@ -21,12 +21,12 @@ public class CoefficientDifficultyTreatingService {
     private final CaseCdtService caseCdtService;
     private final SubjectOfRFService subjectOfRFService;
 
-    List<CoefficientDifficultyTreating> getCareFacilityCdtpListBySubjectId(Long idSubject, String careFacility) {
+    protected List<CoefficientDifficultyTreating> getCareFacilityCdtpListBySubjectId(final Long idSubject, final String careFacility) {
         SubjectOfRF subjectById = subjectOfRFService.getSubjectById(idSubject).orElseThrow();
         return cdtRepository.findAllByNameSubjectAndCareFacility(subjectById.getNameSubject(), careFacility);
     }
 
-    CoefficientDifficultyTreating addNewCoefficientDifficultyTreating(CoefficientDifficultyTreating cdt) {
+    protected CoefficientDifficultyTreating addNewCoefficientDifficultyTreating(final CoefficientDifficultyTreating cdt) {
         if (ObjectUtils.anyNull(
                 cdt,
                 cdt.getNameSubject(),

@@ -51,7 +51,12 @@ public class Client {
     )
     private Collection<Role> roles;
 
-    public Client(String email, String password, String firstName, String lastName, boolean isEnabled, boolean isNotLocked) {
+    public Client(final String email,
+                  final String password,
+                  final String firstName,
+                  final String lastName,
+                  final boolean isEnabled,
+                  final boolean isNotLocked) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
@@ -60,7 +65,7 @@ public class Client {
         this.isNotLocked = isNotLocked;
     }
 
-    public Client(Client client) {
+    public Client(final Client client) {
         id = client.getId();
         email = client.getEmail();
         password = client.getPassword();

@@ -58,7 +58,7 @@ public class CostOfCompletedCaseOfTreatmentService {
     private final DiagnosisRelatedGroupsService drgService;
     private final SubjectOfRFService subjectOfRFService;
 
-    CostTreatmentResponse getCostTreatmentWithDrg(CostTreatmentRequest costTreatmentRequest) {
+    protected CostTreatmentResponse getCostTreatmentWithDrg(final CostTreatmentRequest costTreatmentRequest) {
         if (ObjectUtils.anyNull(
                 costTreatmentRequest,
                 costTreatmentRequest.getIdMedicalInstitution(),
@@ -95,14 +95,12 @@ public class CostOfCompletedCaseOfTreatmentService {
     }
 
     private BigDecimal getCostTreatmentNotFederal(
-            Float valueCdt,
-            MedicalInstitution medicalInstitutionById,
-            SubjectOfRF byNameSubject,
-            DiagnosisRelatedGroups diagnosisRelatedGroups) {
+            final Float valueCdt,
+            final MedicalInstitution medicalInstitutionById,
+            final SubjectOfRF byNameSubject,
+            final DiagnosisRelatedGroups diagnosisRelatedGroups) {
         String numberDrg = diagnosisRelatedGroups.getNumberDrg();
-        float rateRelativeIntensity = diagnosisRelatedGroups.getRateRelativeIntensity();
         float wageShare = diagnosisRelatedGroups.getWageShare();
-        float differentiationCoefficient = medicalInstitutionById.getDifferentiationCoefficient();
         double baseRate;
         float coefficientOfLevel_mo;
         if (numberDrg.toLowerCase().startsWith(ROUND_THE_CLOCK_CARE_FACILITY.toLowerCase())) {
@@ -118,6 +116,8 @@ public class CostOfCompletedCaseOfTreatmentService {
             throw new BadRequestException(VALUES_IN_TABLE_IS_NOT_EXISTS + baseRate + "/" + coefficientOfLevel_mo);
         }
         BigDecimal bigDecimalWageShare = BigDecimal.valueOf(wageShare).setScale(4, RoundingMode.HALF_UP);
+        float rateRelativeIntensity = diagnosisRelatedGroups.getRateRelativeIntensity();
+        float differentiationCoefficient = medicalInstitutionById.getDifferentiationCoefficient();
         return bigDecimalWageShare
                 .multiply(BigDecimal.valueOf(COEFFICIENT_SPECIFICITY_NOT_FEDERAL))
                 .multiply(BigDecimal.valueOf(coefficientOfLevel_mo).setScale(2, RoundingMode.HALF_UP))
@@ -131,21 +131,14 @@ public class CostOfCompletedCaseOfTreatmentService {
     }
 
     private BigDecimal getCostTreatmentFederal(
-            Float valueCdt,
-            MedicalInstitution medicalInstitutionById,
-            DiagnosisRelatedGroups diagnosisRelatedGroups) {
-        String numberDrg = diagnosisRelatedGroups.getNumberDrg();
+            final Float valueCdt,
+            final MedicalInstitution medicalInstitutionById,
+            final DiagnosisRelatedGroups diagnosisRelatedGroups) {
         float rateRelativeIntensity = diagnosisRelatedGroups.getRateRelativeIntensity();
         float wageShare = diagnosisRelatedGroups.getWageShare();
-        float differentiationCoefficient = medicalInstitutionById.getDifferentiationCoefficient();
         double financialCostStandard;
-        float coefficientSpecificity = CoefficientSpecificity.calculate(
-                        rateRelativeIntensity,
-                        medicalInstitutionById.getTypeMedicalInstitution());
-        if (coefficientSpecificity == 0) {
-            throw new BadRequestException(COEFFICIENT_SPECIFICITY_IS_ZERO);
-        }
         double coefficientBaseRate;
+        String numberDrg = diagnosisRelatedGroups.getNumberDrg();
         if (numberDrg.toLowerCase().startsWith(ROUND_THE_CLOCK_CARE_FACILITY.toLowerCase())) {
             financialCostStandard = FINANCIAL_COST_STANDARD_ROUND_THE_CLOCK_CARE_FACILITY;
             coefficientBaseRate = COEFFICIENT_BASE_RATE_ROUND_THE_CLOCK_CARE_FACILITY;
@@ -156,6 +149,13 @@ public class CostOfCompletedCaseOfTreatmentService {
             throw new BadRequestException(NUMBER_DRG_INCORRECT + numberDrg);
         }
         BigDecimal bigDecimalWageShare = BigDecimal.valueOf(wageShare).setScale(4, RoundingMode.HALF_UP);
+        float differentiationCoefficient = medicalInstitutionById.getDifferentiationCoefficient();
+        float coefficientSpecificity = CoefficientSpecificity.calculate(
+                rateRelativeIntensity,
+                medicalInstitutionById.getTypeMedicalInstitution());
+        if (coefficientSpecificity == 0) {
+            throw new BadRequestException(COEFFICIENT_SPECIFICITY_IS_ZERO);
+        }
         return bigDecimalWageShare
                 .multiply(BigDecimal.valueOf(coefficientSpecificity))
                 .multiply(BigDecimal.valueOf(valueCdt))

@@ -16,10 +16,8 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 public class BsaController {
 
-    private final BsaService bsaService;
-
     @PostMapping
-    public ResponseEntity<Map<String, Double>> allMethods(@RequestBody BsaRequest bsaRequest) {
-        return new ResponseEntity<>(bsaService.allMethods(bsaRequest), OK);
+    public ResponseEntity<Map<String, Double>> allMethods(@RequestBody final BsaRequest bsaRequest) {
+        return new ResponseEntity<>(BsaService.allMethods(bsaRequest), OK);
     }
 }

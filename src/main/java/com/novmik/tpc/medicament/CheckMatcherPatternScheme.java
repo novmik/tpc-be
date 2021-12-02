@@ -7,17 +7,17 @@ import java.util.regex.Pattern;
 @Component
 public class CheckMatcherPatternScheme {
 
-    boolean checkMinMaxDose(String strWithDose) {
+    protected static boolean checkMinMaxDose(final String strWithDose) {
         return strWithDose != null && Pattern.compile("^\\d+,?\\d*-\\d+,?\\d*$")
                 .matcher(strWithDose).find();
     }
 
-    boolean checkDose(String strWithDose) {
+    protected static boolean checkDose(final String strWithDose) {
         return strWithDose != null && Pattern.compile("^\\d+,?\\d*$")
                 .matcher(strWithDose).find();
     }
 
-    boolean checkOnceEveryNxDays(String strNumberDaysDrugTreatments) {
+    protected static boolean checkOnceEveryNxDays(final String strNumberDaysDrugTreatments) {
         return strNumberDaysDrugTreatments != null && Pattern.compile(" 1 раз в \\d+ дней")
                 .matcher(strNumberDaysDrugTreatments).find();
     }

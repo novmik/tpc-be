@@ -7,11 +7,11 @@ import static org.springframework.http.HttpStatus.EXPECTATION_FAILED;
 @ResponseStatus(EXPECTATION_FAILED)
 public class UserLoginException extends RuntimeException {
 
-    public UserLoginException(String message) {
+    public UserLoginException(final String message) {
         super(message);
     }
 
-    public UserLoginException(String message, Throwable cause) {
+    public UserLoginException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

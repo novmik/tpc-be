@@ -11,7 +11,7 @@ public class TypeMedicalInstitutionService {
 
     private final TypeMedicalInstitutionRepository typeMedicalInstitutionRepository;
 
-    List<TypeMedicalInstitution> getAllTypeMedicalInstitution() {
+    protected List<TypeMedicalInstitution> getAllTypeMedicalInstitution() {
         return typeMedicalInstitutionRepository.findAll();
     }
 }

@@ -3,7 +3,6 @@ package com.novmik.tpc.auth;
 import com.novmik.tpc.client.Client;
 import com.novmik.tpc.client.ClientService;
 import com.novmik.tpc.client.CustomUserDetails;
-import com.novmik.tpc.exception.ResourceAlreadyInUseException;
 import com.novmik.tpc.exception.TokenRefreshException;
 import com.novmik.tpc.exception.UpdatePasswordException;
 import com.novmik.tpc.refreshtoken.RefreshToken;
@@ -35,19 +34,20 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public Optional<Authentication> authenticateUser(LoginRequest loginRequest) {
+    public Optional<Authentication> authenticateUser(final LoginRequest loginRequest) {
         return Optional.ofNullable(authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
                         loginRequest.getPassword())));
     }
 
-    private Boolean currentPasswordMatches(Client currentUser, String password) {
+    private Boolean currentPasswordMatches(final Client currentUser,
+                                           final String password) {
         return passwordEncoder.matches(password, currentUser.getPassword());
     }
 
-    public Optional<Client> updatePassword(CustomUserDetails customUserDetails,
-                                           UpdatePasswordRequest updatePasswordRequest) {
+    public Optional<Client> updatePassword(final CustomUserDetails customUserDetails,
+                                           final UpdatePasswordRequest updatePasswordRequest) {
         String email = customUserDetails.getUsername();
         Client currentUser = clientService.getClient(email)
                 .orElseThrow();
@@ -62,11 +62,11 @@ public class AuthService {
         return Optional.of(currentUser);
     }
 
-    public String generateToken(CustomUserDetails customUserDetails) {
+    public String generateToken(final CustomUserDetails customUserDetails) {
         return tokenProvider.generateToken(customUserDetails);
     }
 
-    public Optional<RefreshToken> createAndPersistRefreshTokenForDevice(Authentication authentication, LoginRequest loginRequest) {
+    public Optional<RefreshToken> createAndPersistRefreshToken(final Authentication authentication) {
         Client currentUser = (Client) authentication.getPrincipal();
         RefreshToken refreshToken = refreshTokenService.createRefreshToken();
         refreshToken.setClient(currentUser);
@@ -74,7 +74,7 @@ public class AuthService {
         return Optional.ofNullable(refreshToken);
     }
 
-    public Optional<String> refreshJwtToken(TokenRefreshRequest tokenRefreshRequest) {
+    public Optional<String> refreshJwtToken(final TokenRefreshRequest tokenRefreshRequest) {
         String strRefreshToken = tokenRefreshRequest.getRefreshToken();
 
         return Optional.of(refreshTokenService.findRefreshTokenByToken(strRefreshToken)
@@ -90,7 +90,7 @@ public class AuthService {
                 .orElseThrow(() -> new TokenRefreshException(strRefreshToken, "Отсутствует refresh token в ДБ. Пожалуйста, перезайдите."));
     }
 
-    private Client checkClientAccess(Client client) {
+    private Client checkClientAccess(final Client client) {
         if (!client.isNotLocked()) {
             throw new LockedException(ACCOUNT_LOCKED);
         }

@@ -35,7 +35,7 @@ public class ExceptionHandling {
     }
 
     @ExceptionHandler(UserRegistrationException.class)
-    public ResponseEntity<HttpResponse> handleUserRegistrationException(UserRegistrationException ex, WebRequest request) {
+    public ResponseEntity<HttpResponse> handleUserRegistrationException(final UserRegistrationException ex, final WebRequest request) {
         return createHttpResponse(EXPECTATION_FAILED, ex.getMessage());
     }
 
@@ -50,65 +50,65 @@ public class ExceptionHandling {
     }
 
     @ExceptionHandler(InvalidTokenRequestException.class)
-    public ResponseEntity<HttpResponse> handleInvalidTokenRequestException(InvalidTokenRequestException exception) {
+    public ResponseEntity<HttpResponse> handleInvalidTokenRequestException(final InvalidTokenRequestException exception) {
         return createHttpResponse(NOT_ACCEPTABLE, exception.getMessage());
     }
 
     @ExceptionHandler(UpdatePasswordException.class)
-    public ResponseEntity<HttpResponse> handleUpdatePasswordException(UpdatePasswordException exception) {
+    public ResponseEntity<HttpResponse> handleUpdatePasswordException(final UpdatePasswordException exception) {
         return createHttpResponse(EXPECTATION_FAILED, exception.getMessage());
     }
 
     @ExceptionHandler(TokenRefreshException.class)
-    public ResponseEntity<HttpResponse> handleTokenRefreshException(TokenRefreshException exception) {
+    public ResponseEntity<HttpResponse> handleTokenRefreshException(final TokenRefreshException exception) {
         return createHttpResponse(EXPECTATION_FAILED, exception.getMessage());
     }
 
     @ExceptionHandler(ResourceAlreadyInUseException.class)
-    public ResponseEntity<HttpResponse> handleResourceAlreadyInUseException(ResourceAlreadyInUseException exception) {
+    public ResponseEntity<HttpResponse> handleResourceAlreadyInUseException(final ResourceAlreadyInUseException exception) {
         return createHttpResponse(CONFLICT, exception.getMessage());
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<HttpResponse> handleBadRequestException(BadRequestException exception) {
+    public ResponseEntity<HttpResponse> handleBadRequestException(final BadRequestException exception) {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
 
     @ExceptionHandler(UserLoginException.class)
-    public ResponseEntity<HttpResponse> handleUserLoginException(UserLoginException exception) {
+    public ResponseEntity<HttpResponse> handleUserLoginException(final UserLoginException exception) {
         return createHttpResponse(EXPECTATION_FAILED, exception.getMessage());
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<HttpResponse> handleNotFoundException(NotFoundException exception) {
+    public ResponseEntity<HttpResponse> handleNotFoundException(final NotFoundException exception) {
         return createHttpResponse(NOT_FOUND, exception.getMessage());
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<HttpResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
+    public ResponseEntity<HttpResponse> handleHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException exception) {
         HttpMethod supportedMethod = Objects.requireNonNull(exception.getSupportedHttpMethods()).iterator().next();
         return createHttpResponse(METHOD_NOT_ALLOWED, String.format(METHOD_IS_NOT_ALLOWED, supportedMethod));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<HttpResponse> handleException(Exception exception) {
+    public ResponseEntity<HttpResponse> handleException(final Exception exception) {
         log.error(exception.getMessage());
         return createHttpResponse(INTERNAL_SERVER_ERROR,INTERNAL_SERVER_ERROR_MSG);
     }
 
     @ExceptionHandler(NoResultException.class)
-    public ResponseEntity<HttpResponse> handleNoResultException(NoResultException exception) {
+    public ResponseEntity<HttpResponse> handleNoResultException(final NoResultException exception) {
         log.error(exception.getMessage());
         return createHttpResponse(NOT_FOUND,exception.getMessage());
     }
 
     @ExceptionHandler(IOException.class)
-    public ResponseEntity<HttpResponse> handleIOException(IOException exception) {
+    public ResponseEntity<HttpResponse> handleIOException(final IOException exception) {
         log.error(exception.getMessage());
         return createHttpResponse(INTERNAL_SERVER_ERROR,ERROR_PROCESSING_FILE);
     }
 
-    private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {
+    private ResponseEntity<HttpResponse> createHttpResponse(final HttpStatus httpStatus, final String message) {
         return new ResponseEntity<>(new HttpResponse(
                 httpStatus.value(),
                 httpStatus,

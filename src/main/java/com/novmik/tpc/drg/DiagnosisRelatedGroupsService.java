@@ -16,7 +16,7 @@ public class DiagnosisRelatedGroupsService {
 
     private final DiagnosisRelatedGroupsRepository drgRepository;
 
-    public Optional<DiagnosisRelatedGroups> byNumberDrg(String drg) {
+    public Optional<DiagnosisRelatedGroups> byNumberDrg(final String drg) {
         Optional<DiagnosisRelatedGroups> byNumberDrg = drgRepository.findByNumberDrg(drg);
         if (byNumberDrg.isEmpty()) {
             throw new NotFoundException(DRG_NOT_EXISTS_BY_NAME_DRG + drg);
@@ -24,7 +24,7 @@ public class DiagnosisRelatedGroupsService {
         return byNumberDrg;
     }
 
-    DiagnosisRelatedGroups addNewDrg(DiagnosisRelatedGroups diagnosisRelatedGroups) {
+    protected DiagnosisRelatedGroups addNewDrg(final DiagnosisRelatedGroups diagnosisRelatedGroups) {
         if (ObjectUtils.anyNull(
                 diagnosisRelatedGroups,
                 diagnosisRelatedGroups.getNumberDrg(),
@@ -40,7 +40,7 @@ public class DiagnosisRelatedGroupsService {
         return drgRepository.save(diagnosisRelatedGroups);
     }
 
-    DiagnosisRelatedGroups updateDrg(DiagnosisRelatedGroups diagnosisRelatedGroups) {
+    protected DiagnosisRelatedGroups updateDrg(final DiagnosisRelatedGroups diagnosisRelatedGroups) {
         if (ObjectUtils.anyNull(
                 diagnosisRelatedGroups,
                 diagnosisRelatedGroups.getId(),
@@ -57,11 +57,11 @@ public class DiagnosisRelatedGroupsService {
         return drgRepository.save(diagnosisRelatedGroups);
     }
 
-    boolean existsById(Long id) {
+    protected boolean existsById(final Long id) {
         return drgRepository.existsById(id);
     }
 
-    void deleteDrgById(Long idDrg) {
+    protected void deleteDrgById(final Long idDrg) {
         if (idDrg == null) {
             throw new BadRequestException(DRG_NOT_CORRECT);
         }

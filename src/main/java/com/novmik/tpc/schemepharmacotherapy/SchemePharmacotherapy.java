@@ -38,7 +38,12 @@ public class SchemePharmacotherapy {
     @Column(name = "number_drg_dcf")
     private String numberDrgDcf;
 
-    public SchemePharmacotherapy(String codeScheme, String innMedicament, String nameAndDescriptionScheme, Integer numberDaysDrugTreatments, String numberDrgRtccf, String numberDrgDcf) {
+    public SchemePharmacotherapy(final String codeScheme,
+                                 final String innMedicament,
+                                 final String nameAndDescriptionScheme,
+                                 final Integer numberDaysDrugTreatments,
+                                 final String numberDrgRtccf,
+                                 final String numberDrgDcf) {
         this.codeScheme = codeScheme;
         this.innMedicament = innMedicament;
         this.nameAndDescriptionScheme = nameAndDescriptionScheme;

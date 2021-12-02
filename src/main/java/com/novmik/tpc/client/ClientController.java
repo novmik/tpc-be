@@ -32,7 +32,7 @@ public class ClientController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Client> registerUser(@RequestBody RegistrationRequest registrationRequest) {
+    public ResponseEntity<Client> registerUser(@RequestBody final RegistrationRequest registrationRequest) {
 
         return clientService.registerUser(registrationRequest)
                 .map(user -> {
@@ -46,12 +46,12 @@ public class ClientController {
     }
 
     @PostMapping("/addrole")
-    public void addRoleToClient(@RequestBody AddRoleToClientRequest addRoleToClientRequest) {
+    public void addRoleToClient(@RequestBody final AddRoleToClientRequest addRoleToClientRequest) {
         clientService.addRoleToClient(addRoleToClientRequest.getEmail(), addRoleToClientRequest.getRoleName());
     }
 
     @DeleteMapping("/{idClient}")
-    public void deleteClient(@PathVariable("idClient") Long idClient) {
+    public void deleteClient(@PathVariable("idClient") final Long idClient) {
         clientService.deleteClient(idClient);
     }
 }

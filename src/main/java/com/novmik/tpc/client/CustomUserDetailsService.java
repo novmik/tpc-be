@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final ClientRepository clientRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
         Optional<Client> dbClient = clientRepository.findByEmail(email);
         log.info("Найден пользователь: {}", dbClient);
         return dbClient.map(CustomUserDetails::new)

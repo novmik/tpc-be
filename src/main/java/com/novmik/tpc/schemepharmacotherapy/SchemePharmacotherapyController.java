@@ -19,7 +19,7 @@ public class SchemePharmacotherapyController {
     private final SchemePharmacotherapyService schemePharmacotherapyService;
 
     @GetMapping("/{codeScheme}")
-    public ResponseEntity<Optional<SchemePharmacotherapy>> getSchemePharmacotherapy(@PathVariable("codeScheme") String codeScheme) {
+    public ResponseEntity<Optional<SchemePharmacotherapy>> getSchemePharmacotherapy(@PathVariable("codeScheme") final String codeScheme) {
         return new ResponseEntity<>(schemePharmacotherapyService.findByCodeScheme(codeScheme), OK);
     }
 }

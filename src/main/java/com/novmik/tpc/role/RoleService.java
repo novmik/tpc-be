@@ -20,15 +20,15 @@ public class RoleService {
 
     public List<Role> getAllRoles() { return roleRepository.findAll(); }
 
-    public Optional<Role> getRoleByName(String roleName) {
+    public Optional<Role> getRoleByName(final String roleName) {
         return roleRepository.findRoleByName(roleName);
     }
 
-    public Role addNewRole(Role role) {
+    public Role addNewRole(final Role role) {
         return roleRepository.save(role);
     }
 
-    public void addPrivilegeToRole(String roleName, String privilegeName) {
+    public void addPrivilegeToRole(final String roleName, final String privilegeName) {
         Optional<Role> roleByName = getRoleByName(roleName);
         Optional<Privilege> privilegeByName = privilegeService.findByPrivilegeName(privilegeName);
         if (roleByName.isPresent() && privilegeByName.isPresent()) {
