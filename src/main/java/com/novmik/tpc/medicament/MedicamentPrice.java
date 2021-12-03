@@ -1,8 +1,16 @@
 package com.novmik.tpc.medicament;
 
-import lombok.*;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /*
 Таблица: Цена на лекарственные препараты
@@ -18,19 +26,19 @@ import javax.persistence.*;
 @Table(name = "medicament_price")
 public class MedicamentPrice {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(name = "inn")
-    private String inn;
-    @Column(name = "dosage")
-    private Float dosage;
-    @Column(name = "price_with_VAT")
-    private Double priceWithVAT;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+  @Column(name = "inn")
+  private String inn;
+  @Column(name = "dosage")
+  private Float dosage;
+  @Column(name = "price_with_VAT")
+  private Double priceWithVat;
 
-    public MedicamentPrice(final String inn, final Float dosage, final Double priceWithVAT) {
-        this.inn = inn;
-        this.dosage = dosage;
-        this.priceWithVAT = priceWithVAT;
-    }
+  public MedicamentPrice(final String inn, final Float dosage, final Double priceWithVat) {
+    this.inn = inn;
+    this.dosage = dosage;
+    this.priceWithVat = priceWithVat;
+  }
 }

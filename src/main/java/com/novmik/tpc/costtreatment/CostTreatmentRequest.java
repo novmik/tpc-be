@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class CostTreatmentRequest {
-    private Long idMedicalInstitution;
-    private String numberDrg;
-    private Float valueCdt;
+
+  private Long idMedicalInstitution;
+  private String numberDrg;
+  private Float valueCdt;
 }

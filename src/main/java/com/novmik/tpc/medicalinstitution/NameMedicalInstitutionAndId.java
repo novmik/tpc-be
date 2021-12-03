@@ -1,8 +1,8 @@
 package com.novmik.tpc.medicalinstitution;
 
-interface NameMedicalInstitutionAndId {
+public interface NameMedicalInstitutionAndId {
 
-    Long getId();
+  Long getId();
 
-    String getName_mi();
+  String getName_mi();
 }

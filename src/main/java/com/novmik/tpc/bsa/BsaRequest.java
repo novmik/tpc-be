@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class BsaRequest {
 
-    private Integer height;
-    private Double weight;
+  private Integer height;
+  private Double weight;
 
 }

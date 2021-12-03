@@ -1,13 +1,17 @@
 package com.novmik.tpc.costscheme;
 
-import com.novmik.tpc.medicament.Medicament;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import static com.novmik.tpc.medicament.UnitOfMeasurementExtractorConstant.MG;
+import static com.novmik.tpc.medicament.UnitOfMeasurementExtractorConstant.MGK_DIVIDE_KG;
+import static com.novmik.tpc.medicament.UnitOfMeasurementExtractorConstant.MG_DIVIDE_KG;
+import static com.novmik.tpc.medicament.UnitOfMeasurementExtractorConstant.MG_DIVIDE_M_SQUARED;
+import static com.novmik.tpc.medicament.UnitOfMeasurementExtractorConstant.MILLION_ME;
+import static com.novmik.tpc.medicament.UnitOfMeasurementExtractorConstant.MILLION_ME_DIVIDE_M_SQUARED;
 
+import com.novmik.tpc.medicament.Medicament;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
-import static com.novmik.tpc.medicament.UnitOfMeasurementExtractorConstant.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 /*
     Калькулятор Дозировки. Расчёт общей дозировки лекарства в зависимости от единицы измерения
@@ -18,28 +22,32 @@ import static com.novmik.tpc.medicament.UnitOfMeasurementExtractorConstant.*;
 @Component
 public class CalculatorDosage {
 
-    protected static BigDecimal getRequiredDose(final Medicament medicament, final Double weight, final Double bsa) {
-        String unitOfMeasurement = medicament.getUnitOfMeasurement();
-        BigDecimal requiredDose;
-        double unitDose = 0D;
-        if (unitOfMeasurement.equals(MG) || unitOfMeasurement.equals(MILLION_ME)) {
-            unitDose = 1D;
-        }
-        if (unitOfMeasurement.equals(MG_DIVIDE_KG) || unitOfMeasurement.equals(MGK_DIVIDE_KG)) {
-            unitDose = weight;
-        }
-        if (unitOfMeasurement.equals(MG_DIVIDE_M_SQUARED) || unitOfMeasurement.equals(MILLION_ME_DIVIDE_M_SQUARED)) {
-            unitDose = bsa;
-        }
-        if (unitDose == 0) {
-            log.error("Не определена единица измерения дозировки: " + unitOfMeasurement);
-            requiredDose = BigDecimal.ZERO;
-        } else {
-            float valueDose = medicament.getDose() == 0 ? ((medicament.getDose_min() + medicament.getDose_max()) / 2) : medicament.getDose();
-            requiredDose = BigDecimal.valueOf(valueDose * (medicament.getNumberDaysDrug()) * unitDose)
-                    .setScale(0, RoundingMode.CEILING);
-        }
-        return requiredDose;
+  protected static BigDecimal getRequiredDose(final Medicament medicament, final Double weight,
+      final Double bsa) {
+    String unitOfMeasurement = medicament.getUnitOfMeasurement();
+    BigDecimal requiredDose;
+    double unitDose = 0D;
+    if (MG.equals(unitOfMeasurement) || MILLION_ME.equals(unitOfMeasurement)) {
+      unitDose = 1D;
     }
+    if (MG_DIVIDE_KG.equals(unitOfMeasurement) || MGK_DIVIDE_KG.equals(unitOfMeasurement)) {
+      unitDose = weight;
+    }
+    if (MG_DIVIDE_M_SQUARED.equals(unitOfMeasurement) || MILLION_ME_DIVIDE_M_SQUARED.equals(
+        unitOfMeasurement)) {
+      unitDose = bsa;
+    }
+    if (unitDose == 0) {
+      log.error("Не определена единица измерения дозировки: " + unitOfMeasurement);
+      requiredDose = BigDecimal.ZERO;
+    } else {
+      float valueDose =
+          medicament.getDose() == 0 ? ((medicament.getDoseMin() + medicament.getDoseMax()) / 2)
+              : medicament.getDose();
+      requiredDose = BigDecimal.valueOf(valueDose * (medicament.getNumberDaysDrug()) * unitDose)
+          .setScale(0, RoundingMode.CEILING);
+    }
+    return requiredDose;
+  }
 
 }

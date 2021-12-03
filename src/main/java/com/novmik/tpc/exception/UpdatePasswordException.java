@@ -1,12 +1,13 @@
 package com.novmik.tpc.exception;
 
-public class UpdatePasswordException extends RuntimeException{
-    private final String user;
-    private final String message;
+public class UpdatePasswordException extends RuntimeException {
 
-    public UpdatePasswordException(final String user, final String message) {
-        super(String.format("Couldn't update password for [%s]: [%s])", user, message));
-        this.user = user;
-        this.message = message;
-    }
+  private final String user;
+  private final String message;
+
+  public UpdatePasswordException(final String user, final String message) {
+    super(String.format("Couldn't update password for [%s]: [%s])", user, message));
+    this.user = user;
+    this.message = message;
+  }
 }

@@ -1,12 +1,13 @@
 package com.novmik.tpc.exception;
 
-public class TokenRefreshException extends RuntimeException{
-    private final String token;
-    private final String message;
+public class TokenRefreshException extends RuntimeException {
 
-    public TokenRefreshException(final String token, final String message) {
-        super(String.format("Не обновился токен [%s]: [%s])", token, message));
-        this.token = token;
-        this.message = message;
-    }
+  private final String token;
+  private final String message;
+
+  public TokenRefreshException(final String token, final String message) {
+    super(String.format("Не обновился токен [%s]: [%s])", token, message));
+    this.token = token;
+    this.message = message;
+  }
 }

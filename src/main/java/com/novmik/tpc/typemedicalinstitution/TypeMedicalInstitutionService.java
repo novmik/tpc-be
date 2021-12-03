@@ -1,17 +1,16 @@
 package com.novmik.tpc.typemedicalinstitution;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @AllArgsConstructor
 @Service
 public class TypeMedicalInstitutionService {
 
-    private final TypeMedicalInstitutionRepository typeMedicalInstitutionRepository;
+  private final TypeMedicalInstitutionRepository typeMedicalInstitutionRepository;
 
-    protected List<TypeMedicalInstitution> getAllTypeMedicalInstitution() {
-        return typeMedicalInstitutionRepository.findAll();
-    }
+  protected List<TypeMedicalInstitution> getAllTypeMedicalInstitution() {
+    return typeMedicalInstitutionRepository.findAll();
+  }
 }

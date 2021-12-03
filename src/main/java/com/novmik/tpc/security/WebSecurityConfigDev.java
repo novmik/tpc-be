@@ -13,9 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfigDev extends WebSecurityConfigurerAdapter {
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        log.info("Loaded inside a dev only");
-        http.authorizeRequests().anyRequest().permitAll();
-    }
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    log.info("Loaded inside a dev only");
+    http.authorizeRequests().anyRequest().permitAll();
+  }
 }

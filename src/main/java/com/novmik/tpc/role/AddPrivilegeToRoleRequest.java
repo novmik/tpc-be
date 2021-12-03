@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class AddPrivilegeToRoleRequest {
-    private String roleName;
-    private String privilegeName;
+
+  private String roleName;
+  private String privilegeName;
 }
