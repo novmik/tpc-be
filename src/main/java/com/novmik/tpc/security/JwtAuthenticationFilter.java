@@ -51,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
           SecurityContextHolder.getContext().setAuthentication(auth);
         }
       } catch (Exception ex) {
-        log.error("Failed to set user authentication in security context: ", ex);
+        log.error("Не удалось установить аутентификацию пользователя в security context: ", ex);
         throw ex;
       }
     }
@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     String jwtFromRequest = null;
     String bearerToken = request.getHeader(AUTHORIZATION);
     if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(TOKEN_REQUEST_HEADER_PREFIX)) {
-      log.info("Extracted Token: " + bearerToken);
+      log.info("Извлеченный токен: " + bearerToken);
       jwtFromRequest = bearerToken.substring(TOKEN_REQUEST_HEADER_PREFIX.length());
     }
     return jwtFromRequest;
