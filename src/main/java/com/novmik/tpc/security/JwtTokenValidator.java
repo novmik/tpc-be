@@ -27,23 +27,24 @@ public class JwtTokenValidator {
       Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
 
     } catch (final SignatureException ex) {
-      log.error("Invalid JWT signature");
-      throw new InvalidTokenRequestException("JWT", authToken, "Incorrect signature");
+      log.error("Неверный JWT ключ");
+      throw new InvalidTokenRequestException("JWT", authToken, "Неверный ключ");
 
     } catch (final MalformedJwtException ex) {
-      log.error("Invalid JWT token");
-      throw new InvalidTokenRequestException("JWT", authToken, "Malformed jwt token");
+      log.error("Неверный JWT token");
+      throw new InvalidTokenRequestException("JWT", authToken, "Искажённый jwt token");
 
     } catch (final ExpiredJwtException ex) {
-      log.error("Expired JWT token");
-      throw new InvalidTokenRequestException("JWT", authToken, "Token expired. Refresh required");
+      log.error("Срок действия токена JWT истёк");
+      throw new InvalidTokenRequestException(
+          "JWT", authToken, "Срок действия токена истёк. Требуется обновление");
 
     } catch (final UnsupportedJwtException ex) {
-      log.error("Unsupported JWT token");
-      throw new InvalidTokenRequestException("JWT", authToken, "Unsupported JWT token");
+      log.error("Неподдерживаемый токен JWT");
+      throw new InvalidTokenRequestException("JWT", authToken, "Неподдерживаемый токен JWT");
 
     } catch (final IllegalArgumentException ex) {
-      log.error("JWT claims string is empty.");
+      log.error("JWT claims строка пуста.");
       throw new InvalidTokenRequestException("JWT", authToken, "Illegal argument token");
     }
     return true;
