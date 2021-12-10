@@ -1,9 +1,8 @@
 package com.novmik.tpc.client;
 
-import static com.novmik.tpc.client.ClientConstant.CLIENT_NOT_CORRECT;
-import static com.novmik.tpc.client.ClientConstant.CLIENT_NOT_EXISTS;
-import static com.novmik.tpc.client.ClientConstant.CLIENT_OR_ROLE_NOT_EXISTS;
-import static com.novmik.tpc.client.ClientConstant.EMAIL_ADDRESS_EXISTS;
+import static com.novmik.tpc.client.ClientConstants.CLIENT_NOT_CORRECT;
+import static com.novmik.tpc.client.ClientConstants.CLIENT_NOT_EXISTS;
+import static com.novmik.tpc.client.ClientConstants.CLIENT_OR_ROLE_NOT_EXISTS;
 
 import com.novmik.tpc.auth.RegistrationRequest;
 import com.novmik.tpc.exception.BadRequestException;
@@ -15,68 +14,123 @@ import com.novmik.tpc.role.RoleService;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
-
-@Slf4j
+/**
+ * {@link Client} business interface layer.
+ */
 @AllArgsConstructor
 @Service
 public class ClientService {
 
+  /**
+   * {@link ClientRepository}.
+   */
   private final ClientRepository clientRepository;
+  /**
+   * {@link RoleService}.
+   */
   private final RoleService roleService;
-  private final RefreshTokenService refreshTokenService;
+  /**
+   * {@link RefreshTokenService}.
+   */
+  private final RefreshTokenService rtService;
+  /**
+   * {@link PasswordEncoder}.
+   */
   private final PasswordEncoder passwordEncoder;
 
-  public Optional<Client> registerUser(final RegistrationRequest newRegistrationRequest) {
-    String newRegistrationRequestEmail = newRegistrationRequest.getEmail();
-    if (emailAlreadyExists(newRegistrationRequestEmail)) {
-      log.error(EMAIL_ADDRESS_EXISTS + newRegistrationRequestEmail);
-      throw new ResourceAlreadyInUseException("Email", "Address", newRegistrationRequestEmail);
+  /**
+   * Регистрация клиента.
+   *
+   * @param registerRequest {@link RegistrationRequest}
+   * @return {@link Client}
+   * @throws ResourceAlreadyInUseException если email занят
+   */
+  public Optional<Client> registerUser(final RegistrationRequest registerRequest) {
+    final String registerEmail = registerRequest.getEmail();
+    if (existsByEmail(registerEmail)) {
+      throw new ResourceAlreadyInUseException("Email", "Address", registerEmail);
     }
-    log.info("Попытка регистрации нового пользователя [" + newRegistrationRequestEmail + "]");
-    Client newUser = createUser(newRegistrationRequest);
-    Client registeredNewUser = saveClient(newUser);
+    final Client newUser = createUser(registerRequest);
+    final Client registeredNewUser = saveClient(newUser);
     return Optional.ofNullable(registeredNewUser);
   }
 
-  public Boolean emailAlreadyExists(final String email) {
-    return existsByEmail(email);
-  }
-
+  /**
+   * Сохранение клиента.
+   *
+   * @param client {@link Client}
+   * @return {@link Client}
+   */
   public Client saveClient(final Client client) {
     return clientRepository.save(client);
   }
 
+  /**
+   * Поиск клиента по email.
+   *
+   * @param email почта клиента
+   * @return {@link Client}
+   */
   public Optional<Client> getClient(final String email) {
     return clientRepository.findByEmail(email);
   }
 
+  /**
+   * Список {@link Client}.
+   *
+   * @return список {@link Client}
+   */
   public List<Client> getClients() {
     return clientRepository.findAll();
   }
 
+  /**
+   * Наличие email.
+   *
+   * @param email почта клиента
+   * @return наличие
+   */
   public boolean existsByEmail(final String email) {
     return clientRepository.existsByEmail(email);
   }
 
+  /**
+   * Наличие по id.
+   *
+   * @param idClient id {@link Client}
+   * @return наличие
+   */
   public boolean existsById(final Long idClient) {
     return clientRepository.existsById(idClient);
   }
 
-  public Client createUser(final RegistrationRequest registrationRequest) {
+  /**
+   * Создание клиента,
+   * Закодировав пароль.
+   *
+   * @param registerRequest {@link RegistrationRequest}
+   * @return {@link Client}
+   */
+  public Client createUser(final RegistrationRequest registerRequest) {
     return new Client(
-        registrationRequest.getEmail(),
-        passwordEncoder.encode(registrationRequest.getPassword()),
-        registrationRequest.getFirstName(),
-        registrationRequest.getLastName(),
+        registerRequest.getEmail(),
+        passwordEncoder.encode(registerRequest.getPassword()),
+        registerRequest.getFirstName(),
+        registerRequest.getLastName(),
         true,
         true);
   }
 
+  /**
+   * Удаление клиента.
+   *
+   * @param idClient id {@link Client}
+   * @throws BadRequestException если некорректные данные
+   * @throws NotFoundException если {@link Client} не найден
+   */
   public void deleteClient(final Long idClient) {
     if (idClient == null || idClient < 1) {
       throw new BadRequestException(CLIENT_NOT_CORRECT);
@@ -87,9 +141,17 @@ public class ClientService {
     clientRepository.deleteById(idClient);
   }
 
+  /**
+   * Добавление роли клиенту.
+   *
+   * @param email почта {@link Client}
+   * @param roleName наименование роли
+   * @throws NotFoundException если {@link Client} или
+   * {@link Role} не найден
+   */
   public void addRoleToClient(final String email, final String roleName) {
-    Optional<Client> clientByEmail = this.getClient(email);
-    Optional<Role> roleByName = roleService.getRoleByName(roleName);
+    final Optional<Client> clientByEmail = this.getClient(email);
+    final Optional<Role> roleByName = roleService.findRoleByName(roleName);
     if (clientByEmail.isPresent() && roleByName.isPresent()) {
       clientByEmail.get().getRoles().add(roleByName.get());
     } else {
@@ -97,8 +159,13 @@ public class ClientService {
     }
   }
 
+  /**
+   * Удаление токена обновления.
+   *
+   * @param currentUser {@link CustomUserDetails}
+   * @param refreshToken токен обновления
+   */
   public void logoutUser(final CustomUserDetails currentUser, final String refreshToken) {
-    log.info("Removing refresh token associated with User [" + currentUser + "]");
-    refreshTokenService.deleteByRefreshToken(refreshToken);
+    rtService.deleteByRefreshToken(refreshToken);
   }
 }

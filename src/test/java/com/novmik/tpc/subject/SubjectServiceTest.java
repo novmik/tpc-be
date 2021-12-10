@@ -1,8 +1,8 @@
 package com.novmik.tpc.subject;
 
-import static com.novmik.tpc.subject.SubjectConstant.SUBJECT_EXISTS;
-import static com.novmik.tpc.subject.SubjectConstant.SUBJECT_NOT_CORRECT;
-import static com.novmik.tpc.subject.SubjectConstant.SUBJECT_NOT_EXISTS;
+import static com.novmik.tpc.subject.SubjectConstants.SUBJECT_EXISTS;
+import static com.novmik.tpc.subject.SubjectConstants.SUBJECT_NOT_CORRECT;
+import static com.novmik.tpc.subject.SubjectConstants.SUBJECT_NOT_EXISTS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -74,9 +74,9 @@ class SubjectServiceTest {
         22222.00D,
         22222.00D
     );
-    given(subjectRepository.findById(subject.getId())).willReturn(Optional.of(subject));
-    underTest.getSubjectById(subject.getId());
-    verify(subjectRepository).findById(subject.getId());
+    given(subjectRepository.findById(subject.getIdSubject())).willReturn(Optional.of(subject));
+    underTest.getSubjectById(subject.getIdSubject());
+    verify(subjectRepository).findById(subject.getIdSubject());
   }
 
   @Test
@@ -126,7 +126,7 @@ class SubjectServiceTest {
         1.00D,
         1.00D
     );
-    given(subjectRepository.existsById(subject.getId())).willReturn(true);
+    given(subjectRepository.existsById(subject.getIdSubject())).willReturn(true);
     underTest.updateSubject(subject);
     verify(subjectRepository).save(subject);
   }
@@ -148,10 +148,10 @@ class SubjectServiceTest {
         1.00D,
         1.00D
     );
-    given(subjectRepository.existsById(subject.getId())).willReturn(false);
+    given(subjectRepository.existsById(subject.getIdSubject())).willReturn(false);
     assertThatThrownBy(() -> underTest.updateSubject(subject))
         .isInstanceOf(NotFoundException.class)
-        .hasMessage(SUBJECT_NOT_EXISTS + subject.getId());
+        .hasMessage(SUBJECT_NOT_EXISTS + subject.getIdSubject());
     verify(subjectRepository, never()).save(subject);
   }
 

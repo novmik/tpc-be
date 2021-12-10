@@ -1,22 +1,5 @@
 package com.novmik.tpc.exception;
 
-import static com.novmik.tpc.exception.ExceptionConstant.ACCOUNT_DISABLED;
-import static com.novmik.tpc.exception.ExceptionConstant.ACCOUNT_LOCKED;
-import static com.novmik.tpc.exception.ExceptionConstant.ERROR_PROCESSING_FILE;
-import static com.novmik.tpc.exception.ExceptionConstant.INCORRECT_CREDENTIALS;
-import static com.novmik.tpc.exception.ExceptionConstant.INTERNAL_SERVER_ERROR_MSG;
-import static com.novmik.tpc.exception.ExceptionConstant.METHOD_IS_NOT_ALLOWED;
-import static com.novmik.tpc.exception.ExceptionConstant.NOT_ENOUGH_PERMISSION;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.EXPECTATION_FAILED;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
-import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-
 import java.io.IOException;
 import java.util.Objects;
 import javax.persistence.NoResultException;
@@ -33,103 +16,207 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-
-
+/**
+ * Обработчик exceptions.
+ */
 @Slf4j
 @RestControllerAdvice
-public class ExceptionHandling {
+@SuppressWarnings({"PMD.LawOfDemeter", "PMD.TooManyMethods",
+    "PMD.MissingStaticMethodInNonInstantiatableClass"})
+public final class ExceptionHandling {
 
+  /**
+   * Обработка {@link DisabledException}.
+   *
+   * @return {@link HttpResponse} с {@link HttpStatus} 400 и сообщением
+   */
   @ExceptionHandler(DisabledException.class)
   public ResponseEntity<HttpResponse> handleDisabledException() {
-    return createHttpResponse(BAD_REQUEST, ACCOUNT_DISABLED);
+    return createHttpResponse(HttpStatus.BAD_REQUEST, ExceptionConstants.ACCOUNT_DISABLED);
   }
 
+  /**
+   * Обработка {@link BadCredentialsException}.
+   *
+   * @return {@link HttpResponse} с {@link HttpStatus} 400 и сообщением
+   */
   @ExceptionHandler(BadCredentialsException.class)
   public ResponseEntity<HttpResponse> handleBadCredentialsException() {
-    return createHttpResponse(BAD_REQUEST, INCORRECT_CREDENTIALS);
+    return createHttpResponse(HttpStatus.BAD_REQUEST, ExceptionConstants.INCORRECT_CREDENTIALS);
   }
 
+  /**
+   * Обработка {@link UserRegistrationException}.
+   *
+   * @param exception {@link UserRegistrationException}
+   * @param request   {@link WebRequest}
+   * @return {@link HttpResponse} с {@link HttpStatus} 417 и сообщением
+   */
   @ExceptionHandler(UserRegistrationException.class)
   public ResponseEntity<HttpResponse> handleUserRegistrationException(
-      final UserRegistrationException ex, final WebRequest request) {
-    return createHttpResponse(EXPECTATION_FAILED, ex.getMessage());
+      final UserRegistrationException exception, final WebRequest request) {
+    return createHttpResponse(HttpStatus.EXPECTATION_FAILED, exception.getMessage());
   }
 
+  /**
+   * Обработка {@link AccessDeniedException}.
+   *
+   * @return {@link HttpResponse} с {@link HttpStatus} 403 и сообщением
+   */
   @ExceptionHandler(AccessDeniedException.class)
   public ResponseEntity<HttpResponse> handleAccessDeniedException() {
-    return createHttpResponse(FORBIDDEN, NOT_ENOUGH_PERMISSION);
+    return createHttpResponse(HttpStatus.FORBIDDEN, ExceptionConstants.NOT_ENOUGH_PERMISSION);
   }
 
+  /**
+   * Обработка {@link LockedException}.
+   *
+   * @return {@link HttpResponse} с {@link HttpStatus} 401 и сообщением
+   */
   @ExceptionHandler(LockedException.class)
   public ResponseEntity<HttpResponse> handleLockedException() {
-    return createHttpResponse(UNAUTHORIZED, ACCOUNT_LOCKED);
+    return createHttpResponse(HttpStatus.UNAUTHORIZED, ExceptionConstants.ACCOUNT_LOCKED);
   }
 
+  /**
+   * Обработка {@link InvalidTokenRequestException}.
+   *
+   * @param exception {@link InvalidTokenRequestException}
+   * @return {@link HttpResponse} с {@link HttpStatus} 406 и сообщением
+   */
   @ExceptionHandler(InvalidTokenRequestException.class)
   public ResponseEntity<HttpResponse> handleInvalidTokenRequestException(
       final InvalidTokenRequestException exception) {
-    return createHttpResponse(NOT_ACCEPTABLE, exception.getMessage());
+    return createHttpResponse(HttpStatus.NOT_ACCEPTABLE, exception.getMessage());
   }
 
+  /**
+   * Обработка {@link UpdatePasswordException}.
+   *
+   * @param exception {@link UpdatePasswordException}
+   * @return {@link HttpResponse} с {@link HttpStatus} 401 и сообщением
+   */
   @ExceptionHandler(UpdatePasswordException.class)
   public ResponseEntity<HttpResponse> handleUpdatePasswordException(
       final UpdatePasswordException exception) {
-    return createHttpResponse(EXPECTATION_FAILED, exception.getMessage());
+    return createHttpResponse(HttpStatus.EXPECTATION_FAILED, exception.getMessage());
   }
 
+  /**
+   * Обработка {@link TokenRefreshException}.
+   *
+   * @param exception {@link TokenRefreshException}
+   * @return {@link HttpResponse} с {@link HttpStatus} 417 и сообщением
+   */
   @ExceptionHandler(TokenRefreshException.class)
   public ResponseEntity<HttpResponse> handleTokenRefreshException(
       final TokenRefreshException exception) {
-    return createHttpResponse(EXPECTATION_FAILED, exception.getMessage());
+    return createHttpResponse(HttpStatus.EXPECTATION_FAILED, exception.getMessage());
   }
 
+  /**
+   * Обработка {@link ResourceAlreadyInUseException}.
+   *
+   * @param exception {@link ResourceAlreadyInUseException}
+   * @return {@link HttpResponse} с {@link HttpStatus} 409 и сообщением
+   */
   @ExceptionHandler(ResourceAlreadyInUseException.class)
   public ResponseEntity<HttpResponse> handleResourceAlreadyInUseException(
       final ResourceAlreadyInUseException exception) {
-    return createHttpResponse(CONFLICT, exception.getMessage());
+    return createHttpResponse(HttpStatus.CONFLICT, exception.getMessage());
   }
 
+  /**
+   * Обработка {@link BadRequestException}.
+   *
+   * @param exception {@link BadRequestException}
+   * @return {@link HttpResponse} с {@link HttpStatus} 400 и сообщением
+   */
   @ExceptionHandler(BadRequestException.class)
   public ResponseEntity<HttpResponse> handleBadRequestException(
       final BadRequestException exception) {
-    return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
   }
 
+  /**
+   * Обработка {@link UserLoginException}.
+   *
+   * @param exception {@link UserLoginException}
+   * @return {@link HttpResponse} с {@link HttpStatus} 417 и сообщением
+   */
   @ExceptionHandler(UserLoginException.class)
   public ResponseEntity<HttpResponse> handleUserLoginException(final UserLoginException exception) {
-    return createHttpResponse(EXPECTATION_FAILED, exception.getMessage());
+    return createHttpResponse(HttpStatus.EXPECTATION_FAILED, exception.getMessage());
   }
 
+  /**
+   * Обработка {@link NotFoundException}.
+   *
+   * @param exception {@link NotFoundException}
+   * @return {@link HttpResponse} с {@link HttpStatus} 404 и сообщением
+   */
   @ExceptionHandler(NotFoundException.class)
   public ResponseEntity<HttpResponse> handleNotFoundException(final NotFoundException exception) {
-    return createHttpResponse(NOT_FOUND, exception.getMessage());
+    return createHttpResponse(HttpStatus.NOT_FOUND, exception.getMessage());
   }
 
+  /**
+   * Обработка {@link HttpRequestMethodNotSupportedException}.
+   *
+   * @param exception {@link HttpRequestMethodNotSupportedException}
+   * @return {@link HttpResponse} с {@link HttpStatus} 405 и сообщением
+   */
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
   public ResponseEntity<HttpResponse> handleHttpRequestMethodNotSupportedException(
       final HttpRequestMethodNotSupportedException exception) {
-    HttpMethod supportedMethod = Objects.requireNonNull(exception.getSupportedHttpMethods())
+    final HttpMethod supportedMethod = Objects.requireNonNull(exception.getSupportedHttpMethods())
         .iterator().next();
-    return createHttpResponse(METHOD_NOT_ALLOWED,
-        String.format(METHOD_IS_NOT_ALLOWED, supportedMethod));
+    return createHttpResponse(HttpStatus.METHOD_NOT_ALLOWED,
+        String.format(ExceptionConstants.METHOD_IS_NOT_ALLOWED, supportedMethod));
   }
 
+  /**
+   * Обработка {@link Exception}.
+   *
+   * @param exception {@link Exception}
+   * @return {@link HttpResponse} с {@link HttpStatus} 500 и сообщением
+   */
   @ExceptionHandler(Exception.class)
   public ResponseEntity<HttpResponse> handleException(final Exception exception) {
-    log.error(exception.getMessage());
-    return createHttpResponse(INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
+    if (log.isErrorEnabled()) {
+      log.error(exception.getMessage());
+    }
+    return createHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+        ExceptionConstants.INTERNAL_SERVER_ERROR_MSG);
   }
 
+  /**
+   * Обработка {@link NoResultException}.
+   *
+   * @param exception {@link NoResultException}
+   * @return {@link HttpResponse} с {@link HttpStatus} 404 и сообщением
+   */
   @ExceptionHandler(NoResultException.class)
   public ResponseEntity<HttpResponse> handleNoResultException(final NoResultException exception) {
-    log.error(exception.getMessage());
-    return createHttpResponse(NOT_FOUND, exception.getMessage());
+    if (log.isErrorEnabled()) {
+      log.error(exception.getMessage());
+    }
+    return createHttpResponse(HttpStatus.NOT_FOUND, exception.getMessage());
   }
 
+  /**
+   * Обработка {@link IOException}.
+   *
+   * @param exception {@link IOException}
+   * @return {@link HttpResponse} с {@link HttpStatus} 500 и сообщением
+   */
   @ExceptionHandler(IOException.class)
   public ResponseEntity<HttpResponse> handleIoException(final IOException exception) {
-    log.error(exception.getMessage());
-    return createHttpResponse(INTERNAL_SERVER_ERROR, ERROR_PROCESSING_FILE);
+    if (log.isErrorEnabled()) {
+      log.error(exception.getMessage());
+    }
+    return createHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+        ExceptionConstants.ERROR_PROCESSING_FILE);
   }
 
   private ResponseEntity<HttpResponse> createHttpResponse(final HttpStatus httpStatus,
@@ -141,4 +228,6 @@ public class ExceptionHandling {
         message), httpStatus);
   }
 
+  private ExceptionHandling() {
+  }
 }

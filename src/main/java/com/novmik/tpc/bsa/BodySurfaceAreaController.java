@@ -10,13 +10,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * ППТ control layer.
+ */
 @AllArgsConstructor
 @RequestMapping("api/v1/bsa")
 @RestController
-public class BsaController {
+public class BodySurfaceAreaController {
 
+  /**
+   * Коллекция ППТ.
+   * Список ППТ согласено формулам расчёта
+   *
+   * @param bsaRequest Запрос ППТ {@link BodySurfaceAreaRequest}
+   * @return коллекция ППТ
+   */
   @PostMapping
-  public ResponseEntity<Map<String, Double>> allMethods(@RequestBody final BsaRequest bsaRequest) {
-    return new ResponseEntity<>(BsaService.allMethods(bsaRequest), OK);
+  public ResponseEntity<Map<String, Double>> allMethods(
+      @RequestBody final BodySurfaceAreaRequest bsaRequest) {
+    return new ResponseEntity<>(BodySurfaceAreaService.allMethods(bsaRequest), OK);
   }
 }

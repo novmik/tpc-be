@@ -10,16 +10,29 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Схема лекарственной терапии control layer.
+ */
 @AllArgsConstructor
 @RequestMapping("api/v1/codescheme")
 @RestController
 public class SchemePharmacotherapyController {
 
-  private final SchemePharmacotherapyService schemePharmacotherapyService;
+  /**
+   * SchemePharmacotherapyService {@link SchemePharmacotherapyService}.
+   */
+  private final SchemePharmacotherapyService spService;
 
+  /**
+   * Поиск СЛТ по коду схемы.
+   * Get-запрос "api/v1/codescheme/{codeScheme}"
+   *
+   * @param codeScheme код СЛТ
+   * @return СЛТ {@link SchemePharmacotherapy}
+   */
   @GetMapping("/{codeScheme}")
   public ResponseEntity<Optional<SchemePharmacotherapy>> getSchemePharmacotherapy(
       @PathVariable("codeScheme") final String codeScheme) {
-    return new ResponseEntity<>(schemePharmacotherapyService.findByCodeScheme(codeScheme), OK);
+    return new ResponseEntity<>(spService.findByCodeScheme(codeScheme), OK);
   }
 }

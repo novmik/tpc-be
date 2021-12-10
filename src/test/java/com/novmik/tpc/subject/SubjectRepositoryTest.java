@@ -27,7 +27,7 @@ class SubjectRepositoryTest extends IntegrationTestBase {
         1.00D);
     subject = underTest.save(subject);
     List<NameSubjectAndId> idAndNameSubjectFromTable = underTest.getIdAndNameSubjectFromTable();
-    assertThat(subject.getId()).isNotNull();
+    assertThat(subject.getIdSubject()).isNotNull();
     assertThat(idAndNameSubjectFromTable.size()).isEqualTo(1);
   }
 
@@ -49,7 +49,7 @@ class SubjectRepositoryTest extends IntegrationTestBase {
         "Test SubjectName",
         1.00D,
         1.00D);
-    subject = underTest.save(subject);
+    underTest.save(subject);
     Optional<Subject> byNameSubject = underTest.findByNameSubject("test");
     assertThat(byNameSubject).isEmpty();
   }

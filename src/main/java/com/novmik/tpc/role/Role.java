@@ -18,6 +18,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Роль entity class.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -25,13 +28,24 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "role")
+@SuppressWarnings("PMD.ShortClassName")
 public class Role {
 
+  /**
+   * id роли.
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Column(name = "id")
+  private Long idRole;
+  /**
+   * Наименование роли.
+   */
   @Column(name = "name")
   private String name;
+  /**
+   * Список полномочий роли.
+   */
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "role_privilege",

@@ -12,17 +12,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/*
-Таблица: Схема лекарственной терапии
-Колонки:
-    Код схемы лекарственной терапии
-    МНН лекарственных препаратов, входящих в состав схемы
-    Наименование и описание схемы: Длительность цикла лекарственной терапии,
-    режим дозирования и способ введения лекарственных препаратов,
-    Количество дней введения лекарственных препаратов, оплачиваемых по КСГ)
-    Номер КСГ, к которой может быть отнесена схема лекарственной терапии
-*/
-
+/**
+ * Схема лекарственной терапии entity class.
+ * (СЛТ)
+ */
+@SuppressWarnings("PMD.CommentSize")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -32,33 +26,76 @@ import lombok.ToString;
 @Table(name = "scheme_pharmacotherapy")
 public class SchemePharmacotherapy {
 
+  /**
+   * id схемы лекарственной терапии.
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Column(name = "id")
+  private Long idSp;
+  /**
+   * Код СЛТ.
+   * (схема лекарственной терапии)
+   */
   @Column(name = "code_scheme")
   private String codeScheme;
+  /**
+   * МНН лекарственных препаратов.
+   * Входящих в состав схемы
+   */
   @Column(name = "inn_medicament")
   private String innMedicament;
+  /**
+   * Наименование и описание схемы.
+   * Длительность цикла лекарственной терапии,
+   * режим дозирования и способ
+   * введения лекарственных препаратов
+   */
   @Column(name = "name_and_description_scheme")
-  private String nameAndDescriptionScheme;
+  private String description;
+  /**
+   * Кол-во дней введения.
+   * Лекарственных препаратов,
+   * оплачиваемых по КСГ
+   */
   @Column(name = "number_days_drug_treatments")
-  private Integer numberDaysDrugTreatments;
+  private Integer daysTreatments;
+  /**
+   * Номер КСГ круглосуточного стационара.
+   * К которой может быть отнесена
+   * схема лекарственной терапии
+   */
   @Column(name = "number_drg_rttcf")
-  private String numberDrgRtccf;
+  private String numberDrgSt;
+  /**
+   * Номер КСГ дневного стационара.
+   * К которой может быть отнесена
+   * схема лекарственной терапии
+   */
   @Column(name = "number_drg_dcf")
-  private String numberDrgDcf;
+  private String numberDrgDs;
 
+  /**
+   * Ctor.
+   *
+   * @param codeScheme код схемы
+   * @param innMedicament МНН ЛП`ов
+   * @param description Наименование и описание схемы
+   * @param daysTreatments Кол-во дней введения ЛП
+   * @param numberDrgSt Номер КСГ КС
+   * @param numberDrgDs Номер КСГ ДС
+   */
   public SchemePharmacotherapy(final String codeScheme,
       final String innMedicament,
-      final String nameAndDescriptionScheme,
-      final Integer numberDaysDrugTreatments,
-      final String numberDrgRtccf,
-      final String numberDrgDcf) {
+      final String description,
+      final Integer daysTreatments,
+      final String numberDrgSt,
+      final String numberDrgDs) {
     this.codeScheme = codeScheme;
     this.innMedicament = innMedicament;
-    this.nameAndDescriptionScheme = nameAndDescriptionScheme;
-    this.numberDaysDrugTreatments = numberDaysDrugTreatments;
-    this.numberDrgRtccf = numberDrgRtccf;
-    this.numberDrgDcf = numberDrgDcf;
+    this.description = description;
+    this.daysTreatments = daysTreatments;
+    this.numberDrgSt = numberDrgSt;
+    this.numberDrgDs = numberDrgDs;
   }
 }

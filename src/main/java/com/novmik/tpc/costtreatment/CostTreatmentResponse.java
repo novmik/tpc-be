@@ -5,11 +5,23 @@ import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-
+/**
+ * Ответ стоимость одного
+ * случая госпитализации
+ * по КСГ для случаев лекарственной
+ * терапии взрослых со
+ * злокачественными новообразованиями.
+ */
 @AllArgsConstructor
 @Data
 public class CostTreatmentResponse {
 
+  /**
+   * Стоимость лекарственной терапии.
+   */
   private BigDecimal costTreatment;
-  private DiagnosisRelatedGroups diagnosisRelatedGroups;
+  /**
+   * {@link DiagnosisRelatedGroups}.
+   */
+  private DiagnosisRelatedGroups drg;
 }

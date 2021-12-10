@@ -11,17 +11,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-
+/**
+ * {@link DiagnosisPrice} control layer.
+ */
 @AllArgsConstructor
 @RequestMapping("api/v1")
 @RestController
 public class DiagnosisPriceController {
 
-  private final DiagnosisPriceService diagnosisPriceService;
+  /**
+   * {@link DiagnosisPriceService}.
+   */
+  private final DiagnosisPriceService dpService;
 
+  /**
+   * Список {@link DiagnosisPrice}.
+   * Get-запрос "api/v1/{idSubject}/dp"
+   *
+   * @param idSubject id {@link com.novmik.tpc.subject.Subject}
+   * @return список {@link DiagnosisPrice}
+   */
   @GetMapping("/{idSubject}/dp")
   public ResponseEntity<List<DiagnosisPrice>> getDiagnosisPriceList(
       @PathVariable("idSubject") final Long idSubject) {
-    return new ResponseEntity<>(diagnosisPriceService.getDiagnosisPriceList(idSubject), OK);
+    return new ResponseEntity<>(dpService.getDiagnosisPriceList(idSubject), OK);
   }
 }

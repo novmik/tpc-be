@@ -1,7 +1,7 @@
 package com.novmik.tpc.security;
 
-import static com.novmik.tpc.security.JwtTokenConstant.NOVMIK_ADMINISTRATION;
-import static com.novmik.tpc.security.JwtTokenConstant.PERMISSIONS;
+import static com.novmik.tpc.security.SecurityConstants.NOVMIK_ADMINISTRATION;
+import static com.novmik.tpc.security.SecurityConstants.PERMISSIONS;
 
 import com.novmik.tpc.client.CustomUserDetails;
 import io.jsonwebtoken.Claims;
@@ -17,21 +17,44 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
+/**
+ * Создание и обработка токена.
+ */
 @Component
+@SuppressWarnings({"PMD.LawOfDemeter", "PMD.BeanMembersShouldSerialize"})
 public class JwtTokenProvider {
 
+  /**
+   * Секрет.
+   */
   private final String jwtSecret;
+  /**
+   * Продолжительность действия токена.
+   */
   private final long jwtExpirationInMs;
 
-  public JwtTokenProvider(@Value("${jwt.secret}") String jwtSecret,
-      @Value("${jwt.expiration}") long jwtExpirationInMs) {
+  /**
+   * Ctor.
+   *
+   * @param jwtSecret         секрет
+   * @param jwtExpirationInMs продолжительность
+   *                          действия токена
+   */
+  public JwtTokenProvider(@Value("${jwt.secret}") final String jwtSecret,
+      @Value("${jwt.expiration}") final long jwtExpirationInMs) {
     this.jwtSecret = jwtSecret;
     this.jwtExpirationInMs = jwtExpirationInMs;
   }
 
-  public String generateToken(CustomUserDetails customUserDetails) {
-    Instant expiryDate = Instant.now().plusMillis(jwtExpirationInMs);
-    String permissions = getClientPermissions(customUserDetails);
+  /**
+   * Создание токена.
+   *
+   * @param customUserDetails {@link CustomUserDetails}
+   * @return токен
+   */
+  public String generateToken(final CustomUserDetails customUserDetails) {
+    final Instant expiryDate = Instant.now().plusMillis(jwtExpirationInMs);
+    final String permissions = getClientPermissions(customUserDetails);
     return Jwts.builder()
         .setSubject(customUserDetails.getUsername())
         .setAudience(NOVMIK_ADMINISTRATION)
@@ -42,6 +65,12 @@ public class JwtTokenProvider {
         .compact();
   }
 
+  /**
+   * Получение email из токена.
+   *
+   * @param token токен
+   * @return email
+   */
   public String getSubjectFromJwt(final String token) {
     return Jwts.parser()
         .setSigningKey(jwtSecret)
@@ -49,8 +78,14 @@ public class JwtTokenProvider {
         .getBody().getSubject();
   }
 
+  /**
+   * Получение прав доступа.
+   *
+   * @param token токен
+   * @return список {@link GrantedAuthority}
+   */
   public List<GrantedAuthority> getPermissionsFromJwt(final String token) {
-    Claims claims = Jwts.parser()
+    final Claims claims = Jwts.parser()
         .setSigningKey(jwtSecret)
         .parseClaimsJws(token)
         .getBody();
@@ -59,6 +94,12 @@ public class JwtTokenProvider {
         .collect(Collectors.toList());
   }
 
+  /**
+   * Получение authorities.
+   *
+   * @param customUserDetails {@link CustomUserDetails}
+   * @return строку authorities
+   */
   private String getClientPermissions(final CustomUserDetails customUserDetails) {
     return customUserDetails
         .getAuthorities()

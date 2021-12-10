@@ -12,13 +12,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/*
-Таблица: Субъект РФ
-Колонки: Субъект, Базовая ставка круглосуточного стационара,
-Базовая ставка дневного стационара(размер средней стоимости
-законченного случая лечения без учета коэффициента дифференциации)
-*/
-
+/**
+ * Субъект РФ entity class.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -28,21 +24,45 @@ import lombok.ToString;
 @Table(name = "subject_of_rf")
 public class Subject {
 
+  /**
+   * id субъекта РФ.
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Column(name = "id")
+  private Long idSubject;
+  /**
+   * Наименование субъекта РФ.
+   */
   @Column(name = "name_subject")
   private String nameSubject;
-  @Column(name = "baserate_rtccf")
-  private Double baseRateRoundTheClockCareFacility;
-  @Column(name = "baserate_dcf")
-  private Double baseRateDayCareFacility;
+  /**
+   * БС КС.
+   * Базовая ставка круглосуточного стационара
+   * Base Rate Round The Clock Care Facility
+   */
+  @Column(name = "baserate_st")
+  private Double baseRateSt;
+  /**
+   * БС ДС.
+   * Базовая ставка дневного стационара
+   * Base Rate Day Care Facility
+   */
+  @Column(name = "baserate_ds")
+  private Double baseRateDs;
 
+  /**
+   * Ctor.
+   *
+   * @param nameSubject Наименование субъекта РФ
+   * @param baseRateSt  БС КС
+   * @param baseRateDs  БС ДС
+   */
   public Subject(final String nameSubject,
-      final Double baseRateRoundTheClockCareFacility,
-      final Double baseRateDayCareFacility) {
+      final Double baseRateSt,
+      final Double baseRateDs) {
     this.nameSubject = nameSubject;
-    this.baseRateRoundTheClockCareFacility = baseRateRoundTheClockCareFacility;
-    this.baseRateDayCareFacility = baseRateDayCareFacility;
+    this.baseRateSt = baseRateSt;
+    this.baseRateDs = baseRateDs;
   }
 }

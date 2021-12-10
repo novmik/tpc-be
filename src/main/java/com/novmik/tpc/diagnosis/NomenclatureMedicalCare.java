@@ -12,11 +12,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/*
-Таблица: Номенклатура медицинских услуг
-Колонки: Название медицинской услуги, Код медицинской услуги
-*/
-
+/**
+ * Номенклатура медицинских услуг
+ * entity class.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -26,14 +25,30 @@ import lombok.ToString;
 @Table(name = "nomenclature_medical_care")
 public class NomenclatureMedicalCare {
 
+  /**
+   * id номенклатуры медицинских услуг.
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+  @Column(name = "id")
+  private Integer idNmc;
+  /**
+   * Код медицинской услуги.
+   */
   @Column(name = "code_medical_care")
   private String codeMedicalCara;
+  /**
+   * Название медицинской услуги.
+   */
   @Column(name = "name_medical_care")
   private String nameMedicalCare;
 
+  /**
+   * Ctor.
+   *
+   * @param codeMedicalCara код медицинской услуги
+   * @param nameMedicalCare название медицинской услуги
+   */
   public NomenclatureMedicalCare(final String codeMedicalCara, final String nameMedicalCare) {
     this.codeMedicalCara = codeMedicalCara;
     this.nameMedicalCare = nameMedicalCare;

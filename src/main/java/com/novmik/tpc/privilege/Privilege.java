@@ -1,5 +1,6 @@
 package com.novmik.tpc.privilege;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,6 +12,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Полномочия entity class.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -20,8 +24,15 @@ import lombok.ToString;
 @Table(name = "privilege")
 public class Privilege {
 
+  /**
+   * id полномочия.
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Column(name = "id")
+  private Long idPrivilege;
+  /**
+   * Наименование полномочия.
+   */
   private String name;
 }

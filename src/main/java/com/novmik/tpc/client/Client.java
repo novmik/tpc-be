@@ -19,11 +19,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/*
-Таблица: Пользователи
-Колонки: Емайл адрес, Пароль, Имя, Фамилия, Включен, Не заблокирован
-*/
-
+/**
+ * Клиент entity class.
+ * Клиент=пользователь=user
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -31,27 +30,59 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "client")
+@SuppressWarnings("PMD.CommentSize")
 public class Client {
 
+  /**
+   * id клиента.
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Column(name = "id")
+  private Long idClient;
+  /**
+   * Email.
+   */
   @Column(name = "email")
   private String email;
+  /**
+   * Пароль.
+   */
   @Column(name = "password")
   private String password;
+  /**
+   * Имя.
+   */
   @Column(name = "first_name")
   private String firstName;
+  /**
+   * Фамилия.
+   */
   @Column(name = "last_name")
   private String lastName;
+  /**
+   * Дата последнего логина.
+   */
   @Column(name = "last_login_date")
   private Date lastLoginDate;
+  /**
+   * Дата логина.
+   */
   @Column(name = "join_date")
   private Date joinDate;
+  /**
+   * Включение.
+   */
   @Column(name = "is_enabled")
   private boolean isEnabled;
+  /**
+   * Блокировка.
+   */
   @Column(name = "is_not_locked")
   private boolean isNotLocked;
+  /**
+   * Список ролей.
+   */
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "client_role",
@@ -63,6 +94,16 @@ public class Client {
   )
   private Collection<Role> roles;
 
+  /**
+   * Ctor без id.
+   *
+   * @param email email
+   * @param password пароль
+   * @param firstName имя
+   * @param lastName фамилия
+   * @param isEnabled включение
+   * @param isNotLocked блокировка
+   */
   public Client(final String email,
       final String password,
       final String firstName,
@@ -77,8 +118,13 @@ public class Client {
     this.isNotLocked = isNotLocked;
   }
 
+  /**
+   * Ctor.
+   *
+   * @param client {@link Client}
+   */
   public Client(final Client client) {
-    id = client.getId();
+    idClient = client.getIdClient();
     email = client.getEmail();
     password = client.getPassword();
     firstName = client.getFirstName();

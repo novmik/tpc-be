@@ -1,6 +1,6 @@
 package com.novmik.tpc.security;
 
-import static com.novmik.tpc.security.JwtTokenConstant.TOKEN_REQUEST_HEADER_PREFIX;
+import static com.novmik.tpc.security.SecurityConstants.TOKEN_REQUEST_HEADER_PREFIX;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import com.novmik.tpc.client.CustomUserDetailsService;
@@ -22,30 +22,44 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 
-
+/**
+ * Фильтр запроса для authentication
+ * с помощью jwt-токен.
+ */
 @Slf4j
+@SuppressWarnings({"PMD.AtLeastOneConstructor", "PMD.LawOfDemeter",
+    "PMD.BeanMembersShouldSerialize", "PMD.AvoidCatchingGenericException"})
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+  /**
+   * {@link JwtTokenProvider}.
+   */
   @Autowired
   private JwtTokenProvider jwtTokenProvider;
+  /**
+   * {@link JwtTokenValidator}.
+   */
   @Autowired
   private JwtTokenValidator jwtTokenValidator;
+  /**
+   * {@link CustomUserDetailsService}.
+   */
   @Autowired
-  private CustomUserDetailsService customUserDetailsService;
+  private CustomUserDetailsService detailsService;
 
   @Override
   protected void doFilterInternal(final HttpServletRequest request,
       @NonNull final HttpServletResponse response,
       @NonNull final FilterChain filterChain) throws ServletException, IOException {
-    if (!request.getServletPath().equals("/api/v1/auth/login") && !request.getServletPath()
-        .equals("/api/v1/auth/refresh")) {
+    if (!"/api/v1/auth/login".equals(request.getServletPath()) && !"/api/v1/auth/refresh"
+        .equals(request.getServletPath())) {
       try {
-        String jwt = getJwtFromRequest(request);
+        final String jwt = getJwtFromRequest(request);
         if (StringUtils.hasText(jwt) && jwtTokenValidator.validateToken(jwt)) {
-          String clientEmail = jwtTokenProvider.getSubjectFromJwt(jwt);
-          UserDetails userDetails = customUserDetailsService.loadUserByUsername(clientEmail);
-          List<GrantedAuthority> authorities = jwtTokenProvider.getPermissionsFromJwt(jwt);
-          UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+          final String clientEmail = jwtTokenProvider.getSubjectFromJwt(jwt);
+          final UserDetails userDetails = detailsService.loadUserByUsername(clientEmail);
+          final List<GrantedAuthority> authorities = jwtTokenProvider.getPermissionsFromJwt(jwt);
+          final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
               userDetails, jwt, authorities);
           auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
           SecurityContextHolder.getContext().setAuthentication(auth);
@@ -59,11 +73,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   }
 
   private String getJwtFromRequest(final HttpServletRequest request) {
-    String jwtFromRequest = null;
-    String bearerToken = request.getHeader(AUTHORIZATION);
+    String jwtFromRequest;
+    final String bearerToken = request.getHeader(AUTHORIZATION);
     if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(TOKEN_REQUEST_HEADER_PREFIX)) {
-      log.info("Извлеченный токен: " + bearerToken);
       jwtFromRequest = bearerToken.substring(TOKEN_REQUEST_HEADER_PREFIX.length());
+    } else {
+      jwtFromRequest = "";
     }
     return jwtFromRequest;
   }

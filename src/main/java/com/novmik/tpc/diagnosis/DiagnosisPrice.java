@@ -14,11 +14,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/*
-Таблица: Цена на медицинскую диагностику
-Колонки: Субъект, Номенклатура медицинских услуг, Стоимость диагностики
-*/
-
+/**
+ * Цена на медицинскую диагностику entity class.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -28,22 +26,42 @@ import lombok.ToString;
 @Table(name = "diagnosis_price")
 public class DiagnosisPrice {
 
+  /**
+   * id цены на медицинскую диагностику.
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Column(name = "id")
+  private Long idDp;
+  /**
+   * Наименование субъекта РФ.
+   */
   @Column(name = "name_subject")
   private String nameSubject;
+  /**
+   * {@link NomenclatureMedicalCare}.
+   */
   @OneToOne
   @JoinColumn(name = "nomenclature_medical_care_id")
-  private NomenclatureMedicalCare nomenclatureMedicalCare;
+  private NomenclatureMedicalCare nomenclatureMc;
+  /**
+   * Стоимость диагностики.
+   */
   @Column(name = "price_medical_care")
   private Double priceMedicalCare;
 
+  /**
+   * Ctor.
+   *
+   * @param nameSubject наименование субъекта РФ
+   * @param nomenclatureMc {@link NomenclatureMedicalCare}
+   * @param priceMedicalCare стоимость диагностики
+   */
   public DiagnosisPrice(final String nameSubject,
-      final NomenclatureMedicalCare nomenclatureMedicalCare,
+      final NomenclatureMedicalCare nomenclatureMc,
       final Double priceMedicalCare) {
     this.nameSubject = nameSubject;
-    this.nomenclatureMedicalCare = nomenclatureMedicalCare;
+    this.nomenclatureMc = nomenclatureMc;
     this.priceMedicalCare = priceMedicalCare;
   }
 }

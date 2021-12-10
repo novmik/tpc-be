@@ -1,24 +1,37 @@
 package com.novmik.tpc.medicament;
 
-import static com.novmik.tpc.medicament.MedicamentConstant.MEDICAMENT_PRICE_LIST_NOT_FOUND;
+import static com.novmik.tpc.medicament.MedicamentConstants.MEDICAMENT_PRICE_LIST_NOT_FOUND;
 
 import com.novmik.tpc.exception.NotFoundException;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * {@link MedicamentPrice} business interface layer.
+ */
 @AllArgsConstructor
 @Service
 public class MedicamentPriceService {
 
-  private final MedicamentPriceRepository medicamentPriceRepository;
+  /**
+   * {@link MedicamentPriceRepository}.
+   */
+  private final MedicamentPriceRepository mpRepository;
 
+  /**
+   * Список {@link MedicamentPrice} по МНН.
+   *
+   * @param inn МНН
+   * @return список {@link MedicamentPrice}
+   * @throws NotFoundException если {@link MedicamentPrice} не найден
+   */
   public List<MedicamentPrice> getMedicalPriceList(final String inn) {
-    List<MedicamentPrice> medicamentPricesByInn = medicamentPriceRepository.findByInn(inn);
-    if (medicamentPricesByInn.isEmpty()) {
+    final List<MedicamentPrice> medicamentPrices = mpRepository.findByInn(inn);
+    if (medicamentPrices.isEmpty()) {
       throw new NotFoundException(MEDICAMENT_PRICE_LIST_NOT_FOUND + inn);
     }
-    return medicamentPricesByInn;
+    return medicamentPrices;
   }
 
 }

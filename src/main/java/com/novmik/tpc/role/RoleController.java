@@ -13,29 +13,53 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Роль control layer.
+ * Доступ с 'ROLE_ADMIN'
+ */
 @AllArgsConstructor
 @RequestMapping("api/v1/role")
 @PreAuthorize("hasRole('ADMIN')")
 @RestController
 public class RoleController {
 
+  /**
+   * RoleService {@link RoleService}.
+   */
   private final RoleService roleService;
 
+  /**
+   * Список ролей.
+   * Get-запрос "api/v1/role"
+   *
+   * @return список ролей {@link Role}
+   */
   @GetMapping
   public ResponseEntity<List<Role>> getAllRoles() {
     return new ResponseEntity<>(roleService.getAllRoles(), OK);
   }
 
+  /**
+   * Добавление роли.
+   * Post-запрос "api/v1/role"
+   *
+   * @param role роль {@link Role}
+   * @return роль {@link Role}
+   */
   @PostMapping
   public ResponseEntity<Role> addNewRole(@RequestBody final Role role) {
     return new ResponseEntity<>(roleService.addNewRole(role), CREATED);
   }
 
+  /**
+   * Добавление полномочия роли.
+   *
+   * @param privilegeToRole {@link AddPrivilegeToRoleRequest}
+   */
   @PostMapping("/addprivilege")
   public void addPrivilegeToRole(
-      @RequestBody final AddPrivilegeToRoleRequest addPrivilegeToRoleRequest) {
-    roleService.addPrivilegeToRole(addPrivilegeToRoleRequest.getRoleName(),
-        addPrivilegeToRoleRequest.getPrivilegeName());
+      @RequestBody final AddPrivilegeToRoleRequest privilegeToRole) {
+    roleService.addPrivilegeToRole(privilegeToRole.getRoleName(),
+        privilegeToRole.getPrivilegeName());
   }
-
 }

@@ -1,13 +1,9 @@
 package com.novmik.tpc.medicalinstitution;
 
-import static com.novmik.tpc.medicalinstitution.MedicalInstitutionConstant.MEDICAL_INSTITUTIONS_NOT_EXISTS;
-import static com.novmik.tpc.medicalinstitution.MedicalInstitutionConstant.MEDICAL_INSTITUTIONS_NOT_EXISTS_BY_ID_SUBJECT;
-import static com.novmik.tpc.medicalinstitution.MedicalInstitutionConstant.MEDICAL_INSTITUTION_EXISTS;
-import static com.novmik.tpc.medicalinstitution.MedicalInstitutionConstant.MEDICAL_INSTITUTION_NOT_CORRECT;
-import static com.novmik.tpc.subject.SubjectConstant.SUBJECT_NOT_EXISTS;
-
 import com.novmik.tpc.exception.BadRequestException;
 import com.novmik.tpc.exception.NotFoundException;
+import com.novmik.tpc.subject.Subject;
+import com.novmik.tpc.subject.SubjectConstants;
 import com.novmik.tpc.subject.SubjectService;
 import java.util.Comparator;
 import java.util.List;
@@ -17,90 +13,155 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
-
+/**
+ * {@link MedicalInstitution} business interface layer.
+ */
 @AllArgsConstructor
 @Service
+@SuppressWarnings({"PMD.LawOfDemeter", "PMD.CommentSize"})
 public class MedicalInstitutionService {
 
-  private final MedicalInstitutionRepository medicalInstitutionRepository;
+  /**
+   * {@link MedicalInstitutionRepository}.
+   */
+  private final MedicalInstitutionRepository miRepository;
+  /**
+   * {@link SubjectService}.
+   */
   private final SubjectService subjectService;
 
+  /**
+   * Список id и наименование {@link MedicalInstitution}.
+   * Возвращет проекцию {@link NameMedicalInstitutionAndId}
+   *
+   * @param idSubject id {@link Subject}
+   * @return список {@link NameMedicalInstitutionAndId}
+   * @throws NotFoundException если {@link Subject} не найден
+   */
   protected List<NameMedicalInstitutionAndId> getMedicalInstitutionList(
       final Long idSubject) {
-    List<NameMedicalInstitutionAndId> allMedicalInstitutionBySubjectId =
-        medicalInstitutionRepository.listIdAndMedicalInstitutionNameBySubjectId(idSubject);
-    if (allMedicalInstitutionBySubjectId.isEmpty()) {
-      throw new NotFoundException(MEDICAL_INSTITUTIONS_NOT_EXISTS_BY_ID_SUBJECT + idSubject);
+    final List<NameMedicalInstitutionAndId> allMiBySubjectId =
+        miRepository.listIdAndMedicalInstitutionNameBySubjectId(idSubject);
+    if (allMiBySubjectId.isEmpty()) {
+      throw new NotFoundException(
+          MedicalInstitutionConstants.MEDICAL_INSTITUTIONS_NOT_EXISTS_BY_ID_SUBJECT + idSubject);
     }
-    return allMedicalInstitutionBySubjectId;
+    return allMiBySubjectId;
   }
 
+  /**
+   * Поиск {@link MedicalInstitution} по id.
+   *
+   * @param idMi id {@link MedicalInstitution}
+   * @return {@link MedicalInstitution}
+   * @throws NotFoundException если {@link MedicalInstitution} не найден
+   */
   public Optional<MedicalInstitution> getMedicalInstitutionById(
-      final Long idMedicalInstitution) {
-    Optional<MedicalInstitution> medicalInstitutionRepositoryById =
-        medicalInstitutionRepository.findById(idMedicalInstitution);
-    if (medicalInstitutionRepositoryById.isEmpty()) {
-      throw new NotFoundException(MEDICAL_INSTITUTIONS_NOT_EXISTS + idMedicalInstitution);
+      final Long idMi) {
+    final Optional<MedicalInstitution> miById =
+        miRepository.findById(idMi);
+    if (miById.isEmpty()) {
+      throw new NotFoundException(
+          MedicalInstitutionConstants.MEDICAL_INSTITUTIONS_NOT_EXISTS + idMi);
     }
-    return medicalInstitutionRepositoryById;
+    return miById;
   }
 
+  /**
+   * Список {@link MedicalInstitution},
+   * сортированные по id.
+   *
+   * @param idSubject id {@link Subject}
+   * @return список {@link MedicalInstitution}
+   */
   public List<MedicalInstitution> getAllMedicalInstitutionsBySubjectId(
       final Long idSubject) {
-    String nameSubject = subjectService.getSubjectById(idSubject).orElseThrow().getNameSubject();
-    List<MedicalInstitution> allMedicalInstitutionBySubjectId = medicalInstitutionRepository
+    final String nameSubject = subjectService.getSubjectById(idSubject).orElseThrow()
+        .getNameSubject();
+    final List<MedicalInstitution> allMiBySubjectId = miRepository
         .findMedicalInstitutionsByNameSubject(nameSubject);
-    return allMedicalInstitutionBySubjectId.stream()
-        .sorted(Comparator.comparing(MedicalInstitution::getId)).collect(Collectors.toList());
+    return allMiBySubjectId
+        .stream()
+        .sorted(Comparator.comparing(MedicalInstitution::getIdMi))
+        .collect(Collectors.toList());
   }
 
+  /**
+   * Добавление {@link MedicalInstitution}.
+   *
+   * @param medInstitution {@link MedicalInstitution}
+   * @return {@link MedicalInstitution}
+   * @throws BadRequestException если если некорректные данные
+   * @throws BadRequestException если {@link MedicalInstitution} есть
+   * @throws NotFoundException   если {@link Subject} не найден
+   */
   protected MedicalInstitution addNewMedicalInstitution(
-      final MedicalInstitution medicalInstitution) {
+      final MedicalInstitution medInstitution) {
     if (ObjectUtils.anyNull(
-        medicalInstitution,
-        medicalInstitution.getNameMedicalInstitution(),
-        medicalInstitution.getNameSubject()
+        medInstitution,
+        medInstitution.getNameMi(),
+        medInstitution.getNameSubject()
     )) {
-      throw new BadRequestException(MEDICAL_INSTITUTION_NOT_CORRECT + medicalInstitution);
+      throw new BadRequestException(
+          MedicalInstitutionConstants.MEDICAL_INSTITUTION_NOT_CORRECT + medInstitution);
     }
-    if (medicalInstitutionRepository.findByNameMedicalInstitutionAndNameSubject(
-            medicalInstitution.getNameMedicalInstitution(),
-            medicalInstitution.getNameSubject()
+    if (miRepository.findByNameMiAndNameSubject(
+            medInstitution.getNameMi(),
+            medInstitution.getNameSubject()
         )
         .isPresent()) {
       throw new BadRequestException(
-          MEDICAL_INSTITUTION_EXISTS + medicalInstitution.getNameMedicalInstitution());
+          MedicalInstitutionConstants.MEDICAL_INSTITUTION_EXISTS + medInstitution.getNameMi());
     }
-    if (subjectService.findByNameSubject(medicalInstitution.getNameSubject()).isEmpty()) {
-      throw new NotFoundException(SUBJECT_NOT_EXISTS + medicalInstitution.getNameSubject());
+    if (subjectService.findByNameSubject(medInstitution.getNameSubject()).isEmpty()) {
+      throw new NotFoundException(
+          SubjectConstants.SUBJECT_NOT_EXISTS + medInstitution.getNameSubject());
     }
-    return medicalInstitutionRepository.save(medicalInstitution);
+    return miRepository.save(medInstitution);
   }
 
+  /**
+   * Изменение {@link MedicalInstitution}.
+   *
+   * @param medInstitution {@link MedicalInstitution}
+   * @return {@link MedicalInstitution}
+   * @throws BadRequestException если некорректные данные
+   * @throws BadRequestException если {@link MedicalInstitution} не найден
+   */
   protected MedicalInstitution updateMedicalInstitution(
-      final MedicalInstitution medicalInstitution) {
+      final MedicalInstitution medInstitution) {
     if (ObjectUtils.anyNull(
-        medicalInstitution,
-        medicalInstitution.getId(),
-        medicalInstitution.getNameMedicalInstitution(),
-        medicalInstitution.getNameSubject()
+        medInstitution,
+        medInstitution.getIdMi(),
+        medInstitution.getNameMi(),
+        medInstitution.getNameSubject()
     )) {
-      throw new BadRequestException(MEDICAL_INSTITUTION_NOT_CORRECT + medicalInstitution);
+      throw new BadRequestException(
+          MedicalInstitutionConstants.MEDICAL_INSTITUTION_NOT_CORRECT + medInstitution);
     }
-    if (!medicalInstitutionRepository.existsById(medicalInstitution.getId())) {
-      throw new BadRequestException(MEDICAL_INSTITUTIONS_NOT_EXISTS + medicalInstitution.getId());
+    if (!miRepository.existsById(medInstitution.getIdMi())) {
+      throw new BadRequestException(
+          MedicalInstitutionConstants.MEDICAL_INSTITUTIONS_NOT_EXISTS + medInstitution.getIdMi());
     }
-    return medicalInstitutionRepository.save(medicalInstitution);
+    return miRepository.save(medInstitution);
   }
 
+  /**
+   * Удаление {@link MedicalInstitution}.
+   *
+   * @param idMi id {@link MedicalInstitution}
+   * @throws BadRequestException если id не корректный
+   * @throws BadRequestException если {@link MedicalInstitution} не найден
+   */
   protected void deleteMedicalInstitutionById(
-      final Long idMedicalInstitution) {
-    if (idMedicalInstitution == null || idMedicalInstitution < 1) {
-      throw new BadRequestException(MEDICAL_INSTITUTION_NOT_CORRECT);
+      final Long idMi) {
+    if (idMi == null || idMi < 1) {
+      throw new BadRequestException(MedicalInstitutionConstants.MEDICAL_INSTITUTION_NOT_CORRECT);
     }
-    if (!medicalInstitutionRepository.existsById(idMedicalInstitution)) {
-      throw new BadRequestException(MEDICAL_INSTITUTIONS_NOT_EXISTS + idMedicalInstitution);
+    if (!miRepository.existsById(idMi)) {
+      throw new BadRequestException(
+          MedicalInstitutionConstants.MEDICAL_INSTITUTIONS_NOT_EXISTS + idMi);
     }
-    medicalInstitutionRepository.deleteById(idMedicalInstitution);
+    miRepository.deleteById(idMi);
   }
 }

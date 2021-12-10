@@ -47,8 +47,8 @@ class MedicalInstitutionRepositoryTest extends IntegrationTestBase {
         0);
     medicalInstitution = underTest.save(medicalInstitution);
     List<NameMedicalInstitutionAndId> allMedicalInstitutionListBySubjectId = underTest
-        .listIdAndMedicalInstitutionNameBySubjectId(subject.getId());
-    assertThat(medicalInstitution.getId()).isNotNull();
+        .listIdAndMedicalInstitutionNameBySubjectId(subject.getIdSubject());
+    assertThat(medicalInstitution.getIdMi()).isNotNull();
     assertThat(allMedicalInstitutionListBySubjectId.size()).isEqualTo(1);
   }
 
@@ -65,8 +65,8 @@ class MedicalInstitutionRepositoryTest extends IntegrationTestBase {
         0);
     medicalInstitution = underTest.save(medicalInstitution);
     MedicalInstitution actualMedicalInstitution = underTest
-        .findByNameMedicalInstitutionAndNameSubject(
-            medicalInstitution.getNameMedicalInstitution(), medicalInstitution.getNameSubject())
+        .findByNameMiAndNameSubject(
+            medicalInstitution.getNameMi(), medicalInstitution.getNameSubject())
         .orElse(null);
     assertThat(medicalInstitution).hasNoNullFieldsOrProperties();
     assertThat(medicalInstitution).isEqualTo(actualMedicalInstitution);
@@ -85,7 +85,7 @@ class MedicalInstitutionRepositoryTest extends IntegrationTestBase {
         0);
     underTest.save(medicalInstitution);
     Optional<MedicalInstitution> byNameMedicalInstitution = underTest
-        .findByNameMedicalInstitutionAndNameSubject(
+        .findByNameMiAndNameSubject(
         "Test NameMedicalInstitution", "Test NameSubject");
     assertThat(byNameMedicalInstitution.isEmpty()).isTrue();
   }

@@ -14,7 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class WebSecurityConfigDev extends WebSecurityConfigurerAdapter {
 
   @Override
-  protected void configure(HttpSecurity http) throws Exception {
+  protected void configure(final HttpSecurity http) throws Exception {
     log.info("Loaded inside a dev only");
     http.authorizeRequests().anyRequest().permitAll();
   }

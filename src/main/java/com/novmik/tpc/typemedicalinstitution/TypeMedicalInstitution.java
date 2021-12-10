@@ -10,11 +10,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/*
-Таблица: Тип Медицинскай организации (МО)
-Колонки: Тип МО, Описание
-*/
-
+/**
+ * Тип МО entity class.
+ * Тип Медицинскай организации entity class
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -24,9 +23,15 @@ import lombok.ToString;
 @Table(name = "type_medical_institution")
 public class TypeMedicalInstitution {
 
+  /**
+   * Тип МО.
+   */
   @Id
   @Column(name = "type_mi")
   private Integer typeMi;
+  /**
+   * Описание типа МО.
+   */
   @Column(name = "description")
   private String description;
 }

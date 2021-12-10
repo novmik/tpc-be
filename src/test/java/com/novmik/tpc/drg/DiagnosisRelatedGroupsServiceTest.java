@@ -1,9 +1,9 @@
 package com.novmik.tpc.drg;
 
-import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstant.DRG_EXISTS;
-import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstant.DRG_NOT_CORRECT;
-import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstant.DRG_NOT_EXISTS;
-import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstant.DRG_NOT_EXISTS_BY_NAME_DRG;
+import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstants.DRG_EXISTS;
+import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstants.DRG_NOT_CORRECT;
+import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstants.DRG_NOT_EXISTS;
+import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstants.DRG_NOT_EXISTS_BY_NAME_DRG;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -130,7 +130,7 @@ class DiagnosisRelatedGroupsServiceTest {
         2F,
         3F
     );
-    given(drgRepository.existsById(diagnosisRelatedGroups.getId())).willReturn(true);
+    given(drgRepository.existsById(diagnosisRelatedGroups.getIdDrg())).willReturn(true);
     underTest.updateDrg(diagnosisRelatedGroups);
     verify(drgRepository).save(diagnosisRelatedGroups);
   }
@@ -153,10 +153,10 @@ class DiagnosisRelatedGroupsServiceTest {
         2F,
         3F
     );
-    given(drgRepository.existsById(diagnosisRelatedGroups.getId())).willReturn(false);
+    given(drgRepository.existsById(diagnosisRelatedGroups.getIdDrg())).willReturn(false);
     assertThatThrownBy(() -> underTest.updateDrg(diagnosisRelatedGroups))
         .isInstanceOf(NotFoundException.class)
-        .hasMessage(DRG_NOT_EXISTS + diagnosisRelatedGroups.getId());
+        .hasMessage(DRG_NOT_EXISTS + diagnosisRelatedGroups.getIdDrg());
     verify(drgRepository, never()).save(diagnosisRelatedGroups);
   }
 

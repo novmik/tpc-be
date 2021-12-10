@@ -1,9 +1,9 @@
 package com.novmik.tpc.drg;
 
-import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstant.DRG_EXISTS;
-import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstant.DRG_NOT_CORRECT;
-import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstant.DRG_NOT_EXISTS;
-import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstant.DRG_NOT_EXISTS_BY_NAME_DRG;
+import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstants.DRG_EXISTS;
+import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstants.DRG_NOT_CORRECT;
+import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstants.DRG_NOT_EXISTS;
+import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstants.DRG_NOT_EXISTS_BY_NAME_DRG;
 
 import com.novmik.tpc.exception.BadRequestException;
 import com.novmik.tpc.exception.NotFoundException;
@@ -12,57 +12,97 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
+/**
+ * {@link DiagnosisRelatedGroups} business interface layer.
+ */
 @AllArgsConstructor
 @Service
 public class DiagnosisRelatedGroupsService {
 
+  /**
+   * {@link DiagnosisRelatedGroupsRepository}.
+   */
   private final DiagnosisRelatedGroupsRepository drgRepository;
 
+  /**
+   * Поиск {@link DiagnosisRelatedGroups}.
+   *
+   * @param drg номер КСГ
+   * @return {@link DiagnosisRelatedGroups}
+   */
   public Optional<DiagnosisRelatedGroups> byNumberDrg(final String drg) {
-    Optional<DiagnosisRelatedGroups> byNumberDrg = drgRepository.findByNumberDrg(drg);
+    final Optional<DiagnosisRelatedGroups> byNumberDrg = drgRepository.findByNumberDrg(drg);
     if (byNumberDrg.isEmpty()) {
       throw new NotFoundException(DRG_NOT_EXISTS_BY_NAME_DRG + drg);
     }
     return byNumberDrg;
   }
 
-  protected DiagnosisRelatedGroups addNewDrg(final DiagnosisRelatedGroups diagnosisRelatedGroups) {
+  /**
+   * Добавление {@link DiagnosisRelatedGroups}.
+   *
+   * @param drg {@link DiagnosisRelatedGroups}
+   * @return {@link DiagnosisRelatedGroups}
+   * @throws BadRequestException если некорректные данные
+   *                             если {@link DiagnosisRelatedGroups} есть
+   */
+  protected DiagnosisRelatedGroups addNewDrg(final DiagnosisRelatedGroups drg) {
     if (ObjectUtils.anyNull(
-        diagnosisRelatedGroups,
-        diagnosisRelatedGroups.getNumberDrg(),
-        diagnosisRelatedGroups.getNominationDrg(),
-        diagnosisRelatedGroups.getRateRelativeIntensity(),
-        diagnosisRelatedGroups.getWageShare()
+        drg,
+        drg.getNumberDrg(),
+        drg.getNominationDrg(),
+        drg.getRateIntensity(),
+        drg.getWageShare()
     )) {
-      throw new BadRequestException(DRG_NOT_CORRECT + diagnosisRelatedGroups);
+      throw new BadRequestException(DRG_NOT_CORRECT + drg);
     }
-    if (drgRepository.findByNumberDrg(diagnosisRelatedGroups.getNumberDrg()).isPresent()) {
-      throw new BadRequestException(DRG_EXISTS + diagnosisRelatedGroups.getNumberDrg());
+    if (drgRepository.findByNumberDrg(drg.getNumberDrg()).isPresent()) {
+      throw new BadRequestException(DRG_EXISTS + drg.getNumberDrg());
     }
-    return drgRepository.save(diagnosisRelatedGroups);
+    return drgRepository.save(drg);
   }
 
-  protected DiagnosisRelatedGroups updateDrg(final DiagnosisRelatedGroups diagnosisRelatedGroups) {
+  /**
+   * Изменение {@link DiagnosisRelatedGroups}.
+   *
+   * @param drg {@link DiagnosisRelatedGroups}
+   * @return {@link DiagnosisRelatedGroups}
+   */
+  protected DiagnosisRelatedGroups updateDrg(final DiagnosisRelatedGroups drg) {
     if (ObjectUtils.anyNull(
-        diagnosisRelatedGroups,
-        diagnosisRelatedGroups.getId(),
-        diagnosisRelatedGroups.getNumberDrg(),
-        diagnosisRelatedGroups.getNominationDrg(),
-        diagnosisRelatedGroups.getRateRelativeIntensity(),
-        diagnosisRelatedGroups.getWageShare()
+        drg,
+        drg.getIdDrg(),
+        drg.getNumberDrg(),
+        drg.getNominationDrg(),
+        drg.getRateIntensity(),
+        drg.getWageShare()
     )) {
-      throw new BadRequestException(DRG_NOT_CORRECT + diagnosisRelatedGroups);
+      throw new BadRequestException(DRG_NOT_CORRECT + drg);
     }
-    if (!existsById(diagnosisRelatedGroups.getId())) {
-      throw new NotFoundException(DRG_NOT_EXISTS + diagnosisRelatedGroups.getId());
+    if (!existsById(drg.getIdDrg())) {
+      throw new NotFoundException(DRG_NOT_EXISTS + drg.getIdDrg());
     }
-    return drgRepository.save(diagnosisRelatedGroups);
+    return drgRepository.save(drg);
   }
 
-  protected boolean existsById(final Long id) {
-    return drgRepository.existsById(id);
+  /**
+   * Наличие {@link DiagnosisRelatedGroups}.
+   *
+   * @param idDrg id {@link DiagnosisRelatedGroups}
+   * @return наличие
+   */
+  protected boolean existsById(final Long idDrg) {
+    return drgRepository.existsById(idDrg);
   }
 
+  /**
+   * Удаление {@link DiagnosisRelatedGroups}.
+   *
+   * @param idDrg id {@link DiagnosisRelatedGroups}
+   * @throws BadRequestException если id не корректный
+   * @throws NotFoundException   если
+   *                             {@link DiagnosisRelatedGroups} не найден
+   */
   protected void deleteDrgById(final Long idDrg) {
     if (idDrg == null) {
       throw new BadRequestException(DRG_NOT_CORRECT);

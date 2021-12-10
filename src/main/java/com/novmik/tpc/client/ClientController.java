@@ -2,13 +2,7 @@ package com.novmik.tpc.client;
 
 import static org.springframework.http.HttpStatus.OK;
 
-import com.novmik.tpc.auth.OnUserRegistrationCompleteEvent;
-import com.novmik.tpc.auth.RegistrationRequest;
-import com.novmik.tpc.exception.UserRegistrationException;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,48 +12,72 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
+import com.novmik.tpc.auth.RegistrationRequest;
+import com.novmik.tpc.exception.UserRegistrationException;
+import lombok.RequiredArgsConstructor;
 
-@Slf4j
+/**
+ * Клиент control layer.
+ */
 @RequiredArgsConstructor
 @RequestMapping("api/v1/client")
 @PreAuthorize("hasRole('ADMIN')")
 @RestController
+@SuppressWarnings("PMD.LawOfDemeter")
 public class ClientController {
 
+  /**
+   * {@link ClientService}.
+   */
   private final ClientService clientService;
-  private final ApplicationEventPublisher applicationEventPublisher;
 
+  /**
+   * Список клиентов.
+   * Get-запрос "api/v1/client/list"
+   *
+   * @return список {@link Client}
+   */
   @GetMapping("/list")
   public ResponseEntity<List<Client>> getClients() {
     return new ResponseEntity<>(clientService.getClients(), OK);
   }
 
+  /**
+   * Регистрация.
+   * Post-запрос "api/v1/client/register"
+   *
+   * @param regRequest {@link RegistrationRequest}
+   * @return {@link Client}
+   * @throws UserRegistrationException если клиента не найдено
+   */
   @PostMapping("/register")
   public ResponseEntity<Client> registerUser(
-      @RequestBody final RegistrationRequest registrationRequest) {
-
-    return clientService.registerUser(registrationRequest)
-        .map(user -> {
-          UriComponentsBuilder urlBuilder = ServletUriComponentsBuilder.fromCurrentContextPath()
-              .path("/api/auth/registrationConfirmation");
-          OnUserRegistrationCompleteEvent onUserRegistrationCompleteEvent =
-              new OnUserRegistrationCompleteEvent(user, urlBuilder);
-          applicationEventPublisher.publishEvent(onUserRegistrationCompleteEvent);
-          log.info("Зарегистрированный пользователь [API[: " + user);
-          return new ResponseEntity<>(user, OK);
-        })
-        .orElseThrow(() -> new UserRegistrationException(registrationRequest.getEmail(),
-            "В БД отсутствует пользователь"));
+      @RequestBody final RegistrationRequest regRequest) {
+    return clientService.registerUser(regRequest)
+        .map(user -> new ResponseEntity<>(user, OK))
+        .orElseThrow(() -> new UserRegistrationException(
+            regRequest.getEmail(), "Пользователь не зарегистрирован"));
   }
 
+  /**
+   * Добавление роли клиенту.
+   * Post-запрос "api/v1/client/addrole"
+   *
+   * @param addRoleRequest {@link AddRoleToClientRequest}
+   */
   @PostMapping("/addrole")
-  public void addRoleToClient(@RequestBody final AddRoleToClientRequest addRoleToClientRequest) {
-    clientService.addRoleToClient(addRoleToClientRequest.getEmail(),
-        addRoleToClientRequest.getRoleName());
+  public void addRoleToClient(@RequestBody final AddRoleToClientRequest addRoleRequest) {
+    clientService.addRoleToClient(
+        addRoleRequest.getEmail(),
+        addRoleRequest.getRoleName());
   }
 
+  /**
+   * Удаление клиента.
+   * Delete-запрос "api/v1/client/{idClient}"
+   *
+   * @param idClient id {@link Client}
+   */
   @DeleteMapping("/{idClient}")
   public void deleteClient(@PathVariable("idClient") final Long idClient) {
     clientService.deleteClient(idClient);

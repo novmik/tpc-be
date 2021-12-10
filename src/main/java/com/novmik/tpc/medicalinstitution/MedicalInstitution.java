@@ -12,14 +12,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/*
-Таблица: Медицинская организация (МО)
-Колонки: Наименование медицинской организации,
-Коэффициент дифференциации, Уровень МО КС,
-Коэффициент уровня медицинской организации КС (КУС КС),
-Уровень МО ДС, Коэффициент уровня медицинской организации ДС (КУС ДС), Тип МО
-*/
-
+/**
+ * МО entity class.
+ * Медицинская организация
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -27,43 +23,97 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "medical_institution")
+@SuppressWarnings("PMD.CommentSize")
 public class MedicalInstitution {
 
+  /**
+   * id Медицинской организации.
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Column(name = "id")
+  private Long idMi;
+  /**
+   * Наименование субъекта РФ.
+   */
   @Column(name = "name_subject")
   private String nameSubject;
+  /**
+   * Наименование медицинской организации.
+   */
   @Column(name = "name_mi")
-  private String nameMedicalInstitution;
+  private String nameMi;
+  /**
+   * КД.
+   * Коэффициент дифференциации
+   */
   @Column(name = "differentiation_coefficient")
-  private Float differentiationCoefficient;
-  @Column(name = "level_mo_rtccf")
-  private String levelMoRtccf;
-  @Column(name = "coefficient_level_mo_rtccf")
-  private Float coefficientLevelMoRtccf;
-  @Column(name = "level_mo_dcf")
-  private String levelMoDcf;
-  @Column(name = "coefficient_level_mo_dcf")
-  private Float coefficientLevelMoDcf;
+  private Float diffCoefficient;
+  /**
+   * Уровень МО КС.
+   * Уровень медицинской организации
+   * круглосуточного стационара
+   */
+  @Column(name = "level_st")
+  private String levelSt;
+  /**
+   * КУС КС.
+   * Коэффициент уровня
+   * медицинской организации
+   * круглосуточного стационара
+   */
+  @Column(name = "coefficient_level_st")
+  private Float coefficientSt;
+  /**
+   * Уровень МО КС.
+   * Уровень медицинской организации
+   * дневного стационара
+   */
+  @Column(name = "level_ds")
+  private String levelDs;
+  /**
+   * КУС ДС.
+   * Коэффициент уровня
+   * медицинской организации
+   * дневного стационара
+   */
+  @Column(name = "coefficient_level_ds")
+  private Float coefficientDs;
+  /**
+   * Тип МО.
+   * Тип медицинской организации
+   * {@link com.novmik.tpc.typemedicalinstitution.TypeMedicalInstitution}
+   */
   @Column(name = "type_medical_institution")
-  private Integer typeMedicalInstitution;
+  private Integer typeMi;
 
+  /**
+   * Ctor.
+   *
+   * @param nameSubject наименование субъекта РФ
+   * @param nameMi наименование МО
+   * @param diffCoefficient КД
+   * @param levelSt Уровень МО КС
+   * @param coefficientSt КУС КС
+   * @param levelDs Уровень МО ДС
+   * @param coefficientDs КУС ДС
+   * @param typeMi тип МО
+   */
   public MedicalInstitution(final String nameSubject,
-      final String nameMedicalInstitution,
-      final Float differentiationCoefficient,
-      final String levelMoRtccf,
-      final Float coefficientLevelMoRtccf,
-      final String levelMoDcf,
-      final Float coefficientLevelMoDcf,
-      final Integer typeMedicalInstitution) {
+      final String nameMi,
+      final Float diffCoefficient,
+      final String levelSt,
+      final Float coefficientSt,
+      final String levelDs,
+      final Float coefficientDs,
+      final Integer typeMi) {
     this.nameSubject = nameSubject;
-    this.nameMedicalInstitution = nameMedicalInstitution;
-    this.differentiationCoefficient = differentiationCoefficient;
-    this.levelMoRtccf = levelMoRtccf;
-    this.coefficientLevelMoRtccf = coefficientLevelMoRtccf;
-    this.levelMoDcf = levelMoDcf;
-    this.coefficientLevelMoDcf = coefficientLevelMoDcf;
-    this.typeMedicalInstitution = typeMedicalInstitution;
+    this.nameMi = nameMi;
+    this.diffCoefficient = diffCoefficient;
+    this.levelSt = levelSt;
+    this.coefficientSt = coefficientSt;
+    this.levelDs = levelDs;
+    this.coefficientDs = coefficientDs;
+    this.typeMi = typeMi;
   }
 }

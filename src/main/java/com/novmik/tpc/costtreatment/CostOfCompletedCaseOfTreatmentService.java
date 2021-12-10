@@ -1,18 +1,6 @@
 package com.novmik.tpc.costtreatment;
 
-import static com.novmik.tpc.cdt.CdtConstant.DAY_CARE_FACILITY;
-import static com.novmik.tpc.cdt.CdtConstant.ROUND_THE_CLOCK_CARE_FACILITY;
-import static com.novmik.tpc.costtreatment.CostOfCompletedCaseOfTreatmentConstant.COEFFICIENT_BASE_RATE_DAY_CARE_FACILITY;
-import static com.novmik.tpc.costtreatment.CostOfCompletedCaseOfTreatmentConstant.COEFFICIENT_BASE_RATE_ROUND_THE_CLOCK_CARE_FACILITY;
-import static com.novmik.tpc.costtreatment.CostOfCompletedCaseOfTreatmentConstant.COEFFICIENT_SPECIFICITY_IS_ZERO;
-import static com.novmik.tpc.costtreatment.CostOfCompletedCaseOfTreatmentConstant.COEFFICIENT_SPECIFICITY_NOT_FEDERAL;
-import static com.novmik.tpc.costtreatment.CostOfCompletedCaseOfTreatmentConstant.DEFAULT_VALUE_CDT;
-import static com.novmik.tpc.costtreatment.CostOfCompletedCaseOfTreatmentConstant.FINANCIAL_COST_STANDARD_DAY_CARE_FACILITY;
-import static com.novmik.tpc.costtreatment.CostOfCompletedCaseOfTreatmentConstant.FINANCIAL_COST_STANDARD_ROUND_THE_CLOCK_CARE_FACILITY;
-import static com.novmik.tpc.costtreatment.CostOfCompletedCaseOfTreatmentConstant.NUMBER_DRG_INCORRECT;
-import static com.novmik.tpc.costtreatment.CostOfCompletedCaseOfTreatmentConstant.SUBJECT_ID_NUMBER_DRG_VALUE_CDT;
-import static com.novmik.tpc.costtreatment.CostOfCompletedCaseOfTreatmentConstant.VALUES_IN_TABLE_IS_NOT_EXISTS;
-
+import com.novmik.tpc.cdt.CdtConstants;
 import com.novmik.tpc.drg.DiagnosisRelatedGroups;
 import com.novmik.tpc.drg.DiagnosisRelatedGroupsService;
 import com.novmik.tpc.exception.BadRequestException;
@@ -22,180 +10,287 @@ import com.novmik.tpc.subject.Subject;
 import com.novmik.tpc.subject.SubjectService;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Locale;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-/*
-ССксг/кпг = БС х КЗксг/кпг х ((1 - Дзп) + Дзп х ПК х КД)
-БС - размер средней стоимости законченного случая лечения без учета
-коэффициента дифференциации (базовая ставка), рублей;
-КЗксг/кпг - коэффициент относительной затратоемкости по КСГ или КПГ,
-к которой отнесен данный случай госпитализации;
-Дзп - доля заработной платы и прочих расходов в структуре стоимости
-КСГ (установленное Приложением 3 к Программе значение, к которому применяется  КД);
-ПК - поправочный коэффициент оплаты КСГ или КПГ (интегрированный коэффициент,
-рассчитываемый на региональном уровне);
-КД - коэффициент дифференциации, рассчитанный в соответствии с Постановлением № 462.
-
-Поправочный коэффициент оплаты КСГ или КПГ для конкретного случая рассчитывается
-с учетом коэффициентов оплаты, установленных в субъекте Российской Федерации, по следующей формуле:
-ПК = КСксг/кпг х КУСмо х КСЛП
-КСксг/кпг - коэффициент специфики КСГ или КПГ, к которой отнесен данный случай
-госпитализации (используется в расчетах, в случае если указанный коэффициент определен
-в субъекте Российской Федерации для данной КСГ или КПГ);
-КУСмо - коэффициент уровня медицинской организации, в которой был пролечен пациент;
-КСЛП - коэффициент сложности лечения пациента (используется в расчетах,
-в случае если указанный коэффициент определен в субъекте Российской Федерации для данного случая).
-ССксг/кпг = БС х КЗксг/кпг х ((1 - Дзп) + Дзп х КСксг/кпг х КУСмо х КСЛП х КД)
-        baseRate - БС
-        coefficientOfLevel_MO - КУС
-        rateRelativeIntensity - КЗ
-        wageShare - Дзп
-        coefficientSpecificity = 1.0F - КС
-        valueCDTP - КСЛП - расчитывается на frontend'e
-        differentiationCoefficient - КД
-Тариф на оплату медицинской помощи, оказываемой федеральной медицинской организацией
-в условиях при противоопухолевой лекарственной терапии злокачественных новообразований:
-T = НФЗ х КБС х КЗксг/кпг х ((1 - Дзп) + Дзп х КД х КС х КСЛП) - для медицинской организации,
-функции и полномочия учредителей в отношении которых осуществляет Правительство Российской
-Федерации или федеральные органы исполнительной власти
-НФЗ - средний норматив финансовых затрат на единицу объема предоставления медицинской помощи
-в z-х условиях, оказываемой федеральными медицинскими организациями, установленный Программой;
-КБС - коэффициент приведения среднего норматива финансовых затрат на единицу объема предоставления
-медицинской помощи в z-х условиях к базовой ставке, исключающей влияние применяемых коэффициентов
-относительной затратоемкости и специфики оказания медицинской помощи, коэффициента дифференциации
-и коэффициента сложности лечения пациентов, принимающий значение 0,41 - для стационара
-и 0,52 - для дневного стационара;
-        financialCostStandard - НФЗ
-        coefficientBaseRate - КБС
-*/
-
+/**
+ * Стоимость одного случая госпитализации
+ * по КСГ для случаев лекарственной
+ * терапии взрослых со
+ * злокачественными новообразованиями
+ * business interface layer.
+ */
 @Slf4j
 @AllArgsConstructor
 @Service
+@SuppressWarnings({"PMD.CommentSize", "PMD.LawOfDemeter"})
 public class CostOfCompletedCaseOfTreatmentService {
 
+  /**
+   * {@link MedicalInstitutionService}.
+   */
   private final MedicalInstitutionService miService;
+  /**
+   * {@link DiagnosisRelatedGroupsService}.
+   */
   private final DiagnosisRelatedGroupsService drgService;
+  /**
+   * {@link SubjectService}.
+   */
   private final SubjectService subjectService;
 
+  /**
+   * Стоимость госпитализации для
+   * случаев лекарственной терапии.
+   *
+   * @param costRequest {@link CostTreatmentRequest}
+   * @return {@link CostTreatmentResponse}
+   * @throws BadRequestException если некорректные данные
+   */
   protected CostTreatmentResponse getCostTreatmentWithDrg(
-      final CostTreatmentRequest costTreatmentRequest) {
+      final CostTreatmentRequest costRequest) {
     if (ObjectUtils.anyNull(
-        costTreatmentRequest,
-        costTreatmentRequest.getIdMedicalInstitution(),
-        costTreatmentRequest.getNumberDrg(),
-        costTreatmentRequest.getValueCdt()
+        costRequest,
+        costRequest.getIdMi(),
+        costRequest.getNumberDrg(),
+        costRequest.getValueCdt()
     )
-        || costTreatmentRequest.getIdMedicalInstitution() <= 0
-        || StringUtils.isBlank(costTreatmentRequest.getNumberDrg())
+        || costRequest.getIdMi() <= 0
+        || StringUtils.isBlank(costRequest.getNumberDrg())
     ) {
-      throw new BadRequestException(SUBJECT_ID_NUMBER_DRG_VALUE_CDT + costTreatmentRequest);
+      throw new BadRequestException(
+          CostOfCompletedCaseOfTreatmentConstants.SUBJECT_ID_NUMBER_DRG_VALUE_CDT
+              + costRequest);
     }
-    if (costTreatmentRequest.getValueCdt() <= 0) {
-      costTreatmentRequest.setValueCdt(DEFAULT_VALUE_CDT);
+    if (costRequest.getValueCdt() <= 0) {
+      costRequest.setValueCdt(CostOfCompletedCaseOfTreatmentConstants.DEFAULT_VALUE_CDT);
     }
-    MedicalInstitution medicalInstitutionById = miService.getMedicalInstitutionById(
-        costTreatmentRequest.getIdMedicalInstitution()).orElseThrow();
-    Subject byNameSubject = subjectService.findByNameSubject(
-        medicalInstitutionById.getNameSubject()).orElseThrow();
-    DiagnosisRelatedGroups diagnosisRelatedGroups = drgService.byNumberDrg(
-        costTreatmentRequest.getNumberDrg()).orElseThrow();
+    final MedicalInstitution miById = miService.getMedicalInstitutionById(
+        costRequest.getIdMi()).orElseThrow();
+
+    final DiagnosisRelatedGroups drg = drgService.byNumberDrg(
+        costRequest.getNumberDrg()).orElseThrow();
     BigDecimal costTreatment;
-    if (medicalInstitutionById.getTypeMedicalInstitution() != 0) {
-      costTreatment = getCostTreatmentFederal(
-          costTreatmentRequest.getValueCdt(),
-          medicalInstitutionById,
-          diagnosisRelatedGroups
+    if (miById.getTypeMi() == 0) {
+      final Subject byNameSubject = subjectService.findByNameSubject(
+          miById.getNameSubject()).orElseThrow();
+      costTreatment = getCostTreatmentNotFederal(
+          costRequest.getValueCdt(),
+          miById,
+          byNameSubject,
+          drg
       );
     } else {
-      costTreatment = getCostTreatmentNotFederal(
-          costTreatmentRequest.getValueCdt(),
-          medicalInstitutionById,
-          byNameSubject,
-          diagnosisRelatedGroups
+      costTreatment = getCostTreatmentFederal(
+          costRequest.getValueCdt(),
+          miById,
+          drg
       );
+
     }
-    return new CostTreatmentResponse(costTreatment, diagnosisRelatedGroups);
+    return new CostTreatmentResponse(costTreatment, drg);
   }
 
+  /**
+   * Стоимость госпитализации для
+   * случаев лекарственной
+   * терапии не федеральных МО.
+   *
+   * <p>СС = БС*КЗ*((1 - Дзп) + Дзп*ПК*КД)
+   * БС - размер средней стоимости законченного
+   * случая лечения без учета коэффициента
+   * дифференциации (базовая ставка), рублей;
+   * КЗксг/кпг - коэффициент относительной
+   * затратоемкости по КСГ или КПГ, к которой
+   * отнесен данный случай госпитализации;
+   * Дзп - доля заработной платы и прочих
+   * расходов в структуре стоимости
+   * КСГ (установленное Приложением 3 к
+   * Программе значение, к которому
+   * применяется  КД);
+   * ПК - поправочный коэффициент оплаты
+   * КСГ или КПГ (интегрированный коэффициент,
+   * рассчитываемый на региональном уровне);
+   * КД - коэффициент дифференциации,
+   * рассчитанный в соответствии с
+   * Постановлением № 462.
+   *
+   * <p>Поправочный коэффициент оплаты КСГ
+   * или КПГ для конкретного случая
+   * рассчитывается с учетом
+   * коэффициентов оплаты, установленных в
+   * субъекте Российской Федерации, по
+   * следующей формуле:
+   *
+   * <p>ПК = КСксг/кпг х КУСмо х КСЛП
+   * КСксг/кпг - коэффициент специфики
+   * КСГ или КПГ, к которой отнесен данный
+   * случай госпитализации (используется
+   * в расчетах, в случае если указанный
+   * коэффициент определен в субъекте
+   * Российской Федерации для данной
+   * КСГ или КПГ) = 1F;
+   * КУСмо - коэффициент уровня медицинской
+   * организации, в которой был
+   * пролечен пациент;
+   * КСЛП - коэффициент сложности лечения
+   * пациента (используется в расчетах, в случае
+   * если указанный коэффициент определен в
+   * субъекте Российской Федерации для
+   * данного случая).
+   *
+   * <p>СС = БС*КЗ*((1-Дзп)+Дзп*КС*КУСмо*КСЛП*КД)
+   *
+   * @param valueCdt      значение КСЛП
+   * @param miById        {@link MedicalInstitution}
+   * @param byNameSubject {@link Subject}
+   * @param drg           {@link DiagnosisRelatedGroups}
+   * @return стоимость ЛТ
+   * @throws BadRequestException если некорректные данные
+   */
   private BigDecimal getCostTreatmentNotFederal(
       final Float valueCdt,
-      final MedicalInstitution medicalInstitutionById,
+      final MedicalInstitution miById,
       final Subject byNameSubject,
-      final DiagnosisRelatedGroups diagnosisRelatedGroups) {
-    String numberDrg = diagnosisRelatedGroups.getNumberDrg();
-    float wageShare = diagnosisRelatedGroups.getWageShare();
+      final DiagnosisRelatedGroups drg) {
+    final String numberDrg = drg.getNumberDrg();
     double baseRate;
-    float coefficientLevelMo;
-    if (numberDrg.toLowerCase().startsWith(ROUND_THE_CLOCK_CARE_FACILITY.toLowerCase())) {
-      baseRate = byNameSubject.getBaseRateRoundTheClockCareFacility();
-      coefficientLevelMo = medicalInstitutionById.getCoefficientLevelMoRtccf();
-    } else if (numberDrg.toLowerCase().startsWith(DAY_CARE_FACILITY.toLowerCase())) {
-      baseRate = byNameSubject.getBaseRateDayCareFacility();
-      coefficientLevelMo = medicalInstitutionById.getCoefficientLevelMoDcf();
+    float coefficientLevel;
+    if (numberDrg.toLowerCase(Locale.ROOT)
+        .startsWith(CdtConstants.ROUND_THE_CLOCK_CARE_FACILITY.toLowerCase(Locale.ROOT))) {
+      baseRate = byNameSubject.getBaseRateSt();
+      coefficientLevel = miById.getCoefficientSt();
+    } else if (numberDrg
+        .toLowerCase(Locale.ROOT)
+        .startsWith(CdtConstants.DAY_CARE_FACILITY.toLowerCase(Locale.ROOT))) {
+      baseRate = byNameSubject.getBaseRateDs();
+      coefficientLevel = miById.getCoefficientDs();
     } else {
-      throw new BadRequestException(NUMBER_DRG_INCORRECT + numberDrg);
-    }
-    if (ObjectUtils.anyNull(baseRate, coefficientLevelMo)) {
       throw new BadRequestException(
-          VALUES_IN_TABLE_IS_NOT_EXISTS + baseRate + "/" + coefficientLevelMo);
+          CostOfCompletedCaseOfTreatmentConstants.NUMBER_DRG_INCORRECT + numberDrg);
     }
-    BigDecimal bigDecimalWageShare = BigDecimal.valueOf(wageShare)
+    if (ObjectUtils.anyNull(baseRate, coefficientLevel)) {
+      throw new BadRequestException(
+          CostOfCompletedCaseOfTreatmentConstants.VALUES_IN_TABLE_IS_NOT_EXISTS + baseRate + "/"
+              + coefficientLevel);
+    }
+    final float wageShare = drg.getWageShare();
+    final BigDecimal bdWageShare = BigDecimal
+        .valueOf(wageShare)
         .setScale(4, RoundingMode.HALF_UP);
-    float rateRelativeIntensity = diagnosisRelatedGroups.getRateRelativeIntensity();
-    float differentiationCoefficient = medicalInstitutionById.getDifferentiationCoefficient();
-    return bigDecimalWageShare
-        .multiply(BigDecimal.valueOf(COEFFICIENT_SPECIFICITY_NOT_FEDERAL))
-        .multiply(BigDecimal.valueOf(coefficientLevelMo).setScale(2, RoundingMode.HALF_UP))
+    final float rateIntensity = drg.getRateIntensity();
+    final float diffCoefficient = miById.getDiffCoefficient();
+    return bdWageShare
+        .multiply(BigDecimal.valueOf(
+            CostOfCompletedCaseOfTreatmentConstants.COEFFICIENT_SPECIFICITY_NOT_FEDERAL))
+        .multiply(BigDecimal.valueOf(coefficientLevel).setScale(2, RoundingMode.HALF_UP))
         .multiply(BigDecimal.valueOf(valueCdt))
-        .multiply(BigDecimal.valueOf(differentiationCoefficient))
+        .multiply(BigDecimal.valueOf(diffCoefficient))
         .add(BigDecimal.ONE)
-        .subtract(bigDecimalWageShare)
+        .subtract(bdWageShare)
         .multiply(BigDecimal.valueOf(baseRate).setScale(2, RoundingMode.HALF_UP))
-        .multiply(BigDecimal.valueOf(rateRelativeIntensity).setScale(4, RoundingMode.HALF_UP))
+        .multiply(BigDecimal.valueOf(rateIntensity).setScale(4, RoundingMode.HALF_UP))
         .setScale(2, RoundingMode.HALF_UP);
   }
 
+  /**
+   * Стоимость госпитализации для
+   * случаев лекарственной
+   * терапии федеральных МО.
+   *
+   * <p>Тариф на оплату медицинской помощи,
+   * оказываемой федеральной медицинской
+   * организацией в условиях при
+   * противоопухолевой лекарственной
+   * терапии злокачественных новообразований:
+   *
+   * <p>T = НФЗ*КБС*КЗ*((1 - Дзп) + Дзп*КД*КС*КСЛП)
+   * - для медицинской организации, функции
+   * и полномочия учредителей в отношении
+   * которых осуществляет Правительство
+   * Российской Федерации или федеральные
+   * органы исполнительной власти
+   *
+   * <p>НФЗ - средний норматив финансовых
+   * затрат на единицу объема
+   * предоставления медицинской помощи
+   * в z-х условиях, оказываемой
+   * федеральными медицинскими
+   * организациями, установленный Программой;
+   *
+   * <p>КБС - коэффициент приведения
+   * среднего норматива финансовых затрат
+   * на единицу объема предоставления
+   * медицинской помощи в z-х условиях к
+   * базовой ставке, исключающей влияние
+   * применяемых коэффициентов относительной
+   * затратоемкости и специфики оказания
+   * медицинской помощи, коэффициента
+   * дифференциации и коэффициента сложности
+   * лечения пациентов, принимающий значение
+   * 0,41 - для стационара
+   * и 0,52 - для дневного стационара;
+   * financialCost - НФЗ
+   * baseRate - КБС
+   *
+   * @param valueCdt значение КСЛП
+   * @param miById   {@link MedicalInstitution}
+   * @param drg      {@link DiagnosisRelatedGroups}
+   * @return стоимость ЛТ
+   * @throws BadRequestException если некорректные данные
+   *                             если КС = 0
+   */
   private BigDecimal getCostTreatmentFederal(
       final Float valueCdt,
-      final MedicalInstitution medicalInstitutionById,
-      final DiagnosisRelatedGroups diagnosisRelatedGroups) {
-    float rateRelativeIntensity = diagnosisRelatedGroups.getRateRelativeIntensity();
-    float wageShare = diagnosisRelatedGroups.getWageShare();
-    double financialCostStandard;
-    double coefficientBaseRate;
-    String numberDrg = diagnosisRelatedGroups.getNumberDrg();
-    if (numberDrg.toLowerCase().startsWith(ROUND_THE_CLOCK_CARE_FACILITY.toLowerCase())) {
-      financialCostStandard = FINANCIAL_COST_STANDARD_ROUND_THE_CLOCK_CARE_FACILITY;
-      coefficientBaseRate = COEFFICIENT_BASE_RATE_ROUND_THE_CLOCK_CARE_FACILITY;
-    } else if (numberDrg.toLowerCase().startsWith(DAY_CARE_FACILITY.toLowerCase())) {
-      financialCostStandard = FINANCIAL_COST_STANDARD_DAY_CARE_FACILITY;
-      coefficientBaseRate = COEFFICIENT_BASE_RATE_DAY_CARE_FACILITY;
+      final MedicalInstitution miById,
+      final DiagnosisRelatedGroups drg) {
+    final float rateIntensity = drg.getRateIntensity();
+    final float coeffSpecificity = CoefficientSpecificityUtils
+        .calculate(rateIntensity, miById.getTypeMi());
+    if (coeffSpecificity == 0) {
+      throw new BadRequestException(
+          CostOfCompletedCaseOfTreatmentConstants.COEFFICIENT_SPECIFICITY_IS_ZERO);
+    }
+    final String numberDrg = drg.getNumberDrg();
+    double financialCost;
+    double baseRate;
+    if (numberDrg
+        .toLowerCase(Locale.ROOT)
+        .startsWith(CdtConstants.ROUND_THE_CLOCK_CARE_FACILITY
+            .toLowerCase(Locale.ROOT))) {
+      financialCost = CostOfCompletedCaseOfTreatmentConstants
+          .FINANCIAL_COST_STANDARD_ROUND_THE_CLOCK_CARE_FACILITY;
+      baseRate = CostOfCompletedCaseOfTreatmentConstants
+          .COEFFICIENT_BASE_RATE_ROUND_THE_CLOCK_CARE_FACILITY;
+    } else if (numberDrg
+        .toLowerCase(Locale.ROOT)
+        .startsWith(CdtConstants.DAY_CARE_FACILITY
+            .toLowerCase(Locale.ROOT))) {
+      financialCost = CostOfCompletedCaseOfTreatmentConstants
+          .FINANCIAL_COST_STANDARD_DAY_CARE_FACILITY;
+      baseRate = CostOfCompletedCaseOfTreatmentConstants.COEFFICIENT_BASE_RATE_DAY_CARE_FACILITY;
     } else {
-      throw new BadRequestException(NUMBER_DRG_INCORRECT + numberDrg);
+      throw new BadRequestException(
+          CostOfCompletedCaseOfTreatmentConstants.NUMBER_DRG_INCORRECT + numberDrg);
     }
-    BigDecimal bigDecimalWageShare = BigDecimal.valueOf(wageShare)
+    final float wageShare = drg.getWageShare();
+    final BigDecimal bdWageShare = BigDecimal
+        .valueOf(wageShare)
         .setScale(4, RoundingMode.HALF_UP);
-    float differentiationCoefficient = medicalInstitutionById.getDifferentiationCoefficient();
-    float coefficientSpecificity = CoefficientSpecificity.calculate(
-        rateRelativeIntensity,
-        medicalInstitutionById.getTypeMedicalInstitution());
-    if (coefficientSpecificity == 0) {
-      throw new BadRequestException(COEFFICIENT_SPECIFICITY_IS_ZERO);
-    }
-    return bigDecimalWageShare
-        .multiply(BigDecimal.valueOf(coefficientSpecificity))
+    final float diffCoefficient = miById.getDiffCoefficient();
+    return bdWageShare
+        .multiply(BigDecimal.valueOf(coeffSpecificity))
         .multiply(BigDecimal.valueOf(valueCdt))
-        .multiply(BigDecimal.valueOf(differentiationCoefficient))
+        .multiply(BigDecimal.valueOf(diffCoefficient))
         .add(BigDecimal.ONE)
-        .subtract(bigDecimalWageShare)
-        .multiply(BigDecimal.valueOf(financialCostStandard).setScale(2, RoundingMode.HALF_UP))
-        .multiply(BigDecimal.valueOf(coefficientBaseRate).setScale(2, RoundingMode.HALF_UP))
-        .multiply(BigDecimal.valueOf(rateRelativeIntensity).setScale(4, RoundingMode.HALF_UP))
+        .subtract(bdWageShare)
+        .multiply(BigDecimal.valueOf(financialCost).setScale(2, RoundingMode.HALF_UP))
+        .multiply(BigDecimal.valueOf(baseRate).setScale(2, RoundingMode.HALF_UP))
+        .multiply(BigDecimal.valueOf(rateIntensity).setScale(4, RoundingMode.HALF_UP))
         .setScale(2, RoundingMode.HALF_UP);
   }
 }

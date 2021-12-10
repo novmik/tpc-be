@@ -1,13 +1,13 @@
 package com.novmik.tpc.cdt;
 
-import static com.novmik.tpc.cdt.CdtConstant.CARE_FACILITY_MUST_BE;
-import static com.novmik.tpc.cdt.CdtConstant.CARE_FACILITY_NOT_CORRECT;
-import static com.novmik.tpc.cdt.CdtConstant.CDT_EXISTS;
-import static com.novmik.tpc.cdt.CdtConstant.CDT_NOT_CORRECT;
-import static com.novmik.tpc.cdt.CdtConstant.CDT_VALUE_NOT_CORRECT;
-import static com.novmik.tpc.cdt.CdtConstant.DAY_CARE_FACILITY;
-import static com.novmik.tpc.cdt.CdtConstant.ROUND_THE_CLOCK_CARE_FACILITY;
-import static com.novmik.tpc.subject.SubjectConstant.SUBJECT_NOT_EXISTS;
+import static com.novmik.tpc.cdt.CdtConstants.CARE_FACILITY_MUST_BE;
+import static com.novmik.tpc.cdt.CdtConstants.CARE_FACILITY_NOT_CORRECT;
+import static com.novmik.tpc.cdt.CdtConstants.CDT_EXISTS;
+import static com.novmik.tpc.cdt.CdtConstants.CDT_NOT_CORRECT;
+import static com.novmik.tpc.cdt.CdtConstants.CDT_VALUE_NOT_CORRECT;
+import static com.novmik.tpc.cdt.CdtConstants.DAY_CARE_FACILITY;
+import static com.novmik.tpc.cdt.CdtConstants.ROUND_THE_CLOCK_CARE_FACILITY;
+import static com.novmik.tpc.subject.SubjectConstants.SUBJECT_NOT_EXISTS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
@@ -163,7 +163,7 @@ class CoefficientDifficultyTreatingServiceTest {
     );
     given(subjectService.findByNameSubject(cdt.getNameSubject())).willReturn(Optional.of(subject));
     given(caseCdtService.save(cdt.getCaseCdt().getNominationCaseCdt())).willReturn(caseCdt);
-    given(cdtRepository.existByCaseCdtIdAndNameSubjectAndCareFacility(cdt.getCaseCdt().getId(),
+    given(cdtRepository.existByCaseCdtIdAndNameSubjectAndCareFacility(cdt.getCaseCdt().getIdCaseCdt(),
         cdt.getNameSubject(), cdt.getCareFacility())).willReturn(true);
     assertThatThrownBy(() -> underTest.addNewCoefficientDifficultyTreating(cdt))
         .isInstanceOf(BadRequestException.class)
@@ -182,7 +182,7 @@ class CoefficientDifficultyTreatingServiceTest {
     );
     assertThatThrownBy(() -> underTest.addNewCoefficientDifficultyTreating(cdt))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(CDT_VALUE_NOT_CORRECT + cdt.getValueNominationCaseCdt());
+        .hasMessage(CDT_VALUE_NOT_CORRECT + cdt.getValue());
     verify(cdtRepository, never()).save(cdt);
   }
 

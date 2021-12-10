@@ -12,14 +12,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/*
-Таблица: Перечень групп заболеваний,
-в том числе клинико-статистических (КСГ) или клинико-профильных групп заболеваний (КПГ)
-с указанием коэффициентов  относительной затратоемкости КСГ или КПГ
-Колонки: КСГ, Наименование КСГ, Коэффициент относительной затратоемкости (Кз),
-Доля заработной платы (Дзп)
-*/
-
+/**
+ * Перечень групп заболеваний entity class,
+ * в том числе клинико-статистических (КСГ)
+ * или клинико-профильных групп
+ * заболеваний (КПГ)
+ * с указанием коэффициентов
+ * относительной затратоемкости КСГ или КПГ.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -29,25 +29,52 @@ import lombok.ToString;
 @Table(name = "diagnosis_related_groups")
 public class DiagnosisRelatedGroups {
 
+  /**
+   * id КСГ.
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Column(name = "id")
+  private Long idDrg;
+  /**
+   * КСГ.
+   */
   @Column(name = "number_drg")
   private String numberDrg;
+  /**
+   * Наименование КСГ.
+   */
   @Column(name = "nomination_drg")
   private String nominationDrg;
+  /**
+   * Кз.
+   * (Коэффициент относительной
+   * затратоемкости)
+   */
   @Column(name = "rate_relative_intensity")
-  private Float rateRelativeIntensity;
+  private Float rateIntensity;
+  /**
+   * Дзп.
+   * (Доля заработной платы)
+   */
   @Column(name = "wage_share")
   private Float wageShare;
 
+  /**
+   * Ctor.
+   *
+   * @param numberDrg     КСГ
+   * @param nominationDrg наименование КСГ
+   * @param rateIntensity Кз
+   * @param wageShare     Дзп
+   */
   public DiagnosisRelatedGroups(final String numberDrg,
       final String nominationDrg,
-      final Float rateRelativeIntensity,
+      final Float rateIntensity,
       final Float wageShare) {
     this.numberDrg = numberDrg;
     this.nominationDrg = nominationDrg;
-    this.rateRelativeIntensity = rateRelativeIntensity;
+    this.rateIntensity = rateIntensity;
     this.wageShare = wageShare;
   }
 }

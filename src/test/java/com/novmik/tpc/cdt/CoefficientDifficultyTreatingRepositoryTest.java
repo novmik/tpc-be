@@ -1,6 +1,6 @@
 package com.novmik.tpc.cdt;
 
-import static com.novmik.tpc.cdt.CdtConstant.ROUND_THE_CLOCK_CARE_FACILITY;
+import static com.novmik.tpc.cdt.CdtConstants.ROUND_THE_CLOCK_CARE_FACILITY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
@@ -38,7 +38,7 @@ class CoefficientDifficultyTreatingRepositoryTest {
     cdt = underTest.save(cdt);
     List<CoefficientDifficultyTreating> allByNameSubjectAndCareFacility = underTest
         .findAllByNameSubjectAndCareFacility(cdt.getNameSubject(), cdt.getCareFacility());
-    assertThat(cdt.getId()).isNotNull();
+    assertThat(cdt.getIdCdt()).isNotNull();
     assertThat(allByNameSubjectAndCareFacility.size()).isEqualTo(1);
   }
 
@@ -55,7 +55,7 @@ class CoefficientDifficultyTreatingRepositoryTest {
     cdt = underTest.save(cdt);
     boolean existByCaseCdtIdAndNameSubjectAndCareFacility = underTest
         .existByCaseCdtIdAndNameSubjectAndCareFacility(
-            caseCdt.getId(), cdt.getNameSubject(), cdt.getCareFacility());
+            caseCdt.getIdCaseCdt(), cdt.getNameSubject(), cdt.getCareFacility());
     assertThat(existByCaseCdtIdAndNameSubjectAndCareFacility).isTrue();
   }
 

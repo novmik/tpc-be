@@ -1,10 +1,10 @@
 package com.novmik.tpc.medicalinstitution;
 
-import static com.novmik.tpc.medicalinstitution.MedicalInstitutionConstant.MEDICAL_INSTITUTIONS_NOT_EXISTS;
-import static com.novmik.tpc.medicalinstitution.MedicalInstitutionConstant.MEDICAL_INSTITUTIONS_NOT_EXISTS_BY_ID_SUBJECT;
-import static com.novmik.tpc.medicalinstitution.MedicalInstitutionConstant.MEDICAL_INSTITUTION_EXISTS;
-import static com.novmik.tpc.medicalinstitution.MedicalInstitutionConstant.MEDICAL_INSTITUTION_NOT_CORRECT;
-import static com.novmik.tpc.subject.SubjectConstant.SUBJECT_NOT_EXISTS;
+import static com.novmik.tpc.medicalinstitution.MedicalInstitutionConstants.MEDICAL_INSTITUTIONS_NOT_EXISTS;
+import static com.novmik.tpc.medicalinstitution.MedicalInstitutionConstants.MEDICAL_INSTITUTIONS_NOT_EXISTS_BY_ID_SUBJECT;
+import static com.novmik.tpc.medicalinstitution.MedicalInstitutionConstants.MEDICAL_INSTITUTION_EXISTS;
+import static com.novmik.tpc.medicalinstitution.MedicalInstitutionConstants.MEDICAL_INSTITUTION_NOT_CORRECT;
+import static com.novmik.tpc.subject.SubjectConstants.SUBJECT_NOT_EXISTS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -72,10 +72,10 @@ class MedicalInstitutionServiceTest {
         2F,
         0
     );
-    given(medicalInstitutionRepository.findById(medicalInstitution.getId())).willReturn(
+    given(medicalInstitutionRepository.findById(medicalInstitution.getIdMi())).willReturn(
         Optional.of(medicalInstitution));
-    underTest.getMedicalInstitutionById(medicalInstitution.getId());
-    verify(medicalInstitutionRepository).findById(medicalInstitution.getId());
+    underTest.getMedicalInstitutionById(medicalInstitution.getIdMi());
+    verify(medicalInstitutionRepository).findById(medicalInstitution.getIdMi());
   }
 
   @Test
@@ -123,12 +123,12 @@ class MedicalInstitutionServiceTest {
         2F,
         0
     );
-    given(medicalInstitutionRepository.findByNameMedicalInstitutionAndNameSubject(
-        medicalInstitution.getNameMedicalInstitution(),
+    given(medicalInstitutionRepository.findByNameMiAndNameSubject(
+        medicalInstitution.getNameMi(),
         medicalInstitution.getNameSubject())).willReturn(Optional.of(medicalInstitution));
     assertThatThrownBy(() -> underTest.addNewMedicalInstitution(medicalInstitution))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(MEDICAL_INSTITUTION_EXISTS + medicalInstitution.getNameMedicalInstitution());
+        .hasMessage(MEDICAL_INSTITUTION_EXISTS + medicalInstitution.getNameMi());
     verify(medicalInstitutionRepository, never()).save(medicalInstitution);
   }
 
@@ -145,8 +145,8 @@ class MedicalInstitutionServiceTest {
         2F,
         0
     );
-    given(medicalInstitutionRepository.findByNameMedicalInstitutionAndNameSubject(
-        medicalInstitution.getNameMedicalInstitution(),
+    given(medicalInstitutionRepository.findByNameMiAndNameSubject(
+        medicalInstitution.getNameMi(),
         medicalInstitution.getNameSubject())).willReturn(Optional.empty());
     given(subjectService.findByNameSubject(medicalInstitution.getNameSubject())).willReturn(
         Optional.empty());
@@ -169,7 +169,7 @@ class MedicalInstitutionServiceTest {
         2F,
         0
     );
-    given(medicalInstitutionRepository.existsById(medicalInstitution.getId())).willReturn(true);
+    given(medicalInstitutionRepository.existsById(medicalInstitution.getIdMi())).willReturn(true);
     underTest.updateMedicalInstitution(medicalInstitution);
     verify(medicalInstitutionRepository).save(medicalInstitution);
   }
@@ -196,10 +196,10 @@ class MedicalInstitutionServiceTest {
         2F,
         0
     );
-    given(medicalInstitutionRepository.existsById(medicalInstitution.getId())).willReturn(false);
+    given(medicalInstitutionRepository.existsById(medicalInstitution.getIdMi())).willReturn(false);
     assertThatThrownBy(() -> underTest.updateMedicalInstitution(medicalInstitution))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(MEDICAL_INSTITUTIONS_NOT_EXISTS + medicalInstitution.getId());
+        .hasMessage(MEDICAL_INSTITUTIONS_NOT_EXISTS + medicalInstitution.getIdMi());
     verify(medicalInstitutionRepository, never()).save(medicalInstitution);
   }
 

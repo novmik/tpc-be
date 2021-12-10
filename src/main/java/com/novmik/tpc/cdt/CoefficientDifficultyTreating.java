@@ -14,12 +14,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/*
-Таблица: Коэффициент сложности лечения пациентов
-стационара (КСЛП) / CoefficientOfDifficultyInTreatingPatients
-Колонки: Номер случая из БД КСЛП, Имя Субъекта РФ, Значение КСЛП
-*/
-
+/**
+ * КСЛП.
+ * (Коэффициент сложности лечения
+ * пациентов стационара)
+ * Coefficient Of Difficulty
+ * In Treating Patients
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -29,26 +30,51 @@ import lombok.ToString;
 @Table(name = "coefficient_difficulty_treating")
 public class CoefficientDifficultyTreating {
 
+  /**
+   * id КСЛП.
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Column(name = "id")
+  private Long idCdt;
+  /**
+   * Случай КСЛП.
+   */
   @OneToOne
   @JoinColumn(name = "nomination_case_cdt_id")
   private CaseCdt caseCdt;
+  /**
+   * Наименование субъекта РФ.
+   */
   @Column(name = "name_subject")
   private String nameSubject;
+  /**
+   * Значение КСЛП.
+   */
   @Column(name = "value_nomination_case_cdt")
-  private Float valueNominationCaseCdt;
+  private Float value;
+  /**
+   * Стационар.
+   * (Круглосуточный или Дневной)
+   */
   @Column(name = "care_facility")
   private String careFacility;
 
+  /**
+   * Ctor.
+   *
+   * @param caseCdt сучай КСЛП {@link CaseCdt}
+   * @param nameSubject имя субъекта РФ
+   * @param value значение КСЛП
+   * @param careFacility стационар
+   */
   public CoefficientDifficultyTreating(final CaseCdt caseCdt,
       final String nameSubject,
-      final Float valueNominationCaseCdt,
+      final Float value,
       final String careFacility) {
     this.caseCdt = caseCdt;
     this.nameSubject = nameSubject;
-    this.valueNominationCaseCdt = valueNominationCaseCdt;
+    this.value = value;
     this.careFacility = careFacility;
   }
 }

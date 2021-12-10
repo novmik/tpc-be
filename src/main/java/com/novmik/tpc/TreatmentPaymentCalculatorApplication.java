@@ -9,16 +9,30 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+/**
+ * Spring Boot application startup class.
+ * Main entry point
+ */
 @SpringBootApplication
 public class TreatmentPaymentCalculatorApplication {
 
-  public static void main(String[] args) {
+  /**
+   * Main.
+
+   * @param args Command line arguments
+   */
+  public static void main(final String[] args) {
     SpringApplication.run(TreatmentPaymentCalculatorApplication.class, args);
   }
 
+  /**
+   * CORS configuration.
+
+   * @return CorsFilter
+   */
   @Bean
   public CorsFilter corsFilter() {
-    CorsConfiguration corsConfiguration = new CorsConfiguration();
+    final CorsConfiguration corsConfiguration = new CorsConfiguration();
     corsConfiguration.setAllowCredentials(true);
     corsConfiguration.setAllowedOrigins(List.of("http://localhost:4200"));
     corsConfiguration.setAllowedHeaders(
@@ -29,10 +43,12 @@ public class TreatmentPaymentCalculatorApplication {
         Arrays.asList("Origin", "Content-Type", "Accept", "Authorization",
             "Access-Control-Allow-Origin", "Access-Control-Allow-Origin",
             "Access-Control-Allow-Credentials"));
-    corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-    UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource =
+    corsConfiguration.setAllowedMethods(Arrays.asList(
+        "GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    final UrlBasedCorsConfigurationSource urlBasedCors =
         new UrlBasedCorsConfigurationSource();
-    urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
-    return new CorsFilter(urlBasedCorsConfigurationSource);
+    urlBasedCors.registerCorsConfiguration(
+        "/**", corsConfiguration);
+    return new CorsFilter(urlBasedCors);
   }
 }

@@ -6,15 +6,31 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * {@link DiagnosisPrice} business interface layer.
+ */
 @AllArgsConstructor
 @Service
+@SuppressWarnings("PMD.LawOfDemeter")
 public class DiagnosisPriceService {
 
-  private final DiagnosisPriceRepository diagnosisPriceRepository;
+  /**
+   * {@link DiagnosisPriceRepository}.
+   */
+  private final DiagnosisPriceRepository dpRepository;
+  /**
+   * {@link SubjectService}.
+   */
   private final SubjectService subjectService;
 
+  /**
+   * Список {@link DiagnosisPrice}.
+   *
+   * @param idSubject id {@link Subject}
+   * @return список {@link DiagnosisPrice}
+   */
   protected List<DiagnosisPrice> getDiagnosisPriceList(final Long idSubject) {
-    Subject subjectById = subjectService.getSubjectById(idSubject).orElseThrow();
-    return diagnosisPriceRepository.findAllByNameSubject(subjectById.getNameSubject());
+    final Subject subjectById = subjectService.getSubjectById(idSubject).orElseThrow();
+    return dpRepository.findAllByNameSubject(subjectById.getNameSubject());
   }
 }

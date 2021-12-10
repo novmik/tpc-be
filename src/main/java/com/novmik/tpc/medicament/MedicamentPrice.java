@@ -12,11 +12,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/*
-Таблица: Цена на лекарственные препараты
-Колонки: МНН, дозировка, Цена руб. с НДС
-*/
-
+/**
+ * Цена на ЛП entity class.
+ * (Лекарственный препарат)
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -26,16 +25,38 @@ import lombok.ToString;
 @Table(name = "medicament_price")
 public class MedicamentPrice {
 
+  /**
+   * id цены на ЛП.
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Column(name = "id")
+  private Long idMp;
+  /**
+   * МНН.
+   * (Международное непатентованное
+   * наименование)
+   */
   @Column(name = "inn")
   private String inn;
+  /**
+   * Выпускаемая дозировка ЛП.
+   */
   @Column(name = "dosage")
   private Float dosage;
+  /**
+   * Цена ЛП с НДС.
+   */
   @Column(name = "price_with_VAT")
   private Double priceWithVat;
 
+  /**
+   * Ctor.
+   *
+   * @param inn          МНН
+   * @param dosage       выпускаемая дозировка ЛП
+   * @param priceWithVat цена ЛП с НДС
+   */
   public MedicamentPrice(final String inn, final Float dosage, final Double priceWithVat) {
     this.inn = inn;
     this.dosage = dosage;

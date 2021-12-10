@@ -1,6 +1,6 @@
 package com.novmik.tpc.security;
 
-import static com.novmik.tpc.security.WebSecurityConfigConstant.PUBLIC_URLS;
+import static com.novmik.tpc.security.SecurityConstants.PUBLIC_URLS;
 
 import com.novmik.tpc.client.CustomUserDetailsService;
 import lombok.AllArgsConstructor;
@@ -17,7 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 @Profile("!dev")
 @AllArgsConstructor
 @EnableWebSecurity(debug = true)
@@ -27,9 +26,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
     prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private final CustomUserDetailsService userDetailsService;
+  private final CustomUserDetailsService uDService;
   private final JwtAuthenticationEntryPoint jwtEntryPoint;
-  private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+  private final JwtAccessDeniedHandler accessDenied;
 
   @Bean
   @Override
@@ -38,15 +37,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Override
-  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(userDetailsService)
+  protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+    auth.userDetailsService(uDService)
         .passwordEncoder(passwordEncoder());
   }
 
   @Override
-  protected void configure(HttpSecurity http) throws Exception {
+  protected void configure(final HttpSecurity http) throws Exception {
     http.cors().and().csrf().disable()
-        .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
+        .exceptionHandling().accessDeniedHandler(accessDenied)
         .authenticationEntryPoint(jwtEntryPoint).and()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
         .authorizeRequests().antMatchers(PUBLIC_URLS).permitAll().and()
