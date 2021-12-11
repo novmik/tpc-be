@@ -23,7 +23,7 @@ public class RegistrationRequest {
    */
   private String firstName;
   /**
-   * Фамилия
+   * Фамилия.
    */
   private String lastName;
   /**

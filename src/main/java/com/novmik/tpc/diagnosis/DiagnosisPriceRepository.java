@@ -1,8 +1,8 @@
 package com.novmik.tpc.diagnosis;
 
+import com.novmik.tpc.subject.Subject;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.novmik.tpc.subject.Subject;
 
 /**
  * {@link DiagnosisPrice} data

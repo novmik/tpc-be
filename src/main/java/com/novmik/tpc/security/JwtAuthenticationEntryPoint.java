@@ -3,6 +3,8 @@ package com.novmik.tpc.security;
 import static com.novmik.tpc.security.SecurityConstants.FORBIDDEN_MESSAGE;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.novmik.tpc.exception.HttpResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Locale;
@@ -12,8 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.stereotype.Component;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.novmik.tpc.exception.HttpResponse;
 
 /**
  * Вызывается при попытке

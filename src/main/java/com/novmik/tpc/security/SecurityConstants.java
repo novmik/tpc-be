@@ -19,7 +19,7 @@ public class SecurityConstants {
   /**
    * PUBLIC_URLS.
    */
-  public static final String[] PUBLIC_URLS = {
+  protected static final String[] PUBLIC_URLS = {
       "/api/v1/auth/login/**", "/api/v1/auth/refresh"};
   /**
    * TOKEN_REQUEST_HEADER_PREFIX.

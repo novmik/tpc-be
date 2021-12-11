@@ -130,7 +130,7 @@ public class ClientService {
    *
    * @param idClient id {@link Client}
    * @throws BadRequestException если некорректные данные
-   * @throws NotFoundException если {@link Client} не найден
+   * @throws NotFoundException   если {@link Client} не найден
    */
   public void deleteClient(final Long idClient) {
     if (idClient == null || idClient < 1) {
@@ -145,10 +145,10 @@ public class ClientService {
   /**
    * Добавление роли клиенту.
    *
-   * @param email почта {@link Client}
+   * @param email    почта {@link Client}
    * @param roleName наименование роли
    * @throws NotFoundException если {@link Client} или
-   * {@link Role} не найден
+   *                           {@link Role} не найден
    */
   public void addRoleToClient(final String email, final String roleName) {
     final Optional<Client> clientByEmail = this.getClient(email);
@@ -163,7 +163,7 @@ public class ClientService {
   /**
    * Удаление токена обновления.
    *
-   * @param currentUser {@link CustomUserDetails}
+   * @param currentUser  {@link CustomUserDetails}
    * @param refreshToken токен обновления
    */
   public void logoutUser(final CustomUserDetails currentUser, final String refreshToken) {

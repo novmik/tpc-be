@@ -23,7 +23,7 @@ public class PrivilegeService {
   /**
    * {@link PrivilegeRepository}.
    */
-  private final PrivilegeRepository pRepository;
+  private final PrivilegeRepository privilegeRepo;
 
   /**
    * Список {@link Privilege}.
@@ -31,7 +31,7 @@ public class PrivilegeService {
    * @return список {@link Privilege}
    */
   public List<Privilege> getAllPrivilege() {
-    return pRepository.findAll();
+    return privilegeRepo.findAll();
   }
 
   /**
@@ -41,7 +41,7 @@ public class PrivilegeService {
    * @return {@link Privilege}
    */
   public Optional<Privilege> findByPrivilegeName(final String privilegeName) {
-    return pRepository.findByName(privilegeName);
+    return privilegeRepo.findByName(privilegeName);
   }
 
   /**
@@ -51,7 +51,7 @@ public class PrivilegeService {
    * @return наличие
    */
   public boolean existById(final Long idPrivilege) {
-    return pRepository.existsById(idPrivilege);
+    return privilegeRepo.existsById(idPrivilege);
   }
 
   /**
@@ -61,7 +61,7 @@ public class PrivilegeService {
    * @return {@link Privilege}
    */
   protected Privilege save(final Privilege privilege) {
-    return pRepository.save(privilege);
+    return privilegeRepo.save(privilege);
   }
 
   /**
@@ -99,6 +99,6 @@ public class PrivilegeService {
     if (!existById(idPrivilege)) {
       throw new NotFoundException(PRIVILEGE_NOT_EXISTS);
     }
-    pRepository.deleteById(idPrivilege);
+    privilegeRepo.deleteById(idPrivilege);
   }
 }

@@ -30,8 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
    *
    * @param email почта клиента
    * @return {@link UserDetails}
-   * @throws UsernameNotFoundException
-   * если пользователь не найден
+   * @throws UsernameNotFoundException если пользователь не найден
    */
   @Override
   public UserDetails loadUserByUsername(final String email) {

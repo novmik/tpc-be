@@ -39,8 +39,12 @@ public final class BodySurfaceAreaService {
 
   private static Map<String, Double> allMethods(final int height,
       final double weight) {
-    if (height < BodySurfaceAreaConstants.MIN_HEIGHT || height > BodySurfaceAreaConstants.MAX_HEIGHT
-        || weight < BodySurfaceAreaConstants.MIN_WEIGHT || weight > BodySurfaceAreaConstants.MAX_WEIGHT) {
+    if (
+        height < BodySurfaceAreaConstants.MIN_HEIGHT
+        || height > BodySurfaceAreaConstants.MAX_HEIGHT
+        || weight < BodySurfaceAreaConstants.MIN_WEIGHT
+        || weight > BodySurfaceAreaConstants.MAX_WEIGHT
+    ) {
       throw new BadRequestException(
           BSA_NOT_CORRECT_2_OPTIONS + height + "/" + weight);
     }
@@ -48,7 +52,10 @@ public final class BodySurfaceAreaService {
   }
 
   private static Map<String, Double> allMethods(final double weight) {
-    if (weight < BodySurfaceAreaConstants.MIN_WEIGHT || weight > BodySurfaceAreaConstants.MAX_WEIGHT) {
+    if (
+        weight < BodySurfaceAreaConstants.MIN_WEIGHT
+        || weight > BodySurfaceAreaConstants.MAX_WEIGHT
+    ) {
       throw new BadRequestException(BSA_NOT_CORRECT_1_OPTION + weight);
     }
     return BodySurfaceAreaUtils.allMethods(weight);

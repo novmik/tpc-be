@@ -91,10 +91,10 @@ public class RoleService {
   /**
    * Добавление полномочия роли.
    *
-   * @param roleName наименование роли
+   * @param roleName      наименование роли
    * @param privilegeName наименование полномочия
    * @throws NotFoundException если роль
-   * или полномочия не найдены
+   *                           или полномочия не найдены
    */
   public void addPrivilegeToRole(final String roleName, final String privilegeName) {
     final Optional<Role> roleByName = findRoleByName(roleName);

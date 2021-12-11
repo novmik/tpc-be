@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CoefficientDifficultyTreatingController {
 
   /**
-   * КСЛП-сервис {@link CoefficientDifficultyTreatingService}
+   * КСЛП-сервис {@link CoefficientDifficultyTreatingService}.
    */
   private final CoefficientDifficultyTreatingService cdtService;
 
