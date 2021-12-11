@@ -7,10 +7,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+/**
+ * Настройка Spring Security.
+ */
 @Profile("dev")
 @Slf4j
 @EnableWebSecurity(debug = true)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@SuppressWarnings({"PMD.LawOfDemeter", "PMD.AtLeastOneConstructor"})
 public class WebSecurityConfigDev extends WebSecurityConfigurerAdapter {
 
   @Override

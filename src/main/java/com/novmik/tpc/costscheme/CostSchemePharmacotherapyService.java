@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
  */
 @AllArgsConstructor
 @Service
+@SuppressWarnings({"PMD.LongVariable", "PMD.LawOfDemeter", "PMD.CommentSize"})
 public class CostSchemePharmacotherapyService {
 
   /**

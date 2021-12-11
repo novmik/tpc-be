@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 @Transactional
-@SuppressWarnings("PMD.LawOfDemeter")
+@SuppressWarnings({"PMD.LawOfDemeter", "PMD.CommentSize"})
 public class CustomUserDetailsService implements UserDetailsService {
 
   /**

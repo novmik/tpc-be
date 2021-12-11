@@ -17,6 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Настройка Spring Security.
+ */
 @Profile("!dev")
 @AllArgsConstructor
 @EnableWebSecurity(debug = true)
@@ -24,10 +27,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
     securedEnabled = true,
     jsr250Enabled = true,
     prePostEnabled = true)
+@SuppressWarnings("PMD.LawOfDemeter")
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private final CustomUserDetailsService uDService;
+  /**
+   * {@link CustomUserDetailsService}.
+   */
+  private final CustomUserDetailsService cudService;
+  /**
+   * {@link JwtAuthenticationEntryPoint}.
+   */
   private final JwtAuthenticationEntryPoint jwtEntryPoint;
+  /**
+   * {@link JwtAccessDeniedHandler}.
+   */
   private final JwtAccessDeniedHandler accessDenied;
 
   @Bean
@@ -38,7 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(uDService)
+    auth.userDetailsService(cudService)
         .passwordEncoder(passwordEncoder());
   }
 
@@ -54,11 +67,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
   }
 
+  /**
+   * Фильтр каждого запроса
+   * (для получения токена из заголовка).
+   *
+   * @return {@link JwtAuthenticationFilter}
+   */
   @Bean
   public JwtAuthenticationFilter jwtAuthenticationFilter() {
     return new JwtAuthenticationFilter();
   }
 
+  /**
+   * Кодирование паролей.
+   *
+   * @return {@link BCryptPasswordEncoder}
+   */
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();

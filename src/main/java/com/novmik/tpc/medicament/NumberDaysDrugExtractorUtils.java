@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
+@SuppressWarnings("PMD.LawOfDemeter")
 public final class NumberDaysDrugExtractorUtils {
 
   /**

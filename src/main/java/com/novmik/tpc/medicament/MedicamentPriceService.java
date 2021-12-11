@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
  */
 @AllArgsConstructor
 @Service
+@SuppressWarnings("PMD.LawOfDemeter")
 public class MedicamentPriceService {
 
   /**

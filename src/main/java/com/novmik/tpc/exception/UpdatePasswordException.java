@@ -1,9 +1,14 @@
 package com.novmik.tpc.exception;
 
+import java.io.Serial;
+
 /**
  * Обновление пароля Exception.
  */
 public class UpdatePasswordException extends RuntimeException {
+
+  @Serial
+  private static final long serialVersionUID = 8694256901669597873L;
 
   /**
    * Ctor.

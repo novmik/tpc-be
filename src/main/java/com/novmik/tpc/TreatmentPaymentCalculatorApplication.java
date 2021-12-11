@@ -14,6 +14,7 @@ import org.springframework.web.filter.CorsFilter;
  * Main entry point
  */
 @SpringBootApplication
+@SuppressWarnings("PMD.AtLeastOneConstructor")
 public class TreatmentPaymentCalculatorApplication {
 
   /**
