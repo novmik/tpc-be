@@ -1,6 +1,5 @@
 package com.novmik.tpc.security;
 
-import static com.novmik.tpc.security.SecurityConstants.FORBIDDEN_MESSAGE;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +28,8 @@ public class JwtAuthenticationEntryPoint extends Http403ForbiddenEntryPoint {
   public void commence(final HttpServletRequest request, final HttpServletResponse response,
       final AuthenticationException exception) throws IOException {
     final HttpResponse httpResponse = new HttpResponse(FORBIDDEN.value(), FORBIDDEN,
-        FORBIDDEN.getReasonPhrase().toUpperCase(Locale.ROOT), FORBIDDEN_MESSAGE);
+        FORBIDDEN.getReasonPhrase().toUpperCase(Locale.ROOT),
+        "Вам необходимо войти в систему, чтобы получить доступ к этой странице.");
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.setStatus(FORBIDDEN.value());
     try (OutputStream outputStream = response.getOutputStream()) {

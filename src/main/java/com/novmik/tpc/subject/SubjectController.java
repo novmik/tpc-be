@@ -63,7 +63,7 @@ public class SubjectController {
    * @return {@link Subject}
    */
   @GetMapping("/{idSubject}")
-  public ResponseEntity<Optional<Subject>> getSubjectById(
+  public ResponseEntity<Subject> getSubjectById(
       @PathVariable("idSubject") final Long idSubject) {
     return new ResponseEntity<>(subjectService.getSubjectById(idSubject), OK);
   }

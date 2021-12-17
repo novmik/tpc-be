@@ -12,11 +12,6 @@ public class ClientConstants {
   public static final String CLIENT_NOT_FOUND_BY_EMAIL =
       "Пользователя не найдено с электронной почтой: ";
   /**
-   * EMAIL_ADDRESS_EXISTS.
-   */
-  public static final String EMAIL_ADDRESS_EXISTS =
-      "Запись уже существует с электронной почтой: ";
-  /**
    * CLIENT_NOT_CORRECT.
    */
   public static final String CLIENT_NOT_CORRECT =

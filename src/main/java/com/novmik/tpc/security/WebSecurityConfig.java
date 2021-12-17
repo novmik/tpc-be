@@ -1,7 +1,5 @@
 package com.novmik.tpc.security;
 
-import static com.novmik.tpc.security.SecurityConstants.PUBLIC_URLS;
-
 import com.novmik.tpc.client.CustomUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +27,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
     prePostEnabled = true)
 @SuppressWarnings("PMD.LawOfDemeter")
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+  /**
+   * PUBLIC_URLS.
+   */
+  protected static final String[] PUBLIC_URLS = {
+      "/api/v1/auth/login/**", "/api/v1/auth/refresh"};
 
   /**
    * {@link CustomUserDetailsService}.

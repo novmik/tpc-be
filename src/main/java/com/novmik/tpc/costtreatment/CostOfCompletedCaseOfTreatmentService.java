@@ -1,6 +1,6 @@
 package com.novmik.tpc.costtreatment;
 
-import com.novmik.tpc.cdt.CdtConstants;
+import com.novmik.tpc.cdt.CoefficientDifficultyTreatingService;
 import com.novmik.tpc.drg.DiagnosisRelatedGroups;
 import com.novmik.tpc.drg.DiagnosisRelatedGroupsService;
 import com.novmik.tpc.exception.BadRequestException;
@@ -29,6 +29,31 @@ import org.springframework.stereotype.Service;
 @Service
 @SuppressWarnings({"PMD.CommentSize", "PMD.LawOfDemeter"})
 public class CostOfCompletedCaseOfTreatmentService {
+
+  /**
+   * DEFAULT_VALUE_CDT.
+   */
+  public static final float DEFAULT_VALUE_CDT = 1F;
+  /**
+   * COEFFICIENT_SPECIFICITY_NOT_FEDERAL.
+   */
+  public static final float COEFFICIENT_SPECIFICITY_NOT_FEDERAL = 1F;
+  /**
+   * COEFFICIENT_BASE_RATE_ROUND_THE_CLOCK_CARE_FACILITY.
+   */
+  public static final double COEFFICIENT_BASE_RATE_ROUND_THE_CLOCK_CARE_FACILITY = 0.41;
+  /**
+   * COEFFICIENT_BASE_RATE_DAY_CARE_FACILITY.
+   */
+  public static final double COEFFICIENT_BASE_RATE_DAY_CARE_FACILITY = 0.52;
+  /**
+   * FINANCIAL_COST_STANDARD_ROUND_THE_CLOCK_CARE_FACILITY.
+   */
+  public static final double FINANCIAL_COST_STANDARD_ROUND_THE_CLOCK_CARE_FACILITY = 56_680.90;
+  /**
+   * FINANCIAL_COST_STANDARD_DAY_CARE_FACILITY.
+   */
+  public static final double FINANCIAL_COST_STANDARD_DAY_CARE_FACILITY = 25_617.30;
 
   /**
    * {@link MedicalInstitutionService}.
@@ -63,15 +88,13 @@ public class CostOfCompletedCaseOfTreatmentService {
         || StringUtils.isBlank(costRequest.getNumberDrg())
     ) {
       throw new BadRequestException(
-          CostOfCompletedCaseOfTreatmentConstants.SUBJECT_ID_NUMBER_DRG_VALUE_CDT
-              + costRequest);
+          "Субъект id/Номер КСГ/Значение КСГ указаны неверно: " + costRequest);
     }
     if (costRequest.getValueCdt() <= 0) {
-      costRequest.setValueCdt(CostOfCompletedCaseOfTreatmentConstants.DEFAULT_VALUE_CDT);
+      costRequest.setValueCdt(DEFAULT_VALUE_CDT);
     }
     final MedicalInstitution miById = miService.getMedicalInstitutionById(
-        costRequest.getIdMi()).orElseThrow();
-
+        costRequest.getIdMi());
     final DiagnosisRelatedGroups drg = drgService.byNumberDrg(
         costRequest.getNumberDrg()).orElseThrow();
     BigDecimal costTreatment;
@@ -161,22 +184,23 @@ public class CostOfCompletedCaseOfTreatmentService {
     double baseRate;
     float coefficientLevel;
     if (numberDrg.toLowerCase(Locale.ROOT)
-        .startsWith(CdtConstants.ROUND_THE_CLOCK_CARE_FACILITY.toLowerCase(Locale.ROOT))) {
+        .startsWith(CoefficientDifficultyTreatingService
+            .ROUND_THE_CLOCK_CARE_FACILITY.toLowerCase(Locale.ROOT))) {
       baseRate = byNameSubject.getBaseRateSt();
       coefficientLevel = miById.getCoefficientSt();
     } else if (numberDrg
         .toLowerCase(Locale.ROOT)
-        .startsWith(CdtConstants.DAY_CARE_FACILITY.toLowerCase(Locale.ROOT))) {
+        .startsWith(CoefficientDifficultyTreatingService
+            .DAY_CARE_FACILITY.toLowerCase(Locale.ROOT))) {
       baseRate = byNameSubject.getBaseRateDs();
       coefficientLevel = miById.getCoefficientDs();
     } else {
       throw new BadRequestException(
-          CostOfCompletedCaseOfTreatmentConstants.NUMBER_DRG_INCORRECT + numberDrg);
+          "Номер КСГ не верный: " + numberDrg);
     }
     if (ObjectUtils.anyNull(baseRate, coefficientLevel)) {
-      throw new BadRequestException(
-          CostOfCompletedCaseOfTreatmentConstants.VALUES_IN_TABLE_IS_NOT_EXISTS + baseRate + "/"
-              + coefficientLevel);
+      throw new BadRequestException(String.format(
+          "Значения БС/КУС в таблице отсутствуют: %s/%s", baseRate, coefficientLevel));
     }
     final float wageShare = drg.getWageShare();
     final BigDecimal bdWageShare = BigDecimal
@@ -185,8 +209,7 @@ public class CostOfCompletedCaseOfTreatmentService {
     final float rateIntensity = drg.getRateIntensity();
     final float diffCoefficient = miById.getDiffCoefficient();
     return bdWageShare
-        .multiply(BigDecimal.valueOf(
-            CostOfCompletedCaseOfTreatmentConstants.COEFFICIENT_SPECIFICITY_NOT_FEDERAL))
+        .multiply(BigDecimal.valueOf(COEFFICIENT_SPECIFICITY_NOT_FEDERAL))
         .multiply(BigDecimal.valueOf(coefficientLevel).setScale(2, RoundingMode.HALF_UP))
         .multiply(BigDecimal.valueOf(valueCdt))
         .multiply(BigDecimal.valueOf(diffCoefficient))
@@ -252,30 +275,26 @@ public class CostOfCompletedCaseOfTreatmentService {
     final float coeffSpecificity = CoefficientSpecificityUtils
         .calculate(rateIntensity, miById.getTypeMi());
     if (coeffSpecificity == 0) {
-      throw new BadRequestException(
-          CostOfCompletedCaseOfTreatmentConstants.COEFFICIENT_SPECIFICITY_IS_ZERO);
+      throw new BadRequestException("Значение Коэффициента специфики не определено");
     }
     final String numberDrg = drg.getNumberDrg();
     double financialCost;
     double baseRate;
     if (numberDrg
         .toLowerCase(Locale.ROOT)
-        .startsWith(CdtConstants.ROUND_THE_CLOCK_CARE_FACILITY
+        .startsWith(CoefficientDifficultyTreatingService.ROUND_THE_CLOCK_CARE_FACILITY
             .toLowerCase(Locale.ROOT))) {
-      financialCost = CostOfCompletedCaseOfTreatmentConstants
-          .FINANCIAL_COST_STANDARD_ROUND_THE_CLOCK_CARE_FACILITY;
-      baseRate = CostOfCompletedCaseOfTreatmentConstants
-          .COEFFICIENT_BASE_RATE_ROUND_THE_CLOCK_CARE_FACILITY;
+      financialCost = FINANCIAL_COST_STANDARD_ROUND_THE_CLOCK_CARE_FACILITY;
+      baseRate = COEFFICIENT_BASE_RATE_ROUND_THE_CLOCK_CARE_FACILITY;
     } else if (numberDrg
         .toLowerCase(Locale.ROOT)
-        .startsWith(CdtConstants.DAY_CARE_FACILITY
+        .startsWith(CoefficientDifficultyTreatingService.DAY_CARE_FACILITY
             .toLowerCase(Locale.ROOT))) {
-      financialCost = CostOfCompletedCaseOfTreatmentConstants
-          .FINANCIAL_COST_STANDARD_DAY_CARE_FACILITY;
-      baseRate = CostOfCompletedCaseOfTreatmentConstants.COEFFICIENT_BASE_RATE_DAY_CARE_FACILITY;
+      financialCost = FINANCIAL_COST_STANDARD_DAY_CARE_FACILITY;
+      baseRate = COEFFICIENT_BASE_RATE_DAY_CARE_FACILITY;
     } else {
       throw new BadRequestException(
-          CostOfCompletedCaseOfTreatmentConstants.NUMBER_DRG_INCORRECT + numberDrg);
+          "Номер КСГ не верный: " + numberDrg);
     }
     final float wageShare = drg.getWageShare();
     final BigDecimal bdWageShare = BigDecimal

@@ -1,13 +1,7 @@
 package com.novmik.tpc.cdt;
 
-import static com.novmik.tpc.cdt.CdtConstants.CARE_FACILITY_MUST_BE;
-import static com.novmik.tpc.cdt.CdtConstants.CARE_FACILITY_NOT_CORRECT;
-import static com.novmik.tpc.cdt.CdtConstants.CDT_EXISTS;
-import static com.novmik.tpc.cdt.CdtConstants.CDT_NOT_CORRECT;
-import static com.novmik.tpc.cdt.CdtConstants.CDT_VALUE_NOT_CORRECT;
-import static com.novmik.tpc.cdt.CdtConstants.DAY_CARE_FACILITY;
-import static com.novmik.tpc.cdt.CdtConstants.ROUND_THE_CLOCK_CARE_FACILITY;
-import static com.novmik.tpc.subject.SubjectConstants.SUBJECT_NOT_EXISTS;
+import static com.novmik.tpc.cdt.CoefficientDifficultyTreatingService.DAY_CARE_FACILITY;
+import static com.novmik.tpc.cdt.CoefficientDifficultyTreatingService.ROUND_THE_CLOCK_CARE_FACILITY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
@@ -54,8 +48,8 @@ class CoefficientDifficultyTreatingServiceTest {
     );
     long id = 10;
     String careFacility = "testCareFacility";
-    given(subjectService.getSubjectById(id)).willReturn(Optional.of(subject));
-    underTest.getCareFacilityCdtpListBySubjectId(id, careFacility);
+    given(subjectService.getSubjectById(id)).willReturn(subject);
+    underTest.getCareFacilityCdtListBySubjectId(id, careFacility);
     verify(cdtRepository).findAllByNameSubjectAndCareFacility(subject.getNameSubject(),
         careFacility);
   }
@@ -65,10 +59,10 @@ class CoefficientDifficultyTreatingServiceTest {
     long id = 10;
     String careFacility = "testCareFacility";
     when(subjectService.getSubjectById(id)).thenThrow(
-        new NotFoundException(SUBJECT_NOT_EXISTS + id));
-    assertThatThrownBy(() -> underTest.getCareFacilityCdtpListBySubjectId(id, careFacility))
+        new NotFoundException("Субъекта с таким id/именем/названием не существует: " + id));
+    assertThatThrownBy(() -> underTest.getCareFacilityCdtListBySubjectId(id, careFacility))
         .isInstanceOf(NotFoundException.class)
-        .hasMessage(SUBJECT_NOT_EXISTS + id);
+        .hasMessage("Субъекта с таким id/именем/названием не существует: " + id);
     verify(cdtRepository, never()).findAllByNameSubjectAndCareFacility("Test NameSubject",
         careFacility);
   }
@@ -138,7 +132,7 @@ class CoefficientDifficultyTreatingServiceTest {
     CoefficientDifficultyTreating cdt = new CoefficientDifficultyTreating();
     assertThatThrownBy(() -> underTest.addNewCoefficientDifficultyTreating(cdt))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(CDT_NOT_CORRECT + cdt);
+        .hasMessage("Некорректные данные о КСЛП." + cdt);
     verify(cdtRepository, never()).save(cdt);
   }
 
@@ -167,7 +161,7 @@ class CoefficientDifficultyTreatingServiceTest {
         cdt.getNameSubject(), cdt.getCareFacility())).willReturn(true);
     assertThatThrownBy(() -> underTest.addNewCoefficientDifficultyTreating(cdt))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(CDT_EXISTS + caseCdt);
+        .hasMessage("КСЛП с таким id/именем/названием уже существует: " + caseCdt);
     verify(cdtRepository, never()).save(cdt);
   }
 
@@ -182,7 +176,7 @@ class CoefficientDifficultyTreatingServiceTest {
     );
     assertThatThrownBy(() -> underTest.addNewCoefficientDifficultyTreating(cdt))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(CDT_VALUE_NOT_CORRECT + cdt.getValue());
+        .hasMessage("Некорректное значение КСЛП: " + cdt.getValue());
     verify(cdtRepository, never()).save(cdt);
   }
 
@@ -197,8 +191,11 @@ class CoefficientDifficultyTreatingServiceTest {
     );
     assertThatThrownBy(() -> underTest.addNewCoefficientDifficultyTreating(cdt))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(CARE_FACILITY_NOT_CORRECT + cdt.getCareFacility() + ". " + CARE_FACILITY_MUST_BE
-            + ROUND_THE_CLOCK_CARE_FACILITY + " или " + DAY_CARE_FACILITY);
+        .hasMessage(String.format(
+            "Некорректное значение стационара: %s. Должно быть: %s или %s",
+            cdt.getCareFacility(),
+            ROUND_THE_CLOCK_CARE_FACILITY,
+            DAY_CARE_FACILITY));
     verify(cdtRepository, never()).save(cdt);
   }
 
@@ -214,7 +211,7 @@ class CoefficientDifficultyTreatingServiceTest {
     given(subjectService.findByNameSubject(cdt.getNameSubject())).willReturn(Optional.empty());
     assertThatThrownBy(() -> underTest.addNewCoefficientDifficultyTreating(cdt))
         .isInstanceOf(NotFoundException.class)
-        .hasMessage(SUBJECT_NOT_EXISTS + cdt.getNameSubject());
+        .hasMessage("Субъекта с таким id/именем/названием не существует: " + cdt.getNameSubject());
     verify(cdtRepository, never()).save(cdt);
   }
 

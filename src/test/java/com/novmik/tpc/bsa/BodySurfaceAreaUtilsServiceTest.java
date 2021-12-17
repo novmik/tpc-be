@@ -1,8 +1,5 @@
 package com.novmik.tpc.bsa;
 
-import static com.novmik.tpc.bsa.BodySurfaceAreaConstants.BSA_NOT_CORRECT_1_OPTION;
-import static com.novmik.tpc.bsa.BodySurfaceAreaConstants.BSA_NOT_CORRECT_2_OPTIONS;
-import static com.novmik.tpc.bsa.BodySurfaceAreaConstants.BSA_REQUEST_NOT_CORRECT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -30,7 +27,8 @@ class BodySurfaceAreaUtilsServiceTest {
     BodySurfaceAreaRequest bsaRequest = new BodySurfaceAreaRequest(null, -70.0);
     assertThatThrownBy(() -> BodySurfaceAreaService.allMethods(bsaRequest))
         .isInstanceOf(BadRequestException.class)
-        .hasMessageContaining(BSA_NOT_CORRECT_1_OPTION);
+        .hasMessage(String.format(
+            "Некорректный параметр(вес) ППТ: %s", bsaRequest.getWeight()));
   }
 
   @Test
@@ -38,7 +36,7 @@ class BodySurfaceAreaUtilsServiceTest {
     BodySurfaceAreaRequest bsaRequest = new BodySurfaceAreaRequest(170, 0.0);
     assertThatThrownBy(() -> BodySurfaceAreaService.allMethods(bsaRequest))
         .isInstanceOf(BadRequestException.class)
-        .hasMessageContaining(BSA_NOT_CORRECT_2_OPTIONS);
+        .hasMessageContaining("Некорректные параметры(рост или вес) ППТ: ");
   }
 
   @Test
@@ -46,7 +44,7 @@ class BodySurfaceAreaUtilsServiceTest {
     BodySurfaceAreaRequest bsaRequest = new BodySurfaceAreaRequest();
     assertThatThrownBy(() -> BodySurfaceAreaService.allMethods(bsaRequest))
         .isInstanceOf(BadRequestException.class)
-        .hasMessageContaining(BSA_REQUEST_NOT_CORRECT);
+        .hasMessageContaining("Некорректные параметры(рост или вес): ");
   }
 
   @Test
@@ -54,7 +52,7 @@ class BodySurfaceAreaUtilsServiceTest {
     BodySurfaceAreaRequest bsaRequest = new BodySurfaceAreaRequest(170, null);
     assertThatThrownBy(() -> BodySurfaceAreaService.allMethods(bsaRequest))
         .isInstanceOf(BadRequestException.class)
-        .hasMessageContaining(BSA_REQUEST_NOT_CORRECT);
+        .hasMessageContaining("Некорректные параметры(рост или вес): ");
   }
 
 

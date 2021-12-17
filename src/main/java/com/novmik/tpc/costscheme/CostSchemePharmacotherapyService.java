@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.SortedMap;
 import java.util.stream.Collectors;
@@ -28,7 +29,9 @@ import org.springframework.stereotype.Service;
  */
 @AllArgsConstructor
 @Service
-@SuppressWarnings({"PMD.LongVariable", "PMD.LawOfDemeter", "PMD.CommentSize"})
+@SuppressWarnings({"PMD.LawOfDemeter",
+    "PMD.CommentSize",
+    "DataflowAnomalyAnalysis"})
 public class CostSchemePharmacotherapyService {
 
   /**
@@ -49,42 +52,30 @@ public class CostSchemePharmacotherapyService {
    */
   protected CostSchemePharmacotherapyResponse getCostSchemePharmacotherapy(
       final CostSchemePharmacotherapyRequest costSchemeRequest) {
-    if (ObjectUtils.allNotNull(
-        costSchemeRequest.getMedicamentList(),
-        costSchemeRequest.getRegionalMarkup(),
-        costSchemeRequest.getWeight(),
-        costSchemeRequest.getBsa()
-    )
-        && costSchemeRequest.getRegionalMarkup() > 0
-        && costSchemeRequest.getWeight() > 0
-        && costSchemeRequest.getBsa() > 0
+    CostSchemePharmacotherapyResponse costResponse;
+    if (ObjectUtils.allNotNull(costSchemeRequest.getMedicamentList())
+        && checkingRequestParameters(costSchemeRequest)
     ) {
-      return getCostSchemePharmacotherapy(
+      costResponse = getCostSchemePharmacotherapy(
           costSchemeRequest.getMedicamentList(),
           costSchemeRequest.getRegionalMarkup(),
           costSchemeRequest.getWeight(),
           costSchemeRequest.getBsa()
       );
-    }
-    if (ObjectUtils.allNotNull(
-        costSchemeRequest.getCodeScheme(),
-        costSchemeRequest.getRegionalMarkup(),
-        costSchemeRequest.getWeight(),
-        costSchemeRequest.getBsa()
-    )
+    } else if (ObjectUtils.allNotNull(costSchemeRequest.getCodeScheme())
         && StringUtils.isNotBlank(costSchemeRequest.getCodeScheme())
-        && costSchemeRequest.getRegionalMarkup() > 0
-        && costSchemeRequest.getWeight() > 0
-        && costSchemeRequest.getBsa() > 0
+        && checkingRequestParameters(costSchemeRequest)
     ) {
-      return getCostSchemePharmacotherapy(
+      costResponse = getCostSchemePharmacotherapy(
           costSchemeRequest.getCodeScheme(),
           costSchemeRequest.getRegionalMarkup(),
           costSchemeRequest.getWeight(),
           costSchemeRequest.getBsa()
       );
+    } else {
+      throw new BadRequestException(COST_REQUEST_INCORRECT + costSchemeRequest);
     }
-    throw new BadRequestException(COST_REQUEST_INCORRECT + costSchemeRequest);
+    return costResponse;
   }
 
   /**
@@ -127,48 +118,43 @@ public class CostSchemePharmacotherapyService {
       final Double weight,
       final Double bsa
   ) {
-    final List<MedicamentPriceWithPackages> medsPrice =
-        new ArrayList<>();
+    final List<MedicamentPriceWithPackages> medsPrice = new ArrayList<>();
     BigDecimal costScheme = BigDecimal.ZERO;
     for (final Medicament medicament : medicamentList) {
-      final BigDecimal requiredDose = CalculatorDosageUtils
-          .getRequiredDose(medicament, weight, bsa);
+      final BigDecimal requiredDose =
+          CalculatorDosageUtils.getRequiredDose(medicament, weight, bsa);
       medicament.setRequiredDose(requiredDose);
-      List<MedicamentPrice> medicalPriceList = medPriceService
-          .getMedicalPriceList(
-              StringUtils.capitalize(medicament.getInnMedicament()));
+      List<MedicamentPrice> medicalPriceList = medPriceService.getMedicalPriceList(
+          StringUtils.capitalize(medicament.getInnMedicament()));
       medicalPriceList = medicalPriceList
           .stream()
           .sorted(Comparator.comparing(MedicamentPrice::getDosage).reversed())
           .toList();
-      final List<MedicamentPriceWithPackages> medsPriceZeroPackages =
+      final List<MedicamentPriceWithPackages> medsPriceTemp =
           MedicamentPriceWithPackages
-              .fromMedicamentPriceToWithQuantityPackages(
-              medicalPriceList, 0);
-      medsPrice.addAll(medsPriceZeroPackages);
-      final List<Float> dosagesMeds = medsPriceZeroPackages
+              .fromMedicamentPriceToWithQuantityPackages(medicalPriceList, 0);
+      medsPrice.addAll(medsPriceTemp);
+      final List<Float> dosagesMeds = medsPriceTemp
           .stream()
           .map(MedicamentPrice::getDosage)
           .sorted(Comparator.reverseOrder())
           .collect(Collectors.toList());
-      final SortedMap<Double, Map<Float, Integer>> mapResidual =
-          CalculatorResidualUtils.getMapResidual(dosagesMeds, requiredDose);
-      final Map<Float, Integer> requiredDosePackage =
-          mapResidual.get(mapResidual.firstKey());
-      for (final Float dose : requiredDosePackage.keySet()) {
-        final int quantityPackage = requiredDosePackage.get(dose);
-        final Optional<MedicamentPriceWithPackages> oMedsPriceWithPackages =
-            medsPriceZeroPackages
+      final SortedMap<Double, Map<Float, Integer>> mapResidual = CalculatorResidualUtils
+          .getMapResidual(dosagesMeds, requiredDose);
+      final Map<Float, Integer> dosePackage = mapResidual.get(mapResidual.firstKey());
+      for (final Entry<Float, Integer> entry : dosePackage.entrySet()) {
+        final Optional<MedicamentPriceWithPackages> oMedsPrice =
+            medsPriceTemp
                 .stream()
-                .filter(medPrice -> medPrice.getDosage().equals(dose))
+                .filter(medPrice -> medPrice.getDosage().equals(entry.getKey()))
                 .findFirst();
-        if (oMedsPriceWithPackages.isEmpty()) {
+        if (oMedsPrice.isEmpty()) {
           costScheme = BigDecimal.ZERO;
           break;
         }
-        oMedsPriceWithPackages.get().setQuantityPackage(quantityPackage);
-        final Double priceWithVat =
-            oMedsPriceWithPackages.get().getPriceWithVat();
+        final int quantityPackage = entry.getValue();
+        oMedsPrice.get().setQuantityPackage(quantityPackage);
+        final Double priceWithVat = oMedsPrice.get().getPriceWithVat();
         costScheme = costScheme.add(BigDecimal
             .valueOf(quantityPackage * priceWithVat * regionalMarkup)
             .setScale(5, RoundingMode.HALF_UP));
@@ -179,5 +165,16 @@ public class CostSchemePharmacotherapyService {
         medicamentList,
         medsPrice
     );
+  }
+
+  private boolean checkingRequestParameters(
+      final CostSchemePharmacotherapyRequest costSchemeRequest) {
+    return ObjectUtils.allNotNull(
+        costSchemeRequest.getRegionalMarkup(),
+        costSchemeRequest.getWeight(),
+        costSchemeRequest.getBsa()
+    ) && costSchemeRequest.getRegionalMarkup() > 0
+        && costSchemeRequest.getWeight() > 0
+        && costSchemeRequest.getBsa() > 0;
   }
 }

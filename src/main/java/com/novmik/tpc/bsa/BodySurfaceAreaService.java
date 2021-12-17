@@ -1,9 +1,5 @@
 package com.novmik.tpc.bsa;
 
-import static com.novmik.tpc.bsa.BodySurfaceAreaConstants.BSA_NOT_CORRECT_1_OPTION;
-import static com.novmik.tpc.bsa.BodySurfaceAreaConstants.BSA_NOT_CORRECT_2_OPTIONS;
-import static com.novmik.tpc.bsa.BodySurfaceAreaConstants.BSA_REQUEST_NOT_CORRECT;
-
 import com.novmik.tpc.exception.BadRequestException;
 import java.util.Map;
 import org.springframework.stereotype.Service;
@@ -16,6 +12,23 @@ import org.springframework.stereotype.Service;
 public final class BodySurfaceAreaService {
 
   /**
+   * MIN_HEIGHT.
+   */
+  public static final int MIN_HEIGHT = 55;
+  /**
+   * MAX_HEIGHT.
+   */
+  public static final int MAX_HEIGHT = 500;
+  /**
+   * MIN_WEIGHT.
+   */
+  public static final int MIN_WEIGHT = 10;
+  /**
+   * MAX_WEIGHT.
+   */
+  public static final int MAX_WEIGHT = 1000;
+
+  /**
    * Коллекция ППТ.
    *
    * @param bsaRequest Запрос ППТ {@link BodySurfaceAreaRequest}
@@ -24,7 +37,8 @@ public final class BodySurfaceAreaService {
    */
   public static Map<String, Double> allMethods(final BodySurfaceAreaRequest bsaRequest) {
     if (bsaRequest == null || bsaRequest.getWeight() == null) {
-      throw new BadRequestException(BSA_REQUEST_NOT_CORRECT + bsaRequest);
+      throw new BadRequestException(String.format(
+          "Некорректные параметры(рост или вес): %s", bsaRequest));
     }
     Map<String, Double> allMethods;
     if (bsaRequest.getHeight() == null) {
@@ -40,23 +54,24 @@ public final class BodySurfaceAreaService {
   private static Map<String, Double> allMethods(final int height,
       final double weight) {
     if (
-        height < BodySurfaceAreaConstants.MIN_HEIGHT
-        || height > BodySurfaceAreaConstants.MAX_HEIGHT
-        || weight < BodySurfaceAreaConstants.MIN_WEIGHT
-        || weight > BodySurfaceAreaConstants.MAX_WEIGHT
+        height < MIN_HEIGHT
+        || height > MAX_HEIGHT
+        || weight < MIN_WEIGHT
+        || weight > MAX_WEIGHT
     ) {
-      throw new BadRequestException(
-          BSA_NOT_CORRECT_2_OPTIONS + height + "/" + weight);
+      throw new BadRequestException(String.format(
+          "Некорректные параметры(рост или вес) ППТ: %s/%s", height, weight));
     }
     return BodySurfaceAreaUtils.allMethods(height, weight);
   }
 
   private static Map<String, Double> allMethods(final double weight) {
     if (
-        weight < BodySurfaceAreaConstants.MIN_WEIGHT
-        || weight > BodySurfaceAreaConstants.MAX_WEIGHT
+        weight < MIN_WEIGHT
+        || weight > MAX_WEIGHT
     ) {
-      throw new BadRequestException(BSA_NOT_CORRECT_1_OPTION + weight);
+      throw new BadRequestException(String.format(
+          "Некорректный параметр(вес) ППТ: %s", weight));
     }
     return BodySurfaceAreaUtils.allMethods(weight);
   }

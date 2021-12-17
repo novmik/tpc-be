@@ -31,7 +31,7 @@ public class SchemePharmacotherapyController {
    * @return СЛТ {@link SchemePharmacotherapy}
    */
   @GetMapping("/{codeScheme}")
-  public ResponseEntity<Optional<SchemePharmacotherapy>> getSchemePharmacotherapy(
+  public ResponseEntity<SchemePharmacotherapy> getSchemePharmacotherapy(
       @PathVariable("codeScheme") final String codeScheme) {
     return new ResponseEntity<>(spService.findByCodeScheme(codeScheme), OK);
   }

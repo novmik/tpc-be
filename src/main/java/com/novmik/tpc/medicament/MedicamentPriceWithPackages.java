@@ -23,24 +23,6 @@ public class MedicamentPriceWithPackages extends MedicamentPrice {
   private Integer quantityPackage;
 
   /**
-   * Ctor.
-   *
-   * @param idMp            id {@link MedicamentPrice}
-   * @param inn             МНН
-   * @param dosage          дозировка ЛП
-   * @param priceWithVat    цена ЛП с НДС
-   * @param quantityPackage кол-во упаковок ЛП
-   */
-  public MedicamentPriceWithPackages(final Long idMp,
-      final String inn,
-      final Float dosage,
-      final Double priceWithVat,
-      final Integer quantityPackage) {
-    super(idMp, inn, dosage, priceWithVat);
-    this.quantityPackage = quantityPackage;
-  }
-
-  /**
    * Список ЛП с кол-ом упаковок.
    *
    * @param medicamentsPrice список {@link MedicamentPrice}
@@ -52,11 +34,26 @@ public class MedicamentPriceWithPackages extends MedicamentPrice {
       final Integer quantityPackage) {
     return medicamentsPrice.stream()
         .map(medicamentPrice -> new MedicamentPriceWithPackages(
-            medicamentPrice.getIdMp(),
-            medicamentPrice.getInn(),
-            medicamentPrice.getDosage(),
-            medicamentPrice.getPriceWithVat(),
+            medicamentPrice,
             quantityPackage)
         ).collect(Collectors.toList());
+  }
+
+  /**
+   * Ctor.
+   *
+   * @param medicamentPrice {@link MedicamentPrice}
+   * @param quantityPackage кол-во упаковок ЛП
+   */
+  public MedicamentPriceWithPackages(
+      final MedicamentPrice medicamentPrice,
+      final Integer quantityPackage) {
+    super(
+        medicamentPrice.getIdMp(),
+        medicamentPrice.getInn(),
+        medicamentPrice.getDosage(),
+        medicamentPrice.getPriceWithVat()
+    );
+    this.quantityPackage = quantityPackage;
   }
 }

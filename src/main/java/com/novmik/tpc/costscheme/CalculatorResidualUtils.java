@@ -1,24 +1,26 @@
 package com.novmik.tpc.costscheme;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;
 
 /**
  * Калькулятор остатка ЛП.
  */
 @Component
+@SuppressWarnings({"PMD.CommentSize", "PMD.UseConcurrentHashMap", "DataflowAnomalyAnalysis"})
 public final class CalculatorResidualUtils {
 
   /**
-   * {@link SortedMap} Остаток лекарства ->
+   * {@link SortedMap} Остаток ЛП ->
    * {Необходимая дозировка -> Кол-во упаковок}.
    *
-   * @param dosagesMeds  список доступных дозировок
+   * @param dosagesMeds    список доступных дозировок
+   *                       sort от max к min
    * @param bdRequiredDose необходимая дозировка
    * @return {@link SortedMap}
    */
@@ -26,17 +28,13 @@ public final class CalculatorResidualUtils {
       final List<Float> dosagesMeds,
       final BigDecimal bdRequiredDose) {
     final SortedMap<Double, Map<Float, Integer>> mapResidual = new TreeMap<>();
-    final Map<Float, Integer> dosePackage = new ConcurrentHashMap<>();
+    Map<Float, Integer> tempMap;
+    final Map<Float, Integer> dosePackage = new HashMap<>();
     double requiredDose = bdRequiredDose.doubleValue();
     for (final Float dosage : dosagesMeds) {
       if (requiredDose >= dosage) {
         final int quantityPackage = (int) (requiredDose / dosage);
-        if (dosePackage.containsKey(dosage)) {
-          dosePackage.replace(dosage,
-              dosePackage.get(dosage) + quantityPackage);
-        } else {
-          dosePackage.put(dosage, quantityPackage);
-        }
+        dosePackage.merge(dosage, quantityPackage, Integer::sum);
         requiredDose %= dosage;
         if (requiredDose == 0) {
           mapResidual.put(requiredDose, dosePackage);
@@ -45,14 +43,8 @@ public final class CalculatorResidualUtils {
       }
       final double fissionExcess = dosage - requiredDose;
       final int quantityPackage = (int) Math.ceil(requiredDose / dosage);
-      final Map<Float, Integer> tempMap =
-          new ConcurrentHashMap<>(dosePackage);
-      if (tempMap.containsKey(dosage)) {
-        tempMap.replace(dosage,
-            tempMap.get(dosage) + quantityPackage);
-      } else {
-        tempMap.put(dosage, quantityPackage);
-      }
+      tempMap = new HashMap<>(dosePackage);
+      tempMap.merge(dosage, quantityPackage, Integer::sum);
       mapResidual.put(fissionExcess, tempMap);
     }
     return mapResidual;

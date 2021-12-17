@@ -17,6 +17,6 @@ public class UpdatePasswordException extends RuntimeException {
    * @param message сообщение
    */
   public UpdatePasswordException(final String user, final String message) {
-    super(String.format("Couldn't update password for [%s]: [%s])", user, message));
+    super(String.format("Не удалось обновить пароль для [%s]: [%s]", user, message));
   }
 }

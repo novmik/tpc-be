@@ -53,6 +53,7 @@ public class RoleController {
 
   /**
    * Добавление полномочия роли.
+   * Post-запрос "api/v1/role/addprivilege"
    *
    * @param privilegeToRole {@link AddPrivilegeToRoleRequest}
    */

@@ -1,10 +1,5 @@
 package com.novmik.tpc.role;
 
-import static com.novmik.tpc.role.RoleConstants.ROLE_EXISTS;
-import static com.novmik.tpc.role.RoleConstants.ROLE_NOT_CORRECT;
-import static com.novmik.tpc.role.RoleConstants.ROLE_NOT_EXISTS;
-import static com.novmik.tpc.role.RoleConstants.ROLE_OR_PRIVILEGE_NOT_EXISTS;
-
 import com.novmik.tpc.exception.BadRequestException;
 import com.novmik.tpc.exception.NotFoundException;
 import com.novmik.tpc.privilege.Privilege;
@@ -51,7 +46,7 @@ public class RoleService {
   public Optional<Role> findRoleByName(final String roleName) {
     final Optional<Role> roleByName = roleRepository.findRoleByName(roleName);
     if (roleByName.isEmpty()) {
-      throw new NotFoundException(ROLE_NOT_EXISTS + roleName);
+      throw new NotFoundException("Роль не найдена." + roleName);
     }
     return roleByName;
   }
@@ -70,10 +65,10 @@ public class RoleService {
         role.getName(),
         role.getPrivileges()
     )) {
-      throw new BadRequestException(ROLE_NOT_CORRECT + role);
+      throw new BadRequestException("Некорректные данные о роли" + role);
     }
     if (findRoleByName(role.getName()).isPresent()) {
-      throw new BadRequestException(ROLE_EXISTS + role.getName());
+      throw new BadRequestException("Роль с таким id/названием уже существует: " + role.getName());
     }
     return save(role);
   }
@@ -102,7 +97,7 @@ public class RoleService {
     if (roleByName.isPresent() && privilegeByName.isPresent()) {
       roleByName.get().getPrivileges().add(privilegeByName.get());
     } else {
-      throw new NotFoundException(ROLE_OR_PRIVILEGE_NOT_EXISTS);
+      throw new NotFoundException("Роль/полномочия не найдены.");
     }
   }
 

@@ -1,9 +1,5 @@
 package com.novmik.tpc.subject;
 
-import static com.novmik.tpc.subject.SubjectConstants.SUBJECT_EXISTS;
-import static com.novmik.tpc.subject.SubjectConstants.SUBJECT_NOT_CORRECT;
-import static com.novmik.tpc.subject.SubjectConstants.SUBJECT_NOT_EXISTS;
-
 import com.novmik.tpc.exception.BadRequestException;
 import com.novmik.tpc.exception.NotFoundException;
 import java.util.Comparator;
@@ -88,12 +84,10 @@ public class SubjectService {
    * @return {@link Subject}
    * @throws NotFoundException если {@link Subject} не найден
    */
-  public Optional<Subject> getSubjectById(final Long idSubject) {
-    final Optional<Subject> optionalSubject = subjectRepository.findById(idSubject);
-    if (optionalSubject.isEmpty()) {
-      throw new NotFoundException(SUBJECT_NOT_EXISTS + idSubject);
-    }
-    return optionalSubject;
+  public Subject getSubjectById(final Long idSubject) {
+    return subjectRepository.findById(idSubject)
+        .orElseThrow(() -> new NotFoundException(
+            "Субъекта с таким id/именем/названием не существует: " + idSubject));
   }
 
   /**
@@ -111,10 +105,11 @@ public class SubjectService {
         subject.getBaseRateDs(),
         subject.getBaseRateSt()
     )) {
-      throw new BadRequestException(SUBJECT_NOT_CORRECT + subject);
+      throw new BadRequestException("Некорректные данные о субъекте." + subject);
     }
     if (findByNameSubject(subject.getNameSubject()).isPresent()) {
-      throw new BadRequestException(SUBJECT_EXISTS + subject.getNameSubject());
+      throw new BadRequestException(
+          "Субъект с таким id/именем/названием уже существует: " + subject.getNameSubject());
     }
     return save(subject);
   }
@@ -135,10 +130,11 @@ public class SubjectService {
         subject.getBaseRateDs(),
         subject.getBaseRateSt()
     )) {
-      throw new BadRequestException(SUBJECT_NOT_CORRECT + subject);
+      throw new BadRequestException("Некорректные данные о субъекте." + subject);
     }
     if (!existsById(subject.getIdSubject())) {
-      throw new NotFoundException(SUBJECT_NOT_EXISTS + subject.getIdSubject());
+      throw new NotFoundException(
+          "Субъекта с таким id/именем/названием не существует: " + subject.getIdSubject());
     }
     return save(subject);
   }
@@ -152,10 +148,11 @@ public class SubjectService {
    */
   protected void deleteSubjectById(final Long idSubject) {
     if (idSubject == null || idSubject < 1) {
-      throw new BadRequestException(SUBJECT_NOT_CORRECT);
+      throw new BadRequestException("Некорректные данные о субъекте.");
     }
     if (!existsById(idSubject)) {
-      throw new NotFoundException(SUBJECT_NOT_EXISTS + idSubject);
+      throw new NotFoundException(
+          "Субъекта с таким id/именем/названием не существует: " + idSubject);
     }
     subjectRepository.deleteById(idSubject);
   }

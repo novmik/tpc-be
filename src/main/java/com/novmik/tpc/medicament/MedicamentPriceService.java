@@ -1,7 +1,5 @@
 package com.novmik.tpc.medicament;
 
-import static com.novmik.tpc.medicament.MedicamentConstants.MEDICAMENT_PRICE_LIST_NOT_FOUND;
-
 import com.novmik.tpc.exception.NotFoundException;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -30,7 +28,7 @@ public class MedicamentPriceService {
   public List<MedicamentPrice> getMedicalPriceList(final String inn) {
     final List<MedicamentPrice> medicamentPrices = mpRepository.findByInn(inn);
     if (medicamentPrices.isEmpty()) {
-      throw new NotFoundException(MEDICAMENT_PRICE_LIST_NOT_FOUND + inn);
+      throw new NotFoundException("Список лекарств не найден, МНН: " + inn);
     }
     return medicamentPrices;
   }

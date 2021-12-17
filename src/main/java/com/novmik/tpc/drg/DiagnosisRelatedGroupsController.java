@@ -6,6 +6,7 @@ import static org.springframework.http.HttpStatus.OK;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -74,6 +75,7 @@ public class DiagnosisRelatedGroupsController {
    * @param idDrg id {@link DiagnosisRelatedGroups}
    */
   @DeleteMapping("/{idDrg}")
+  @PreAuthorize("hasAuthority('DELETE')")
   public void deleteDrgById(@PathVariable("idDrg") final Long idDrg) {
     drgService.deleteDrgById(idDrg);
   }

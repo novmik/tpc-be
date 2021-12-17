@@ -2,6 +2,7 @@ package com.novmik.tpc.auth;
 
 import com.novmik.tpc.role.Role;
 import java.util.Collection;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**

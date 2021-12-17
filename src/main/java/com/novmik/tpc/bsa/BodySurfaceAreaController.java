@@ -20,7 +20,7 @@ public class BodySurfaceAreaController {
 
   /**
    * Коллекция ППТ.
-   * Список ППТ согласено формулам расчёта
+   * Список ППТ согласно формулам расчёта
    *
    * @param bsaRequest Запрос ППТ {@link BodySurfaceAreaRequest}
    * @return коллекция ППТ

@@ -71,7 +71,7 @@ public class MedicalInstitutionController {
    * @return {@link MedicalInstitution}
    */
   @GetMapping("/{idMedicalInstitution}")
-  public ResponseEntity<Optional<MedicalInstitution>> getMedicalInstitutionById(
+  public ResponseEntity<MedicalInstitution> getMedicalInstitutionById(
       @PathVariable("idMedicalInstitution") final Long idMi) {
     return new ResponseEntity<>(miService
         .getMedicalInstitutionById(idMi), OK);
@@ -107,7 +107,7 @@ public class MedicalInstitutionController {
 
   /**
    * Удаление {@link MedicalInstitution}.
-   * Delete-запрос "api/v1/mi"
+   * Delete-запрос "api/v1/mi/{idMedicalInstitution}"
    * Доступ с полномочием 'DELETE'
    *
    * @param idMi id {@link MedicalInstitution}.

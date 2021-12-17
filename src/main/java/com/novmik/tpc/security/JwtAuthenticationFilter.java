@@ -1,6 +1,5 @@
 package com.novmik.tpc.security;
 
-import static com.novmik.tpc.security.SecurityConstants.TOKEN_REQUEST_HEADER_PREFIX;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import com.novmik.tpc.client.CustomUserDetailsService;
@@ -30,6 +29,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @SuppressWarnings({"PMD.AtLeastOneConstructor", "PMD.LawOfDemeter",
     "PMD.BeanMembersShouldSerialize", "PMD.AvoidCatchingGenericException"})
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+  /**
+   * TOKEN_REQUEST_HEADER_PREFIX.
+   */
+  private static final String TOKEN_REQUEST_HEADER_PREFIX =
+      "Bearer ";
 
   /**
    * {@link JwtTokenProvider}.

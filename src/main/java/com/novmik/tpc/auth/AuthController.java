@@ -25,12 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
   /**
-   * AuthService {@link AuthService}.
+   * {@link AuthService}.
    */
   private final AuthService authService;
 
   /**
    * Логин.
+   * Post-запрос "api/v1/auth/login"
    *
    * @param loginRequest {@link LoginRequest}
    * @return JwtAuthenticationResponse {@link JwtAuthenticationResponse}
@@ -41,7 +42,8 @@ public class AuthController {
       @RequestBody final LoginRequest loginRequest) {
     final Authentication authentication = authService.authenticateUser(loginRequest)
         .orElseThrow(
-            () -> new UserLoginException("Не удалось войти пользователю [" + loginRequest + "]"));
+            () -> new UserLoginException(String.format(
+                "Не удалось войти пользователю [%s]", loginRequest)));
     final CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
     SecurityContextHolder.getContext().setAuthentication(authentication);
     return authService.createAndPersistRefreshToken(authentication)
@@ -51,11 +53,13 @@ public class AuthController {
           return new ResponseEntity<>(new JwtAuthenticationResponse(jwtToken, refreshToken), OK);
         })
         .orElseThrow(
-            () -> new UserLoginException("Не создать refresh token для: [" + loginRequest + "]"));
+            () -> new UserLoginException(String.format(
+                "Не создать refresh token для: [%s]", loginRequest)));
   }
 
   /**
    * Обновление токена.
+   * Post-запрос "api/v1/auth/refresh"
    *
    * @param trRequest запрос обновления токена
    * @return JwtAuthenticationResponse {@link JwtAuthenticationResponse}

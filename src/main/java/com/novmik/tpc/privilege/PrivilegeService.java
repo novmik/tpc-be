@@ -1,9 +1,5 @@
 package com.novmik.tpc.privilege;
 
-import static com.novmik.tpc.privilege.PrivilegeConstants.PRIVILEGE_EXIST;
-import static com.novmik.tpc.privilege.PrivilegeConstants.PRIVILEGE_NOT_CORRECT;
-import static com.novmik.tpc.privilege.PrivilegeConstants.PRIVILEGE_NOT_EXISTS;
-
 import com.novmik.tpc.exception.BadRequestException;
 import com.novmik.tpc.exception.NotFoundException;
 import java.util.List;
@@ -77,10 +73,10 @@ public class PrivilegeService {
         privilege,
         privilege.getName()
     )) {
-      throw new BadRequestException(PRIVILEGE_NOT_CORRECT);
+      throw new BadRequestException("Некорректные данные о привилегии.");
     }
     if (findByPrivilegeName(privilege.getName()).isPresent()) {
-      throw new BadRequestException(PRIVILEGE_EXIST + privilege.getName());
+      throw new BadRequestException("Привилегия уже существует: " + privilege.getName());
     }
     return save(privilege);
   }
@@ -94,10 +90,10 @@ public class PrivilegeService {
    */
   protected void deletePrivilegeById(final Long idPrivilege) {
     if (idPrivilege == null || idPrivilege < 1) {
-      throw new BadRequestException(PRIVILEGE_NOT_CORRECT);
+      throw new BadRequestException("Некорректные данные о привилегии.");
     }
     if (!existById(idPrivilege)) {
-      throw new NotFoundException(PRIVILEGE_NOT_EXISTS);
+      throw new NotFoundException("Привилегии с таким id/названием не существует: ");
     }
     privilegeRepo.deleteById(idPrivilege);
   }

@@ -2,7 +2,6 @@ package com.novmik.tpc.cdt;
 
 import com.novmik.tpc.exception.BadRequestException;
 import com.novmik.tpc.exception.NotFoundException;
-import com.novmik.tpc.subject.SubjectConstants;
 import com.novmik.tpc.subject.SubjectService;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -16,6 +15,19 @@ import org.springframework.stereotype.Service;
 @Service
 @SuppressWarnings({"PMD.CommentSize", "PMD.LawOfDemeter"})
 public class CoefficientDifficultyTreatingService {
+
+  /**
+   * ROUND_THE_CLOCK_CARE_FACILITY.
+   * Круглосуточные стационар (КС)
+   */
+  public static final String ROUND_THE_CLOCK_CARE_FACILITY =
+      "st";
+  /**
+   * DAY_CARE_FACILITY.
+   * Дневной стационар (ДС)
+   */
+  public static final String DAY_CARE_FACILITY =
+      "ds";
 
   /**
    * КСЛПRepository {@link CoefficientDifficultyTreatingRepository}.
@@ -38,11 +50,10 @@ public class CoefficientDifficultyTreatingService {
    * @param careFacility стационар
    * @return список КСЛП {@link CoefficientDifficultyTreating}
    */
-  protected List<CoefficientDifficultyTreating> getCareFacilityCdtpListBySubjectId(
+  protected List<CoefficientDifficultyTreating> getCareFacilityCdtListBySubjectId(
       final Long idSubject, final String careFacility) {
     final String nameSubject = subjectService
         .getSubjectById(idSubject)
-        .orElseThrow()
         .getNameSubject();
     return cdtRepository.findAllByNameSubjectAndCareFacility(nameSubject, careFacility);
   }
@@ -57,12 +68,14 @@ public class CoefficientDifficultyTreatingService {
       final CoefficientDifficultyTreating cdt) {
     cdtValidationCheck(cdt);
     if (subjectService.findByNameSubject(cdt.getNameSubject()).isEmpty()) {
-      throw new NotFoundException(SubjectConstants.SUBJECT_NOT_EXISTS + cdt.getNameSubject());
+      throw new NotFoundException(
+          "Субъекта с таким id/именем/названием не существует: " + cdt.getNameSubject());
     }
     final CaseCdt caseCdt = caseCdtService.save(cdt.getCaseCdt().getNominationCaseCdt());
     if (cdtRepository.existByCaseCdtIdAndNameSubjectAndCareFacility(cdt.getCaseCdt().getIdCaseCdt(),
         cdt.getNameSubject(), cdt.getCareFacility())) {
-      throw new BadRequestException(CdtConstants.CDT_EXISTS + caseCdt);
+      throw new BadRequestException(
+          "КСЛП с таким id/именем/названием уже существует: " + caseCdt);
     }
     cdt.setCaseCdt(caseCdt);
     return cdtRepository.save(cdt);
@@ -84,18 +97,18 @@ public class CoefficientDifficultyTreatingService {
         cdt.getValue(),
         cdt.getCareFacility()
     )) {
-      throw new BadRequestException(CdtConstants.CDT_NOT_CORRECT + cdt);
+      throw new BadRequestException("Некорректные данные о КСЛП." + cdt);
     }
     if (cdt.getValue() <= 0) {
-      throw new BadRequestException(CdtConstants.CDT_VALUE_NOT_CORRECT + cdt.getValue());
+      throw new BadRequestException("Некорректное значение КСЛП: " + cdt.getValue());
     }
-    if (!CdtConstants.ROUND_THE_CLOCK_CARE_FACILITY.equalsIgnoreCase(cdt.getCareFacility())
-        && !CdtConstants.DAY_CARE_FACILITY.equalsIgnoreCase(cdt.getCareFacility())) {
-      throw new BadRequestException(
-          CdtConstants.CARE_FACILITY_NOT_CORRECT + cdt.getCareFacility() + ". "
-              + CdtConstants.CARE_FACILITY_MUST_BE
-              + CdtConstants.ROUND_THE_CLOCK_CARE_FACILITY + " или "
-              + CdtConstants.DAY_CARE_FACILITY);
+    if (!ROUND_THE_CLOCK_CARE_FACILITY.equalsIgnoreCase(cdt.getCareFacility())
+        && !DAY_CARE_FACILITY.equalsIgnoreCase(cdt.getCareFacility())) {
+      throw new BadRequestException(String.format(
+              "Некорректное значение стационара: %s. Должно быть: %s или %s",
+              cdt.getCareFacility(),
+          ROUND_THE_CLOCK_CARE_FACILITY,
+          DAY_CARE_FACILITY));
     }
   }
 

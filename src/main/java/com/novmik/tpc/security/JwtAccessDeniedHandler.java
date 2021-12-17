@@ -1,6 +1,5 @@
 package com.novmik.tpc.security;
 
-import static com.novmik.tpc.security.SecurityConstants.ACCESS_DENIED_MESSAGE;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +34,8 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
   public void handle(final HttpServletRequest request, final HttpServletResponse response,
       final AccessDeniedException exception) throws IOException {
     final HttpResponse httpResponse = new HttpResponse(UNAUTHORIZED.value(), UNAUTHORIZED,
-        UNAUTHORIZED.getReasonPhrase().toUpperCase(Locale.ROOT), ACCESS_DENIED_MESSAGE);
+        UNAUTHORIZED.getReasonPhrase().toUpperCase(Locale.ROOT),
+        "Вы не имеете доступа к этой странице.");
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.setStatus(UNAUTHORIZED.value());
     try (OutputStream outputStream = response.getOutputStream()) {
