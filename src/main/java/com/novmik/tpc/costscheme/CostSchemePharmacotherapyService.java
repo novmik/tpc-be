@@ -1,7 +1,5 @@
 package com.novmik.tpc.costscheme;
 
-import static com.novmik.tpc.costscheme.CostSchemePharmacotherapyConstants.COST_REQUEST_INCORRECT;
-
 import com.novmik.tpc.bsa.BodySurfaceAreaUtils;
 import com.novmik.tpc.exception.BadRequestException;
 import com.novmik.tpc.medicament.Medicament;
@@ -73,7 +71,8 @@ public class CostSchemePharmacotherapyService {
           costSchemeRequest.getBsa()
       );
     } else {
-      throw new BadRequestException(COST_REQUEST_INCORRECT + costSchemeRequest);
+      throw new BadRequestException(
+          "Не верный запрос стоимости схемы лекарственной терапии: " + costSchemeRequest);
     }
     return costResponse;
   }

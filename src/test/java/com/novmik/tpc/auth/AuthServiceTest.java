@@ -2,7 +2,6 @@ package com.novmik.tpc.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -13,7 +12,6 @@ import com.novmik.tpc.exception.UpdatePasswordException;
 import com.novmik.tpc.refreshtoken.RefreshToken;
 import com.novmik.tpc.refreshtoken.RefreshTokenService;
 import com.novmik.tpc.security.JwtTokenProvider;
-import java.time.Instant;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,7 +71,7 @@ class AuthServiceTest {
     CustomUserDetails customUserDetails = new CustomUserDetails(currentUser);
     UpdatePasswordRequest updatePassRequest = new UpdatePasswordRequest("oldPass", "newPass");
     String email = customUserDetails.getUsername();
-    when(clientService.getClient(email)).thenReturn(Optional.of(currentUser));
+    when(clientService.getClientByEmail(email)).thenReturn(Optional.of(currentUser));
     when(passwordEncoder.matches(
         updatePassRequest.getOldPassword(), currentUser.getPassword())).thenReturn(true);
     assertThat(underTest.updatePassword(customUserDetails, updatePassRequest)).isPresent();
@@ -85,7 +83,7 @@ class AuthServiceTest {
     CustomUserDetails customUserDetails = new CustomUserDetails(currentClient);
     UpdatePasswordRequest updatePassRequest = new UpdatePasswordRequest("oldPass", "newPass");
     String email = customUserDetails.getUsername();
-    when(clientService.getClient(email)).thenReturn(Optional.of(currentClient));
+    when(clientService.getClientByEmail(email)).thenReturn(Optional.of(currentClient));
     when(passwordEncoder.matches(
         updatePassRequest.getOldPassword(), currentClient.getPassword())).thenReturn(false);
     assertThatThrownBy(() -> underTest.updatePassword(customUserDetails, updatePassRequest))
@@ -119,13 +117,5 @@ class AuthServiceTest {
 
   @Test
   void refreshJwtToken() {
-    Client client = new Client("test@test.com", "encodedPass", "T", "E", true, true);
-    RefreshToken refreshToken = new RefreshToken(
-        100L, "token", client, 1L, Instant.now().plusSeconds(1000));
-    TokenRefreshRequest trRequest = new TokenRefreshRequest();
-    trRequest.setRefreshToken("refreshToken");
-    when(rtService.findRefreshTokenByToken(anyString())).thenReturn(Optional.of(refreshToken));
-//    when(underTest.generateToken(new CustomUserDetails(client))).thenReturn(anyString());
-    assertThat(underTest.refreshJwtToken(trRequest)).isPresent();
   }
 }

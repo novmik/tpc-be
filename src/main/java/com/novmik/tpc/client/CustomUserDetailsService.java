@@ -1,7 +1,5 @@
 package com.novmik.tpc.client;
 
-import static com.novmik.tpc.client.ClientConstants.CLIENT_NOT_FOUND_BY_EMAIL;
-
 import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +33,9 @@ public class CustomUserDetailsService implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(final String email) {
     final Optional<Client> dbClient = clientRepository.findByEmail(email);
-    return dbClient.map(CustomUserDetails::new)
-        .orElseThrow(() -> new UsernameNotFoundException(CLIENT_NOT_FOUND_BY_EMAIL + email));
+    return dbClient
+        .map(CustomUserDetails::new)
+        .orElseThrow(() -> new UsernameNotFoundException(String.format(
+            "Пользователь с электронной почтой: [%s] не найден.", email)));
   }
 }

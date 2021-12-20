@@ -4,10 +4,13 @@ import com.novmik.tpc.role.Role;
 import java.util.Collection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Запрос на регистрацию клиента.
  */
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class RegistrationRequest {
 

@@ -2,7 +2,9 @@ package com.novmik.tpc.costtreatment;
 
 import com.novmik.tpc.cdt.CoefficientDifficultyTreating;
 import com.novmik.tpc.medicalinstitution.MedicalInstitution;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Запрос стоимости одного
@@ -11,6 +13,8 @@ import lombok.Data;
  * терапии взрослых со
  * злокачественными новообразованиями.
  */
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class CostTreatmentRequest {
 

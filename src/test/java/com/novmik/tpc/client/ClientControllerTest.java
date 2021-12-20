@@ -42,7 +42,7 @@ class ClientControllerTest {
   void registerUser() throws Exception {
     RegistrationRequest regRequest = new RegistrationRequest();
     Client newClient = new Client("test@test.com", "pass", "T", "E", true, true);
-    when(clientService.registerUser(regRequest)).thenReturn(Optional.of(newClient));
+    when(clientService.registerClient(regRequest)).thenReturn(Optional.of(newClient));
     mockMvc.perform(post("/api/v1/client/register")
             .content(asJsonString(regRequest))
             .contentType(MediaType.APPLICATION_JSON)

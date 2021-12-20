@@ -53,7 +53,7 @@ public class ClientController {
   @PostMapping("/register")
   public ResponseEntity<Client> registerUser(
       @RequestBody final RegistrationRequest regRequest) {
-    return clientService.registerUser(regRequest)
+    return clientService.registerClient(regRequest)
         .map(user -> new ResponseEntity<>(user, OK))
         .orElseThrow(() -> new UserRegistrationException(
             regRequest.getEmail(), "Пользователь не зарегистрирован"));
@@ -80,6 +80,6 @@ public class ClientController {
    */
   @DeleteMapping("/{idClient}")
   public void deleteClient(@PathVariable("idClient") final Long idClient) {
-    clientService.deleteClient(idClient);
+    clientService.deleteClientById(idClient);
   }
 }

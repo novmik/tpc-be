@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.novmik.tpc.exception.BadRequestException;
 import org.junit.jupiter.api.Test;
 
-class BodySurfaceAreaUtilsServiceTest {
+class BodySurfaceAreaServiceTest {
 
   @Test
   void canGetMapWithAllBsaMethodsWhenTwoOptions() {

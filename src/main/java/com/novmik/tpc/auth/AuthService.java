@@ -85,7 +85,7 @@ public class AuthService {
   public Optional<Client> updatePassword(final CustomUserDetails customUserDetails,
       final UpdatePasswordRequest updatePassRequest) {
     final String email = customUserDetails.getUsername();
-    final Client currentUser = clientService.getClient(email)
+    final Client currentUser = clientService.getClientByEmail(email)
         .orElseThrow();
 
     if (!currentPasswordMatches(currentUser, updatePassRequest.getOldPassword())) {
@@ -144,14 +144,6 @@ public class AuthService {
             strRefreshToken, "Отсутствует refresh token. Пожалуйста, перезайдите."));
   }
 
-  /**
-   * Проверка доступа.
-   *
-   * @param client {@link Client}
-   * @return client {@link Client}
-   * @throws LockedException если клиент заблокирован
-   * @throws DisabledException если клиент отключен
-   */
   private Client checkClientAccess(final Client client) {
     if (!client.isNotLocked()) {
       throw new LockedException("Ваш аккаунт заблокирован. Свяжитесь с администрацией.");

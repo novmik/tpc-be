@@ -20,7 +20,7 @@ public final class CoefficientSpecificityUtils {
    */
   public static float calculate(
       final float rateIntensity,
-      final Integer typeMi
+      final int typeMi
   ) {
     float coefficient = 0;
     switch (typeMi) {
