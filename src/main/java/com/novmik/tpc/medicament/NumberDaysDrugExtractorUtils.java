@@ -1,8 +1,5 @@
 package com.novmik.tpc.medicament;
 
-import static com.novmik.tpc.medicament.MedicamentConstants.EVERY_DAY;
-import static com.novmik.tpc.medicament.MedicamentConstants.FIRST_DAY;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +10,20 @@ import org.springframework.stereotype.Component;
 @Component
 @SuppressWarnings("PMD.LawOfDemeter")
 public final class NumberDaysDrugExtractorUtils {
+
+  /**
+   * Извлечение кол-ва дней ЛТ.
+   *
+   * @return строка с кол-ом дней ЛТ
+   */
+  public static String getDaysDrug(final String innDescription, final String unitOfMeasurement) {
+    String strDaysDrug = innDescription.substring(
+        innDescription.indexOf(unitOfMeasurement) + unitOfMeasurement.length());
+    if (innDescription.contains(" auc ")) {
+      strDaysDrug = innDescription.substring(innDescription.indexOf(" в"));
+    }
+    return strDaysDrug;
+  }
 
   /**
    * Получить кол-во дней ЛТ.
@@ -26,10 +37,10 @@ public final class NumberDaysDrugExtractorUtils {
       final String strNumberDaysDrug,
       final Integer numberDays) {
     Integer numberDaysDrug = 0;
-    if (strNumberDaysDrug.contains(EVERY_DAY)) {
+    if (strNumberDaysDrug.contains("ежедневно")) {
       numberDaysDrug = numberDays;
     }
-    if (strNumberDaysDrug.contains(FIRST_DAY)) {
+    if (strNumberDaysDrug.contains("в 1-й день")) {
       numberDaysDrug = 1;
     }
     if (CheckMatcherPatternSchemeHelper.checkOnceEveryNxDays(strNumberDaysDrug)) {

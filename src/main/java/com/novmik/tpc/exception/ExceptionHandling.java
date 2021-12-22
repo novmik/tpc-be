@@ -32,7 +32,8 @@ public final class ExceptionHandling {
    */
   @ExceptionHandler(DisabledException.class)
   public ResponseEntity<HttpResponse> handleDisabledException() {
-    return createHttpResponse(HttpStatus.BAD_REQUEST, ExceptionConstants.ACCOUNT_DISABLED);
+    return createHttpResponse(
+        HttpStatus.BAD_REQUEST, "Ваш аккаунт заблокирован. Свяжитесь с администрацией.");
   }
 
   /**
@@ -42,7 +43,8 @@ public final class ExceptionHandling {
    */
   @ExceptionHandler(BadCredentialsException.class)
   public ResponseEntity<HttpResponse> handleBadCredentialsException() {
-    return createHttpResponse(HttpStatus.BAD_REQUEST, ExceptionConstants.INCORRECT_CREDENTIALS);
+    return createHttpResponse(
+        HttpStatus.BAD_REQUEST, "Неверно имя пользователя / пароль. Попробуйте снова.");
   }
 
   /**
@@ -65,7 +67,7 @@ public final class ExceptionHandling {
    */
   @ExceptionHandler(AccessDeniedException.class)
   public ResponseEntity<HttpResponse> handleAccessDeniedException() {
-    return createHttpResponse(HttpStatus.FORBIDDEN, ExceptionConstants.NOT_ENOUGH_PERMISSION);
+    return createHttpResponse(HttpStatus.FORBIDDEN, "У вас недостаточно прав.");
   }
 
   /**
@@ -75,7 +77,8 @@ public final class ExceptionHandling {
    */
   @ExceptionHandler(LockedException.class)
   public ResponseEntity<HttpResponse> handleLockedException() {
-    return createHttpResponse(HttpStatus.UNAUTHORIZED, ExceptionConstants.ACCOUNT_LOCKED);
+    return createHttpResponse(
+        HttpStatus.UNAUTHORIZED, "Ваш аккаунт заблокирован. Свяжитесь с администрацией.");
   }
 
   /**
@@ -172,7 +175,7 @@ public final class ExceptionHandling {
     final HttpMethod supportedMethod = Objects.requireNonNull(exception.getSupportedHttpMethods())
         .iterator().next();
     return createHttpResponse(HttpStatus.METHOD_NOT_ALLOWED,
-        String.format(ExceptionConstants.METHOD_IS_NOT_ALLOWED, supportedMethod));
+        String.format("Метод запроса не разрешен. Отправьте '%s' запрос.", supportedMethod));
   }
 
   /**
@@ -186,8 +189,8 @@ public final class ExceptionHandling {
     if (log.isErrorEnabled()) {
       log.error(exception.getMessage());
     }
-    return createHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR,
-        ExceptionConstants.INTERNAL_SERVER_ERROR_MSG);
+    return createHttpResponse(
+        HttpStatus.INTERNAL_SERVER_ERROR, "Произошла ошибка при обработке запроса.");
   }
 
   /**
@@ -215,8 +218,8 @@ public final class ExceptionHandling {
     if (log.isErrorEnabled()) {
       log.error(exception.getMessage());
     }
-    return createHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR,
-        ExceptionConstants.ERROR_PROCESSING_FILE);
+    return createHttpResponse(
+        HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при обработке файла.");
   }
 
   private ResponseEntity<HttpResponse> createHttpResponse(final HttpStatus httpStatus,

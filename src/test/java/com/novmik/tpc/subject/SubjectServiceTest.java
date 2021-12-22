@@ -1,14 +1,11 @@
 package com.novmik.tpc.subject;
 
-import static com.novmik.tpc.subject.SubjectConstants.SUBJECT_EXISTS;
-import static com.novmik.tpc.subject.SubjectConstants.SUBJECT_NOT_CORRECT;
-import static com.novmik.tpc.subject.SubjectConstants.SUBJECT_NOT_EXISTS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.novmik.tpc.exception.BadRequestException;
 import com.novmik.tpc.exception.NotFoundException;
@@ -49,14 +46,14 @@ class SubjectServiceTest {
   @Test
   void canGetTrueWhenSubjectExistById() {
     long id = 10;
-    given(subjectRepository.existsById(id)).willReturn(true);
+    when(subjectRepository.existsById(id)).thenReturn(true);
     assertThat(underTest.existsById(id)).isTrue();
   }
 
   @Test
   void canGetFalseWhenSubjectNotExistById() {
     long id = 10;
-    given(subjectRepository.existsById(id)).willReturn(false);
+    when(subjectRepository.existsById(id)).thenReturn(false);
     assertThat(underTest.existsById(id)).isFalse();
   }
 
@@ -74,7 +71,7 @@ class SubjectServiceTest {
         22222.00D,
         22222.00D
     );
-    given(subjectRepository.findById(subject.getIdSubject())).willReturn(Optional.of(subject));
+    when(subjectRepository.findById(subject.getIdSubject())).thenReturn(Optional.of(subject));
     underTest.getSubjectById(subject.getIdSubject());
     verify(subjectRepository).findById(subject.getIdSubject());
   }
@@ -99,7 +96,7 @@ class SubjectServiceTest {
     Subject subject = new Subject();
     assertThatThrownBy(() -> underTest.addNewSubject(subject))
         .isInstanceOf(BadRequestException.class)
-        .hasMessageContaining(SUBJECT_NOT_CORRECT);
+        .hasMessageContaining("Некорректные данные о субъекте.");
     verify(subjectRepository, never()).save(subject);
   }
 
@@ -110,11 +107,12 @@ class SubjectServiceTest {
         22222.00D,
         22222.00D
     );
-    given(subjectRepository.findByNameSubject(subject.getNameSubject())).willReturn(
+    when(subjectRepository.findByNameSubject(subject.getNameSubject())).thenReturn(
         Optional.of(subject));
     assertThatThrownBy(() -> underTest.addNewSubject(subject))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(SUBJECT_EXISTS + subject.getNameSubject());
+        .hasMessage(
+            "Субъект с таким id/именем/названием уже существует: " + subject.getNameSubject());
     verify(subjectRepository, never()).save(subject);
   }
 
@@ -126,7 +124,7 @@ class SubjectServiceTest {
         1.00D,
         1.00D
     );
-    given(subjectRepository.existsById(subject.getIdSubject())).willReturn(true);
+    when(subjectRepository.existsById(subject.getIdSubject())).thenReturn(true);
     underTest.updateSubject(subject);
     verify(subjectRepository).save(subject);
   }
@@ -136,7 +134,7 @@ class SubjectServiceTest {
     Subject subject = new Subject();
     assertThatThrownBy(() -> underTest.updateSubject(subject))
         .isInstanceOf(BadRequestException.class)
-        .hasMessageContaining(SUBJECT_NOT_CORRECT);
+        .hasMessageContaining("Некорректные данные о субъекте.");
     verify(subjectRepository, never()).save(subject);
   }
 
@@ -148,17 +146,17 @@ class SubjectServiceTest {
         1.00D,
         1.00D
     );
-    given(subjectRepository.existsById(subject.getIdSubject())).willReturn(false);
+    when(subjectRepository.existsById(subject.getIdSubject())).thenReturn(false);
     assertThatThrownBy(() -> underTest.updateSubject(subject))
         .isInstanceOf(NotFoundException.class)
-        .hasMessage(SUBJECT_NOT_EXISTS + subject.getIdSubject());
+        .hasMessage("Субъекта с таким id/именем/названием не существует: " + subject.getIdSubject());
     verify(subjectRepository, never()).save(subject);
   }
 
   @Test
   void canDeleteSubjectById() {
     long id = 10;
-    given(subjectRepository.existsById(id)).willReturn(true);
+    when(subjectRepository.existsById(id)).thenReturn(true);
     underTest.deleteSubjectById(id);
     verify(subjectRepository).deleteById(id);
   }
@@ -166,10 +164,10 @@ class SubjectServiceTest {
   @Test
   void willThrowWhenDeleteSubjectByIdWhichNotExists() {
     long id = 10;
-    given(subjectRepository.existsById(id)).willReturn(false);
+    when(subjectRepository.existsById(id)).thenReturn(false);
     assertThatThrownBy(() -> underTest.deleteSubjectById(id))
         .isInstanceOf(NotFoundException.class)
-        .hasMessage(SUBJECT_NOT_EXISTS + id);
+        .hasMessage("Субъекта с таким id/именем/названием не существует: " + id);
     verify(subjectRepository, never()).deleteById(id);
   }
 
@@ -177,7 +175,13 @@ class SubjectServiceTest {
   void willThrowWhenDeleteNullSubjectById() {
     assertThatThrownBy(() -> underTest.deleteSubjectById(null))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(SUBJECT_NOT_CORRECT);
+        .hasMessage("Некорректные данные о субъекте.");
     verify(subjectRepository, never()).deleteById(anyLong());
+  }
+
+  @Test
+  void canGetAllSubject() {
+    underTest.getAllSubject();
+    verify(subjectRepository).findAll();
   }
 }

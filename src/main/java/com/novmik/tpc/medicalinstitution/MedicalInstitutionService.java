@@ -3,11 +3,9 @@ package com.novmik.tpc.medicalinstitution;
 import com.novmik.tpc.exception.BadRequestException;
 import com.novmik.tpc.exception.NotFoundException;
 import com.novmik.tpc.subject.Subject;
-import com.novmik.tpc.subject.SubjectConstants;
 import com.novmik.tpc.subject.SubjectService;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
@@ -44,7 +42,7 @@ public class MedicalInstitutionService {
         miRepository.listIdAndMedicalInstitutionNameBySubjectId(idSubject);
     if (allMiBySubjectId.isEmpty()) {
       throw new NotFoundException(
-          MedicalInstitutionConstants.MEDICAL_INSTITUTIONS_NOT_EXISTS_BY_ID_SUBJECT + idSubject);
+          "Нет медицинских организаций с таким id Субъекта: " + idSubject);
     }
     return allMiBySubjectId;
   }
@@ -56,15 +54,10 @@ public class MedicalInstitutionService {
    * @return {@link MedicalInstitution}
    * @throws NotFoundException если {@link MedicalInstitution} не найден
    */
-  public Optional<MedicalInstitution> getMedicalInstitutionById(
-      final Long idMi) {
-    final Optional<MedicalInstitution> miById =
-        miRepository.findById(idMi);
-    if (miById.isEmpty()) {
-      throw new NotFoundException(
-          MedicalInstitutionConstants.MEDICAL_INSTITUTIONS_NOT_EXISTS + idMi);
-    }
-    return miById;
+  public MedicalInstitution getMedicalInstitutionById(final Long idMi) {
+    return miRepository.findById(idMi)
+        .orElseThrow(() -> new NotFoundException(
+            "Нет медицинских организаций с таким id: " + idMi));
   }
 
   /**
@@ -76,8 +69,7 @@ public class MedicalInstitutionService {
    */
   public List<MedicalInstitution> getAllMedicalInstitutionsBySubjectId(
       final Long idSubject) {
-    final String nameSubject = subjectService.getSubjectById(idSubject).orElseThrow()
-        .getNameSubject();
+    final String nameSubject = subjectService.getSubjectById(idSubject).getNameSubject();
     final List<MedicalInstitution> allMiBySubjectId = miRepository
         .findMedicalInstitutionsByNameSubject(nameSubject);
     return allMiBySubjectId
@@ -103,7 +95,7 @@ public class MedicalInstitutionService {
         medInstitution.getNameSubject()
     )) {
       throw new BadRequestException(
-          MedicalInstitutionConstants.MEDICAL_INSTITUTION_NOT_CORRECT + medInstitution);
+          "Некорректные данные о медицинской организации." + medInstitution);
     }
     if (miRepository.findByNameMiAndNameSubject(
             medInstitution.getNameMi(),
@@ -111,11 +103,13 @@ public class MedicalInstitutionService {
         )
         .isPresent()) {
       throw new BadRequestException(
-          MedicalInstitutionConstants.MEDICAL_INSTITUTION_EXISTS + medInstitution.getNameMi());
+          "Медицинская организация с таким id/именем/названием уже существует: "
+              + medInstitution.getNameMi());
     }
     if (subjectService.findByNameSubject(medInstitution.getNameSubject()).isEmpty()) {
       throw new NotFoundException(
-          SubjectConstants.SUBJECT_NOT_EXISTS + medInstitution.getNameSubject());
+          "Субъекта с таким id/именем/названием не существует: "
+              + medInstitution.getNameSubject());
     }
     return miRepository.save(medInstitution);
   }
@@ -137,11 +131,11 @@ public class MedicalInstitutionService {
         medInstitution.getNameSubject()
     )) {
       throw new BadRequestException(
-          MedicalInstitutionConstants.MEDICAL_INSTITUTION_NOT_CORRECT + medInstitution);
+          "Некорректные данные о медицинской организации." + medInstitution);
     }
     if (!miRepository.existsById(medInstitution.getIdMi())) {
       throw new BadRequestException(
-          MedicalInstitutionConstants.MEDICAL_INSTITUTIONS_NOT_EXISTS + medInstitution.getIdMi());
+          "Нет медицинских организаций с таким id: " + medInstitution.getIdMi());
     }
     return miRepository.save(medInstitution);
   }
@@ -156,11 +150,11 @@ public class MedicalInstitutionService {
   protected void deleteMedicalInstitutionById(
       final Long idMi) {
     if (idMi == null || idMi < 1) {
-      throw new BadRequestException(MedicalInstitutionConstants.MEDICAL_INSTITUTION_NOT_CORRECT);
+      throw new BadRequestException("Некорректные данные о медицинской организации.");
     }
     if (!miRepository.existsById(idMi)) {
       throw new BadRequestException(
-          MedicalInstitutionConstants.MEDICAL_INSTITUTIONS_NOT_EXISTS + idMi);
+          "Нет медицинских организаций с таким id: " + idMi);
     }
     miRepository.deleteById(idMi);
   }

@@ -1,10 +1,5 @@
 package com.novmik.tpc.medicalinstitution;
 
-import static com.novmik.tpc.medicalinstitution.MedicalInstitutionConstants.MEDICAL_INSTITUTIONS_NOT_EXISTS;
-import static com.novmik.tpc.medicalinstitution.MedicalInstitutionConstants.MEDICAL_INSTITUTIONS_NOT_EXISTS_BY_ID_SUBJECT;
-import static com.novmik.tpc.medicalinstitution.MedicalInstitutionConstants.MEDICAL_INSTITUTION_EXISTS;
-import static com.novmik.tpc.medicalinstitution.MedicalInstitutionConstants.MEDICAL_INSTITUTION_NOT_CORRECT;
-import static com.novmik.tpc.subject.SubjectConstants.SUBJECT_NOT_EXISTS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -56,7 +51,7 @@ class MedicalInstitutionServiceTest {
     long idSubject = 10;
     assertThatThrownBy(() -> underTest.getMedicalInstitutionList(idSubject))
         .isInstanceOf(NotFoundException.class)
-        .hasMessage(MEDICAL_INSTITUTIONS_NOT_EXISTS_BY_ID_SUBJECT + idSubject);
+        .hasMessage("Нет медицинских организаций с таким id Субъекта: " + idSubject);
   }
 
   @Test
@@ -106,7 +101,7 @@ class MedicalInstitutionServiceTest {
     MedicalInstitution medicalInstitution = new MedicalInstitution();
     assertThatThrownBy(() -> underTest.addNewMedicalInstitution(medicalInstitution))
         .isInstanceOf(BadRequestException.class)
-        .hasMessageContaining(MEDICAL_INSTITUTION_NOT_CORRECT);
+        .hasMessageContaining("Некорректные данные о медицинской организации.");
     verify(medicalInstitutionRepository, never()).save(medicalInstitution);
   }
 
@@ -128,7 +123,9 @@ class MedicalInstitutionServiceTest {
         medicalInstitution.getNameSubject())).willReturn(Optional.of(medicalInstitution));
     assertThatThrownBy(() -> underTest.addNewMedicalInstitution(medicalInstitution))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(MEDICAL_INSTITUTION_EXISTS + medicalInstitution.getNameMi());
+        .hasMessage(
+            "Медицинская организация с таким id/именем/названием уже существует: "
+                + medicalInstitution.getNameMi());
     verify(medicalInstitutionRepository, never()).save(medicalInstitution);
   }
 
@@ -152,7 +149,9 @@ class MedicalInstitutionServiceTest {
         Optional.empty());
     assertThatThrownBy(() -> underTest.addNewMedicalInstitution(medicalInstitution))
         .isInstanceOf(NotFoundException.class)
-        .hasMessage(SUBJECT_NOT_EXISTS + medicalInstitution.getNameSubject());
+        .hasMessage(
+            "Субъекта с таким id/именем/названием не существует: "
+                + medicalInstitution.getNameSubject());
     verify(medicalInstitutionRepository, never()).save(medicalInstitution);
   }
 
@@ -179,7 +178,7 @@ class MedicalInstitutionServiceTest {
     MedicalInstitution medicalInstitution = new MedicalInstitution();
     assertThatThrownBy(() -> underTest.updateMedicalInstitution(medicalInstitution))
         .isInstanceOf(BadRequestException.class)
-        .hasMessageContaining(MEDICAL_INSTITUTION_NOT_CORRECT);
+        .hasMessageContaining("Некорректные данные о медицинской организации.");
     verify(medicalInstitutionRepository, never()).save(medicalInstitution);
   }
 
@@ -199,7 +198,7 @@ class MedicalInstitutionServiceTest {
     given(medicalInstitutionRepository.existsById(medicalInstitution.getIdMi())).willReturn(false);
     assertThatThrownBy(() -> underTest.updateMedicalInstitution(medicalInstitution))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(MEDICAL_INSTITUTIONS_NOT_EXISTS + medicalInstitution.getIdMi());
+        .hasMessage("Нет медицинских организаций с таким id: " + medicalInstitution.getIdMi());
     verify(medicalInstitutionRepository, never()).save(medicalInstitution);
   }
 
@@ -217,7 +216,7 @@ class MedicalInstitutionServiceTest {
     given(medicalInstitutionRepository.existsById(id)).willReturn(false);
     assertThatThrownBy(() -> underTest.deleteMedicalInstitutionById(id))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(MEDICAL_INSTITUTIONS_NOT_EXISTS + id);
+        .hasMessage("Нет медицинских организаций с таким id: " + id);
     verify(medicalInstitutionRepository, never()).deleteById(id);
   }
 
@@ -225,7 +224,7 @@ class MedicalInstitutionServiceTest {
   void willThrowWhenDeleteNullMedicalInstitutionById() {
     assertThatThrownBy(() -> underTest.deleteMedicalInstitutionById(null))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(MEDICAL_INSTITUTION_NOT_CORRECT);
+        .hasMessage("Некорректные данные о медицинской организации.");
     verify(medicalInstitutionRepository, never()).deleteById(anyLong());
   }
 

@@ -4,7 +4,6 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.util.List;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -63,7 +62,7 @@ public class SubjectController {
    * @return {@link Subject}
    */
   @GetMapping("/{idSubject}")
-  public ResponseEntity<Optional<Subject>> getSubjectById(
+  public ResponseEntity<Subject> getSubjectById(
       @PathVariable("idSubject") final Long idSubject) {
     return new ResponseEntity<>(subjectService.getSubjectById(idSubject), OK);
   }

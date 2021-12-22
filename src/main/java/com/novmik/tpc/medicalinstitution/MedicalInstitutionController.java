@@ -5,7 +5,6 @@ import static org.springframework.http.HttpStatus.OK;
 
 import com.novmik.tpc.subject.Subject;
 import java.util.List;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -71,7 +70,7 @@ public class MedicalInstitutionController {
    * @return {@link MedicalInstitution}
    */
   @GetMapping("/{idMedicalInstitution}")
-  public ResponseEntity<Optional<MedicalInstitution>> getMedicalInstitutionById(
+  public ResponseEntity<MedicalInstitution> getMedicalInstitutionById(
       @PathVariable("idMedicalInstitution") final Long idMi) {
     return new ResponseEntity<>(miService
         .getMedicalInstitutionById(idMi), OK);
@@ -107,7 +106,7 @@ public class MedicalInstitutionController {
 
   /**
    * Удаление {@link MedicalInstitution}.
-   * Delete-запрос "api/v1/mi"
+   * Delete-запрос "api/v1/mi/{idMedicalInstitution}"
    * Доступ с полномочием 'DELETE'
    *
    * @param idMi id {@link MedicalInstitution}.

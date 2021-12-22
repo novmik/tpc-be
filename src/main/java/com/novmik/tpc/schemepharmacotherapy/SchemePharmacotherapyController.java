@@ -2,7 +2,6 @@ package com.novmik.tpc.schemepharmacotherapy;
 
 import static org.springframework.http.HttpStatus.OK;
 
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +30,7 @@ public class SchemePharmacotherapyController {
    * @return СЛТ {@link SchemePharmacotherapy}
    */
   @GetMapping("/{codeScheme}")
-  public ResponseEntity<Optional<SchemePharmacotherapy>> getSchemePharmacotherapy(
+  public ResponseEntity<SchemePharmacotherapy> getSchemePharmacotherapy(
       @PathVariable("codeScheme") final String codeScheme) {
     return new ResponseEntity<>(spService.findByCodeScheme(codeScheme), OK);
   }

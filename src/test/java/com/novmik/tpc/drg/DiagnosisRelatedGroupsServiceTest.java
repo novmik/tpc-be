@@ -1,9 +1,5 @@
 package com.novmik.tpc.drg;
 
-import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstants.DRG_EXISTS;
-import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstants.DRG_NOT_CORRECT;
-import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstants.DRG_NOT_EXISTS;
-import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstants.DRG_NOT_EXISTS_BY_NAME_DRG;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -75,7 +71,7 @@ class DiagnosisRelatedGroupsServiceTest {
     given(drgRepository.findByNumberDrg(numberDrg)).willReturn(Optional.empty());
     assertThatThrownBy(() -> underTest.byNumberDrg(numberDrg))
         .isInstanceOf(NotFoundException.class)
-        .hasMessage(DRG_NOT_EXISTS_BY_NAME_DRG + numberDrg);
+        .hasMessage("КСГ/КПГ не содержит: " + numberDrg);
   }
 
   @Test
@@ -100,7 +96,7 @@ class DiagnosisRelatedGroupsServiceTest {
     DiagnosisRelatedGroups diagnosisRelatedGroups = new DiagnosisRelatedGroups();
     assertThatThrownBy(() -> underTest.addNewDrg(diagnosisRelatedGroups))
         .isInstanceOf(BadRequestException.class)
-        .hasMessageContaining(DRG_NOT_CORRECT);
+        .hasMessageContaining("Некорректные данные записи в КСГ/КПГ.");
     verify(drgRepository, never()).save(diagnosisRelatedGroups);
   }
 
@@ -117,7 +113,7 @@ class DiagnosisRelatedGroupsServiceTest {
         Optional.of(diagnosisRelatedGroups));
     assertThatThrownBy(() -> underTest.addNewDrg(diagnosisRelatedGroups))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(DRG_EXISTS + diagnosisRelatedGroups.getNumberDrg());
+        .hasMessage("КСГ/КПГ уже содержит: " + diagnosisRelatedGroups.getNumberDrg());
     verify(drgRepository, never()).save(diagnosisRelatedGroups);
   }
 
@@ -140,7 +136,7 @@ class DiagnosisRelatedGroupsServiceTest {
     DiagnosisRelatedGroups diagnosisRelatedGroups = new DiagnosisRelatedGroups();
     assertThatThrownBy(() -> underTest.updateDrg(diagnosisRelatedGroups))
         .isInstanceOf(BadRequestException.class)
-        .hasMessageContaining(DRG_NOT_CORRECT);
+        .hasMessageContaining("Некорректные данные записи в КСГ/КПГ.");
     verify(drgRepository, never()).save(diagnosisRelatedGroups);
   }
 
@@ -156,7 +152,7 @@ class DiagnosisRelatedGroupsServiceTest {
     given(drgRepository.existsById(diagnosisRelatedGroups.getIdDrg())).willReturn(false);
     assertThatThrownBy(() -> underTest.updateDrg(diagnosisRelatedGroups))
         .isInstanceOf(NotFoundException.class)
-        .hasMessage(DRG_NOT_EXISTS + diagnosisRelatedGroups.getIdDrg());
+        .hasMessage("Нет КСГ/КПГ с таким id: " + diagnosisRelatedGroups.getIdDrg());
     verify(drgRepository, never()).save(diagnosisRelatedGroups);
   }
 
@@ -174,7 +170,7 @@ class DiagnosisRelatedGroupsServiceTest {
     given(drgRepository.existsById(id)).willReturn(false);
     assertThatThrownBy(() -> underTest.deleteDrgById(id))
         .isInstanceOf(NotFoundException.class)
-        .hasMessage(DRG_NOT_EXISTS + id);
+        .hasMessage("Нет КСГ/КПГ с таким id: " + id);
     verify(drgRepository, never()).deleteById(anyLong());
   }
 
@@ -182,7 +178,7 @@ class DiagnosisRelatedGroupsServiceTest {
   void willThrowWhenDeleteNullDrgById() {
     assertThatThrownBy(() -> underTest.deleteDrgById(null))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(DRG_NOT_CORRECT);
+        .hasMessage("Некорректные данные записи в КСГ/КПГ.");
     verify(drgRepository, never()).deleteById(anyLong());
   }
 }

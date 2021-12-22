@@ -1,10 +1,5 @@
 package com.novmik.tpc.drg;
 
-import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstants.DRG_EXISTS;
-import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstants.DRG_NOT_CORRECT;
-import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstants.DRG_NOT_EXISTS;
-import static com.novmik.tpc.drg.DiagnosisRelatedGroupsConstants.DRG_NOT_EXISTS_BY_NAME_DRG;
-
 import com.novmik.tpc.exception.BadRequestException;
 import com.novmik.tpc.exception.NotFoundException;
 import java.util.Optional;
@@ -34,7 +29,7 @@ public class DiagnosisRelatedGroupsService {
   public Optional<DiagnosisRelatedGroups> byNumberDrg(final String drg) {
     final Optional<DiagnosisRelatedGroups> byNumberDrg = drgRepository.findByNumberDrg(drg);
     if (byNumberDrg.isEmpty()) {
-      throw new NotFoundException(DRG_NOT_EXISTS_BY_NAME_DRG + drg);
+      throw new NotFoundException("КСГ/КПГ не содержит: " + drg);
     }
     return byNumberDrg;
   }
@@ -55,10 +50,10 @@ public class DiagnosisRelatedGroupsService {
         drg.getRateIntensity(),
         drg.getWageShare()
     )) {
-      throw new BadRequestException(DRG_NOT_CORRECT + drg);
+      throw new BadRequestException("Некорректные данные записи в КСГ/КПГ." + drg);
     }
     if (drgRepository.findByNumberDrg(drg.getNumberDrg()).isPresent()) {
-      throw new BadRequestException(DRG_EXISTS + drg.getNumberDrg());
+      throw new BadRequestException("КСГ/КПГ уже содержит: " + drg.getNumberDrg());
     }
     return drgRepository.save(drg);
   }
@@ -78,10 +73,10 @@ public class DiagnosisRelatedGroupsService {
         drg.getRateIntensity(),
         drg.getWageShare()
     )) {
-      throw new BadRequestException(DRG_NOT_CORRECT + drg);
+      throw new BadRequestException("Некорректные данные записи в КСГ/КПГ." + drg);
     }
     if (!existsById(drg.getIdDrg())) {
-      throw new NotFoundException(DRG_NOT_EXISTS + drg.getIdDrg());
+      throw new NotFoundException("Нет КСГ/КПГ с таким id: " + drg.getIdDrg());
     }
     return drgRepository.save(drg);
   }
@@ -106,10 +101,10 @@ public class DiagnosisRelatedGroupsService {
    */
   protected void deleteDrgById(final Long idDrg) {
     if (idDrg == null) {
-      throw new BadRequestException(DRG_NOT_CORRECT);
+      throw new BadRequestException("Некорректные данные записи в КСГ/КПГ.");
     }
     if (!existsById(idDrg)) {
-      throw new NotFoundException(DRG_NOT_EXISTS + idDrg);
+      throw new NotFoundException("Нет КСГ/КПГ с таким id: " + idDrg);
     }
     drgRepository.deleteById(idDrg);
   }

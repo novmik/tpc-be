@@ -44,7 +44,7 @@ public class CaseCdtService {
    */
   @SuppressWarnings("PMD.LawOfDemeter")
   protected CaseCdt save(final String nominationCaseCdt) {
-    final Optional<CaseCdt> optionalCaseCdt = findByNominationCaseCdt(nominationCaseCdt);
-    return optionalCaseCdt.orElseGet(() -> save(new CaseCdt(nominationCaseCdt)));
+    return findByNominationCaseCdt(nominationCaseCdt)
+        .orElseGet(() -> save(new CaseCdt(nominationCaseCdt)));
   }
 }

@@ -1,10 +1,12 @@
 package com.novmik.tpc.auth;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
  * Запрос на изменение пароля.
  */
+@AllArgsConstructor
 @Data
 public class UpdatePasswordRequest {
 

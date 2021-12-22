@@ -30,7 +30,7 @@ public class DiagnosisPriceService {
    * @return список {@link DiagnosisPrice}
    */
   protected List<DiagnosisPrice> getDiagnosisPriceList(final Long idSubject) {
-    final Subject subjectById = subjectService.getSubjectById(idSubject).orElseThrow();
+    final Subject subjectById = subjectService.getSubjectById(idSubject);
     return dpRepository.findAllByNameSubject(subjectById.getNameSubject());
   }
 }

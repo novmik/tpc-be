@@ -1,9 +1,5 @@
 package com.novmik.tpc.privilege;
 
-import static com.novmik.tpc.privilege.PrivilegeConstants.PRIVILEGE_EXIST;
-import static com.novmik.tpc.privilege.PrivilegeConstants.PRIVILEGE_NOT_CORRECT;
-import static com.novmik.tpc.privilege.PrivilegeConstants.PRIVILEGE_NOT_EXISTS;
-
 import com.novmik.tpc.exception.BadRequestException;
 import com.novmik.tpc.exception.NotFoundException;
 import java.util.List;
@@ -23,7 +19,7 @@ public class PrivilegeService {
   /**
    * {@link PrivilegeRepository}.
    */
-  private final PrivilegeRepository pRepository;
+  private final PrivilegeRepository privilegeRepo;
 
   /**
    * Список {@link Privilege}.
@@ -31,7 +27,7 @@ public class PrivilegeService {
    * @return список {@link Privilege}
    */
   public List<Privilege> getAllPrivilege() {
-    return pRepository.findAll();
+    return privilegeRepo.findAll();
   }
 
   /**
@@ -41,7 +37,7 @@ public class PrivilegeService {
    * @return {@link Privilege}
    */
   public Optional<Privilege> findByPrivilegeName(final String privilegeName) {
-    return pRepository.findByName(privilegeName);
+    return privilegeRepo.findByName(privilegeName);
   }
 
   /**
@@ -51,7 +47,7 @@ public class PrivilegeService {
    * @return наличие
    */
   public boolean existById(final Long idPrivilege) {
-    return pRepository.existsById(idPrivilege);
+    return privilegeRepo.existsById(idPrivilege);
   }
 
   /**
@@ -61,7 +57,7 @@ public class PrivilegeService {
    * @return {@link Privilege}
    */
   protected Privilege save(final Privilege privilege) {
-    return pRepository.save(privilege);
+    return privilegeRepo.save(privilege);
   }
 
   /**
@@ -77,10 +73,10 @@ public class PrivilegeService {
         privilege,
         privilege.getName()
     )) {
-      throw new BadRequestException(PRIVILEGE_NOT_CORRECT);
+      throw new BadRequestException("Некорректные данные о привилегии.");
     }
     if (findByPrivilegeName(privilege.getName()).isPresent()) {
-      throw new BadRequestException(PRIVILEGE_EXIST + privilege.getName());
+      throw new BadRequestException("Привилегия уже существует: " + privilege.getName());
     }
     return save(privilege);
   }
@@ -94,11 +90,11 @@ public class PrivilegeService {
    */
   protected void deletePrivilegeById(final Long idPrivilege) {
     if (idPrivilege == null || idPrivilege < 1) {
-      throw new BadRequestException(PRIVILEGE_NOT_CORRECT);
+      throw new BadRequestException("Некорректные данные о привилегии: " + idPrivilege);
     }
     if (!existById(idPrivilege)) {
-      throw new NotFoundException(PRIVILEGE_NOT_EXISTS);
+      throw new NotFoundException("Привилегии с таким id/названием не существует: " + idPrivilege);
     }
-    pRepository.deleteById(idPrivilege);
+    privilegeRepo.deleteById(idPrivilege);
   }
 }

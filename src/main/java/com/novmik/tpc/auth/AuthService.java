@@ -1,8 +1,5 @@
 package com.novmik.tpc.auth;
 
-import static com.novmik.tpc.exception.ExceptionConstants.ACCOUNT_DISABLED;
-import static com.novmik.tpc.exception.ExceptionConstants.ACCOUNT_LOCKED;
-
 import com.novmik.tpc.client.Client;
 import com.novmik.tpc.client.ClientService;
 import com.novmik.tpc.client.CustomUserDetails;
@@ -88,11 +85,11 @@ public class AuthService {
   public Optional<Client> updatePassword(final CustomUserDetails customUserDetails,
       final UpdatePasswordRequest updatePassRequest) {
     final String email = customUserDetails.getUsername();
-    final Client currentUser = clientService.getClient(email)
+    final Client currentUser = clientService.getClientByEmail(email)
         .orElseThrow();
 
     if (!currentPasswordMatches(currentUser, updatePassRequest.getOldPassword())) {
-      throw new UpdatePasswordException(currentUser.getEmail(), "Invalid current password");
+      throw new UpdatePasswordException(currentUser.getEmail(), "Неверный пароль");
     }
     final String newPassword = passwordEncoder.encode(updatePassRequest.getNewPassword());
     currentUser.setPassword(newPassword);
@@ -143,24 +140,16 @@ public class AuthService {
             .map(this::checkClientAccess)
             .map(CustomUserDetails::new)
             .map(this::generateToken))
-        .orElseThrow(() -> new TokenRefreshException(strRefreshToken,
-            "Отсутствует refresh token. Пожалуйста, перезайдите."));
+        .orElseThrow(() -> new TokenRefreshException(
+            strRefreshToken, "Отсутствует refresh token. Пожалуйста, перезайдите."));
   }
 
-  /**
-   * Проверка доступа.
-   *
-   * @param client {@link Client}
-   * @return client {@link Client}
-   * @throws LockedException если клиент заблокирован
-   * @throws DisabledException если клиент отключен
-   */
   private Client checkClientAccess(final Client client) {
     if (!client.isNotLocked()) {
-      throw new LockedException(ACCOUNT_LOCKED);
+      throw new LockedException("Ваш аккаунт заблокирован. Свяжитесь с администрацией.");
     }
     if (!client.isEnabled()) {
-      throw new DisabledException(ACCOUNT_DISABLED);
+      throw new DisabledException("Ваш аккаунт отключен. Свяжитесь с администрацией.");
     }
     return client;
   }

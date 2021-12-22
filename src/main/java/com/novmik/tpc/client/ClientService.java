@@ -1,9 +1,5 @@
 package com.novmik.tpc.client;
 
-import static com.novmik.tpc.client.ClientConstants.CLIENT_NOT_CORRECT;
-import static com.novmik.tpc.client.ClientConstants.CLIENT_NOT_EXISTS;
-import static com.novmik.tpc.client.ClientConstants.CLIENT_OR_ROLE_NOT_EXISTS;
-
 import com.novmik.tpc.auth.RegistrationRequest;
 import com.novmik.tpc.exception.BadRequestException;
 import com.novmik.tpc.exception.NotFoundException;
@@ -49,14 +45,14 @@ public class ClientService {
    * @return {@link Client}
    * @throws ResourceAlreadyInUseException если email занят
    */
-  public Optional<Client> registerUser(final RegistrationRequest registerRequest) {
+  public Optional<Client> registerClient(final RegistrationRequest registerRequest) {
     final String registerEmail = registerRequest.getEmail();
     if (existsByEmail(registerEmail)) {
       throw new ResourceAlreadyInUseException("Email", "Address", registerEmail);
     }
     final Client newUser = createUser(registerRequest);
-    final Client registeredNewUser = saveClient(newUser);
-    return Optional.ofNullable(registeredNewUser);
+    final Client registeredNewClient = saveClient(newUser);
+    return Optional.ofNullable(registeredNewClient);
   }
 
   /**
@@ -75,7 +71,7 @@ public class ClientService {
    * @param email почта клиента
    * @return {@link Client}
    */
-  public Optional<Client> getClient(final String email) {
+  public Optional<Client> getClientByEmail(final String email) {
     return clientRepository.findByEmail(email);
   }
 
@@ -130,14 +126,14 @@ public class ClientService {
    *
    * @param idClient id {@link Client}
    * @throws BadRequestException если некорректные данные
-   * @throws NotFoundException если {@link Client} не найден
+   * @throws NotFoundException   если {@link Client} не найден
    */
-  public void deleteClient(final Long idClient) {
+  public void deleteClientById(final Long idClient) {
     if (idClient == null || idClient < 1) {
-      throw new BadRequestException(CLIENT_NOT_CORRECT);
+      throw new BadRequestException("Некорректные данные о Клиенте.");
     }
     if (!existsById(idClient)) {
-      throw new NotFoundException(CLIENT_NOT_EXISTS + idClient);
+      throw new NotFoundException("Клиента с таким id/email не существует: " + idClient);
     }
     clientRepository.deleteById(idClient);
   }
@@ -145,28 +141,27 @@ public class ClientService {
   /**
    * Добавление роли клиенту.
    *
-   * @param email почта {@link Client}
+   * @param email    почта {@link Client}
    * @param roleName наименование роли
    * @throws NotFoundException если {@link Client} или
-   * {@link Role} не найден
+   *                           {@link Role} не найден
    */
   public void addRoleToClient(final String email, final String roleName) {
-    final Optional<Client> clientByEmail = this.getClient(email);
+    final Optional<Client> clientByEmail = getClientByEmail(email);
     final Optional<Role> roleByName = roleService.findRoleByName(roleName);
     if (clientByEmail.isPresent() && roleByName.isPresent()) {
       clientByEmail.get().getRoles().add(roleByName.get());
     } else {
-      throw new NotFoundException(CLIENT_OR_ROLE_NOT_EXISTS);
+      throw new NotFoundException("Клиента или роли не существует.");
     }
   }
 
   /**
    * Удаление токена обновления.
    *
-   * @param currentUser {@link CustomUserDetails}
    * @param refreshToken токен обновления
    */
-  public void logoutUser(final CustomUserDetails currentUser, final String refreshToken) {
+  public void logoutUser(final String refreshToken) {
     rtService.deleteByRefreshToken(refreshToken);
   }
 }

@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Body surface area (BSA)
  * Единица измерения - кв.м.
  */
-@SuppressWarnings({"PMD.TooManyMethods",})
+@SuppressWarnings("PMD.TooManyMethods")
 public final class BodySurfaceAreaUtils {
 
   /**

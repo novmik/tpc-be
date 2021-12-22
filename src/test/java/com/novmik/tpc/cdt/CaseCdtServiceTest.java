@@ -44,5 +44,8 @@ class CaseCdtServiceTest {
 
   @Test
   void canSaveNameCaseCdt() {
+    String nominationCaseCdt = "Test nomination Case Cdt";
+    underTest.save(nominationCaseCdt);
+    verify(caseCdtRepository).findByNominationCaseCdt(nominationCaseCdt);
   }
 }

@@ -17,6 +17,6 @@ public class TokenRefreshException extends RuntimeException {
    * @param message сообщение
    */
   public TokenRefreshException(final String token, final String message) {
-    super(String.format("Не обновился токен [%s]: [%s])", token, message));
+    super(String.format("Не обновился токен [%s]: [%s]", token, message));
   }
 }

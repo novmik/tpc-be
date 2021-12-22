@@ -1,16 +1,9 @@
 package com.novmik.tpc.cdt;
 
-import static com.novmik.tpc.cdt.CdtConstants.CARE_FACILITY_MUST_BE;
-import static com.novmik.tpc.cdt.CdtConstants.CARE_FACILITY_NOT_CORRECT;
-import static com.novmik.tpc.cdt.CdtConstants.CDT_EXISTS;
-import static com.novmik.tpc.cdt.CdtConstants.CDT_NOT_CORRECT;
-import static com.novmik.tpc.cdt.CdtConstants.CDT_VALUE_NOT_CORRECT;
-import static com.novmik.tpc.cdt.CdtConstants.DAY_CARE_FACILITY;
-import static com.novmik.tpc.cdt.CdtConstants.ROUND_THE_CLOCK_CARE_FACILITY;
-import static com.novmik.tpc.subject.SubjectConstants.SUBJECT_NOT_EXISTS;
+import static com.novmik.tpc.cdt.CoefficientDifficultyTreatingService.DAY_CARE_FACILITY;
+import static com.novmik.tpc.cdt.CoefficientDifficultyTreatingService.ROUND_THE_CLOCK_CARE_FACILITY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,8 +33,8 @@ class CoefficientDifficultyTreatingServiceTest {
 
   @BeforeEach
   void setUp() {
-    underTest = new CoefficientDifficultyTreatingService(cdtRepository, caseCdtService,
-        subjectService);
+    underTest = new CoefficientDifficultyTreatingService(
+        cdtRepository, caseCdtService, subjectService);
   }
 
   @Test
@@ -54,10 +47,10 @@ class CoefficientDifficultyTreatingServiceTest {
     );
     long id = 10;
     String careFacility = "testCareFacility";
-    given(subjectService.getSubjectById(id)).willReturn(Optional.of(subject));
-    underTest.getCareFacilityCdtpListBySubjectId(id, careFacility);
-    verify(cdtRepository).findAllByNameSubjectAndCareFacility(subject.getNameSubject(),
-        careFacility);
+    when(subjectService.getSubjectById(id)).thenReturn(subject);
+    underTest.getCareFacilityCdtListBySubjectId(id, careFacility);
+    verify(cdtRepository)
+        .findAllByNameSubjectAndCareFacility(subject.getNameSubject(), careFacility);
   }
 
   @Test
@@ -65,10 +58,10 @@ class CoefficientDifficultyTreatingServiceTest {
     long id = 10;
     String careFacility = "testCareFacility";
     when(subjectService.getSubjectById(id)).thenThrow(
-        new NotFoundException(SUBJECT_NOT_EXISTS + id));
-    assertThatThrownBy(() -> underTest.getCareFacilityCdtpListBySubjectId(id, careFacility))
+        new NotFoundException("Субъекта с таким id/именем/названием не существует: " + id));
+    assertThatThrownBy(() -> underTest.getCareFacilityCdtListBySubjectId(id, careFacility))
         .isInstanceOf(NotFoundException.class)
-        .hasMessage(SUBJECT_NOT_EXISTS + id);
+        .hasMessage("Субъекта с таким id/именем/названием не существует: " + id);
     verify(cdtRepository, never()).findAllByNameSubjectAndCareFacility("Test NameSubject",
         careFacility);
   }
@@ -92,9 +85,9 @@ class CoefficientDifficultyTreatingServiceTest {
         2F,
         ROUND_THE_CLOCK_CARE_FACILITY
     );
-    given(subjectService.findByNameSubject(subject.getNameSubject())).willReturn(
+    when(subjectService.findByNameSubject(subject.getNameSubject())).thenReturn(
         Optional.of(subject));
-    given(caseCdtService.save(caseCdt.getNominationCaseCdt())).willReturn(caseCdt);
+    when(caseCdtService.save(caseCdt.getNominationCaseCdt())).thenReturn(caseCdt);
     underTest.addNewCoefficientDifficultyTreating(cdt);
     ArgumentCaptor<CoefficientDifficultyTreating> cdtArgumentCaptor = ArgumentCaptor.forClass(
         CoefficientDifficultyTreating.class);
@@ -122,9 +115,9 @@ class CoefficientDifficultyTreatingServiceTest {
         2F,
         DAY_CARE_FACILITY
     );
-    given(subjectService.findByNameSubject(subject.getNameSubject())).willReturn(
+    when(subjectService.findByNameSubject(subject.getNameSubject())).thenReturn(
         Optional.of(subject));
-    given(caseCdtService.save(caseCdt.getNominationCaseCdt())).willReturn(caseCdt);
+    when(caseCdtService.save(caseCdt.getNominationCaseCdt())).thenReturn(caseCdt);
     underTest.addNewCoefficientDifficultyTreating(cdt);
     ArgumentCaptor<CoefficientDifficultyTreating> cdtArgumentCaptor = ArgumentCaptor.forClass(
         CoefficientDifficultyTreating.class);
@@ -138,7 +131,7 @@ class CoefficientDifficultyTreatingServiceTest {
     CoefficientDifficultyTreating cdt = new CoefficientDifficultyTreating();
     assertThatThrownBy(() -> underTest.addNewCoefficientDifficultyTreating(cdt))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(CDT_NOT_CORRECT + cdt);
+        .hasMessage("Некорректные данные о КСЛП." + cdt);
     verify(cdtRepository, never()).save(cdt);
   }
 
@@ -161,13 +154,13 @@ class CoefficientDifficultyTreatingServiceTest {
         2F,
         ROUND_THE_CLOCK_CARE_FACILITY
     );
-    given(subjectService.findByNameSubject(cdt.getNameSubject())).willReturn(Optional.of(subject));
-    given(caseCdtService.save(cdt.getCaseCdt().getNominationCaseCdt())).willReturn(caseCdt);
-    given(cdtRepository.existByCaseCdtIdAndNameSubjectAndCareFacility(cdt.getCaseCdt().getIdCaseCdt(),
-        cdt.getNameSubject(), cdt.getCareFacility())).willReturn(true);
+    when(subjectService.findByNameSubject(cdt.getNameSubject())).thenReturn(Optional.of(subject));
+    when(caseCdtService.save(cdt.getCaseCdt().getNominationCaseCdt())).thenReturn(caseCdt);
+    when(cdtRepository.existByCaseCdtIdAndNameSubjectAndCareFacility(cdt.getCaseCdt().getIdCaseCdt(),
+        cdt.getNameSubject(), cdt.getCareFacility())).thenReturn(true);
     assertThatThrownBy(() -> underTest.addNewCoefficientDifficultyTreating(cdt))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(CDT_EXISTS + caseCdt);
+        .hasMessage("КСЛП с таким id/именем/названием уже существует: " + caseCdt);
     verify(cdtRepository, never()).save(cdt);
   }
 
@@ -182,7 +175,7 @@ class CoefficientDifficultyTreatingServiceTest {
     );
     assertThatThrownBy(() -> underTest.addNewCoefficientDifficultyTreating(cdt))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(CDT_VALUE_NOT_CORRECT + cdt.getValue());
+        .hasMessage("Некорректное значение КСЛП: " + cdt.getValue());
     verify(cdtRepository, never()).save(cdt);
   }
 
@@ -197,8 +190,11 @@ class CoefficientDifficultyTreatingServiceTest {
     );
     assertThatThrownBy(() -> underTest.addNewCoefficientDifficultyTreating(cdt))
         .isInstanceOf(BadRequestException.class)
-        .hasMessage(CARE_FACILITY_NOT_CORRECT + cdt.getCareFacility() + ". " + CARE_FACILITY_MUST_BE
-            + ROUND_THE_CLOCK_CARE_FACILITY + " или " + DAY_CARE_FACILITY);
+        .hasMessage(String.format(
+            "Некорректное значение стационара: %s. Должно быть: %s или %s",
+            cdt.getCareFacility(),
+            ROUND_THE_CLOCK_CARE_FACILITY,
+            DAY_CARE_FACILITY));
     verify(cdtRepository, never()).save(cdt);
   }
 
@@ -211,10 +207,10 @@ class CoefficientDifficultyTreatingServiceTest {
         1F,
         "ST"
     );
-    given(subjectService.findByNameSubject(cdt.getNameSubject())).willReturn(Optional.empty());
+    when(subjectService.findByNameSubject(cdt.getNameSubject())).thenReturn(Optional.empty());
     assertThatThrownBy(() -> underTest.addNewCoefficientDifficultyTreating(cdt))
         .isInstanceOf(NotFoundException.class)
-        .hasMessage(SUBJECT_NOT_EXISTS + cdt.getNameSubject());
+        .hasMessage("Субъекта с таким id/именем/названием не существует: " + cdt.getNameSubject());
     verify(cdtRepository, never()).save(cdt);
   }
 

@@ -1,8 +1,5 @@
 package com.novmik.tpc.security;
 
-import static com.novmik.tpc.security.SecurityConstants.NOVMIK_ADMINISTRATION;
-import static com.novmik.tpc.security.SecurityConstants.PERMISSIONS;
-
 import com.novmik.tpc.client.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -57,11 +54,11 @@ public class JwtTokenProvider {
     final String permissions = getClientPermissions(customUserDetails);
     return Jwts.builder()
         .setSubject(customUserDetails.getUsername())
-        .setAudience(NOVMIK_ADMINISTRATION)
+        .setAudience("User Management Portal of Treatment Payment Calculator(TPC) (Novmik.com)")
         .setIssuedAt(Date.from(Instant.now()))
         .setExpiration(Date.from(expiryDate))
         .signWith(SignatureAlgorithm.HS512, jwtSecret)
-        .claim(PERMISSIONS, permissions)
+        .claim("permissions", permissions)
         .compact();
   }
 
@@ -89,7 +86,7 @@ public class JwtTokenProvider {
         .setSigningKey(jwtSecret)
         .parseClaimsJws(token)
         .getBody();
-    return Arrays.stream(claims.get(PERMISSIONS).toString().split(","))
+    return Arrays.stream(claims.get("permissions").toString().split(","))
         .map(SimpleGrantedAuthority::new)
         .collect(Collectors.toList());
   }

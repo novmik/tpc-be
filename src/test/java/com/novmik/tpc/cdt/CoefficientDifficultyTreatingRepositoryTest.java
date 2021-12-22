@@ -1,6 +1,6 @@
 package com.novmik.tpc.cdt;
 
-import static com.novmik.tpc.cdt.CdtConstants.ROUND_THE_CLOCK_CARE_FACILITY;
+import static com.novmik.tpc.cdt.CoefficientDifficultyTreatingService.ROUND_THE_CLOCK_CARE_FACILITY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 

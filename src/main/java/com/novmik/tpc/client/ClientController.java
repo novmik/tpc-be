@@ -2,7 +2,10 @@ package com.novmik.tpc.client;
 
 import static org.springframework.http.HttpStatus.OK;
 
+import com.novmik.tpc.auth.RegistrationRequest;
+import com.novmik.tpc.exception.UserRegistrationException;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,9 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.novmik.tpc.auth.RegistrationRequest;
-import com.novmik.tpc.exception.UserRegistrationException;
-import lombok.RequiredArgsConstructor;
 
 /**
  * Клиент control layer.
@@ -53,7 +53,7 @@ public class ClientController {
   @PostMapping("/register")
   public ResponseEntity<Client> registerUser(
       @RequestBody final RegistrationRequest regRequest) {
-    return clientService.registerUser(regRequest)
+    return clientService.registerClient(regRequest)
         .map(user -> new ResponseEntity<>(user, OK))
         .orElseThrow(() -> new UserRegistrationException(
             regRequest.getEmail(), "Пользователь не зарегистрирован"));
@@ -80,6 +80,6 @@ public class ClientController {
    */
   @DeleteMapping("/{idClient}")
   public void deleteClient(@PathVariable("idClient") final Long idClient) {
-    clientService.deleteClient(idClient);
+    clientService.deleteClientById(idClient);
   }
 }

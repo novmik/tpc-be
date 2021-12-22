@@ -2,11 +2,15 @@ package com.novmik.tpc.auth;
 
 import com.novmik.tpc.role.Role;
 import java.util.Collection;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Запрос на регистрацию клиента.
  */
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class RegistrationRequest {
 
@@ -23,7 +27,7 @@ public class RegistrationRequest {
    */
   private String firstName;
   /**
-   * Фамилия
+   * Фамилия.
    */
   private String lastName;
   /**

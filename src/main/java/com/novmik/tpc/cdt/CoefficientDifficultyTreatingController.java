@@ -1,7 +1,8 @@
 package com.novmik.tpc.cdt;
 
-import static com.novmik.tpc.cdt.CdtConstants.DAY_CARE_FACILITY;
-import static com.novmik.tpc.cdt.CdtConstants.ROUND_THE_CLOCK_CARE_FACILITY;
+import static com.novmik.tpc.cdt.CoefficientDifficultyTreatingService.DAY_CARE_FACILITY;
+import static com.novmik.tpc.cdt.CoefficientDifficultyTreatingService.ROUND_THE_CLOCK_CARE_FACILITY;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.util.List;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CoefficientDifficultyTreatingController {
 
   /**
-   * КСЛП-сервис {@link CoefficientDifficultyTreatingService}
+   * КСЛП-сервис {@link CoefficientDifficultyTreatingService}.
    */
   private final CoefficientDifficultyTreatingService cdtService;
 
@@ -35,12 +36,12 @@ public class CoefficientDifficultyTreatingController {
    * @param idSubject id субъекта РФ
    * @return список КСЛП {@link CoefficientDifficultyTreating}
    */
-  @GetMapping("/{idSubject}/" + ROUND_THE_CLOCK_CARE_FACILITY + "/")
+  @GetMapping("/{idSubject}/" + ROUND_THE_CLOCK_CARE_FACILITY)
   public ResponseEntity
-      <List<CoefficientDifficultyTreating>> getRoundTheClockCareFacilityCdtpListBySubjectId(
+      <List<CoefficientDifficultyTreating>> getStCdtpListBySubjectId(
       @PathVariable("idSubject") final Long idSubject) {
     return new ResponseEntity<>(
-        cdtService.getCareFacilityCdtpListBySubjectId(idSubject, ROUND_THE_CLOCK_CARE_FACILITY),
+        cdtService.getCareFacilityCdtListBySubjectId(idSubject, ROUND_THE_CLOCK_CARE_FACILITY),
         OK);
   }
 
@@ -51,12 +52,13 @@ public class CoefficientDifficultyTreatingController {
    * @param idSubject id субъекта РФ
    * @return список КСЛП {@link CoefficientDifficultyTreating}
    */
-  @GetMapping("/{idSubject}/" + DAY_CARE_FACILITY + "/")
+  @GetMapping("/{idSubject}/" + DAY_CARE_FACILITY)
   public ResponseEntity
-      <List<CoefficientDifficultyTreating>> getDayCareFacilityCdtpListBySubjectId(
+      <List<CoefficientDifficultyTreating>> getDsCdtpListBySubjectId(
       @PathVariable("idSubject") final Long idSubject) {
     return new ResponseEntity<>(
-        cdtService.getCareFacilityCdtpListBySubjectId(idSubject, DAY_CARE_FACILITY), OK);
+        cdtService.getCareFacilityCdtListBySubjectId(idSubject, DAY_CARE_FACILITY),
+        OK);
   }
 
   /**
@@ -70,6 +72,6 @@ public class CoefficientDifficultyTreatingController {
   public ResponseEntity
       <CoefficientDifficultyTreating> addNewCdtp(
       @RequestBody final CoefficientDifficultyTreating cdt) {
-    return new ResponseEntity<>(cdtService.addNewCoefficientDifficultyTreating(cdt), OK);
+    return new ResponseEntity<>(cdtService.addNewCoefficientDifficultyTreating(cdt), CREATED);
   }
 }
