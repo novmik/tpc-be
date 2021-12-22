@@ -90,10 +90,10 @@ public class PrivilegeService {
    */
   protected void deletePrivilegeById(final Long idPrivilege) {
     if (idPrivilege == null || idPrivilege < 1) {
-      throw new BadRequestException("Некорректные данные о привилегии.");
+      throw new BadRequestException("Некорректные данные о привилегии: " + idPrivilege);
     }
     if (!existById(idPrivilege)) {
-      throw new NotFoundException("Привилегии с таким id/названием не существует: ");
+      throw new NotFoundException("Привилегии с таким id/названием не существует: " + idPrivilege);
     }
     privilegeRepo.deleteById(idPrivilege);
   }

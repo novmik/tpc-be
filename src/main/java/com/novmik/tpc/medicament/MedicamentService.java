@@ -35,7 +35,8 @@ public class MedicamentService {
     final List<Medicament> medicamentList = MedicamentExtractorResolverUtils.getMedicamentList(
         scheme);
     if (medicamentList.isEmpty()) {
-      throw new NotFoundException("Список лекарств извлечь не получилось из схемы: " + scheme);
+      throw new NotFoundException(
+          String.format("Список лекарств из схемы: [%s] извлечь не получилось ", scheme));
     }
     return medicamentList;
   }

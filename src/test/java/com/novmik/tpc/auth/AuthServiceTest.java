@@ -2,6 +2,7 @@ package com.novmik.tpc.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -58,10 +59,7 @@ class AuthServiceTest {
   @Test
   void notCanAuthenticateUser() {
     LoginRequest loginRequest = new LoginRequest();
-    Authentication auth = new UsernamePasswordAuthenticationToken(
-        loginRequest.getEmail(),
-        loginRequest.getPassword());
-    when(authManager.authenticate(auth)).thenReturn(null);
+    when(authManager.authenticate(any(Authentication.class))).thenReturn(null);
     assertThat(underTest.authenticateUser(loginRequest)).isEmpty();
   }
 

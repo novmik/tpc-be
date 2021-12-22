@@ -4,14 +4,12 @@ import com.novmik.tpc.exception.TokenRefreshException;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
  * RefreshToken business interface layer.
  */
-@RequiredArgsConstructor
 @Service
 @SuppressWarnings("PMD.LawOfDemeter")
 public class RefreshTokenService {
@@ -25,8 +23,13 @@ public class RefreshTokenService {
    * Продолжительность действия RefreshToken.
    * 2592000000мс = 30 дней
    */
-  @Value("${jwt.token.refresh.duration}")
-  private Long durationMs;
+  private final long durationMs;
+
+  public RefreshTokenService(final RefreshTokenRepository rtRepository,
+      @Value("${jwt.token.refresh.duration}") final Long durationMs) {
+    this.rtRepository = rtRepository;
+    this.durationMs = durationMs;
+  }
 
   /**
    * Поиск RefreshToken по токену.
@@ -70,7 +73,7 @@ public class RefreshTokenService {
   public void verifyExpiration(final RefreshToken token) {
     if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
       throw new TokenRefreshException(token.getToken(),
-          "Токен не действителен. Пожалуйста, отправьте новый запрос");
+          "Токен не действителен. Отправьте новый запрос");
     }
   }
 

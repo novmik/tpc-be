@@ -4,7 +4,6 @@ import static com.novmik.tpc.cdt.CoefficientDifficultyTreatingService.DAY_CARE_F
 import static com.novmik.tpc.cdt.CoefficientDifficultyTreatingService.ROUND_THE_CLOCK_CARE_FACILITY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,8 +33,8 @@ class CoefficientDifficultyTreatingServiceTest {
 
   @BeforeEach
   void setUp() {
-    underTest = new CoefficientDifficultyTreatingService(cdtRepository, caseCdtService,
-        subjectService);
+    underTest = new CoefficientDifficultyTreatingService(
+        cdtRepository, caseCdtService, subjectService);
   }
 
   @Test
@@ -48,10 +47,10 @@ class CoefficientDifficultyTreatingServiceTest {
     );
     long id = 10;
     String careFacility = "testCareFacility";
-    given(subjectService.getSubjectById(id)).willReturn(subject);
+    when(subjectService.getSubjectById(id)).thenReturn(subject);
     underTest.getCareFacilityCdtListBySubjectId(id, careFacility);
-    verify(cdtRepository).findAllByNameSubjectAndCareFacility(subject.getNameSubject(),
-        careFacility);
+    verify(cdtRepository)
+        .findAllByNameSubjectAndCareFacility(subject.getNameSubject(), careFacility);
   }
 
   @Test
@@ -86,9 +85,9 @@ class CoefficientDifficultyTreatingServiceTest {
         2F,
         ROUND_THE_CLOCK_CARE_FACILITY
     );
-    given(subjectService.findByNameSubject(subject.getNameSubject())).willReturn(
+    when(subjectService.findByNameSubject(subject.getNameSubject())).thenReturn(
         Optional.of(subject));
-    given(caseCdtService.save(caseCdt.getNominationCaseCdt())).willReturn(caseCdt);
+    when(caseCdtService.save(caseCdt.getNominationCaseCdt())).thenReturn(caseCdt);
     underTest.addNewCoefficientDifficultyTreating(cdt);
     ArgumentCaptor<CoefficientDifficultyTreating> cdtArgumentCaptor = ArgumentCaptor.forClass(
         CoefficientDifficultyTreating.class);
@@ -116,9 +115,9 @@ class CoefficientDifficultyTreatingServiceTest {
         2F,
         DAY_CARE_FACILITY
     );
-    given(subjectService.findByNameSubject(subject.getNameSubject())).willReturn(
+    when(subjectService.findByNameSubject(subject.getNameSubject())).thenReturn(
         Optional.of(subject));
-    given(caseCdtService.save(caseCdt.getNominationCaseCdt())).willReturn(caseCdt);
+    when(caseCdtService.save(caseCdt.getNominationCaseCdt())).thenReturn(caseCdt);
     underTest.addNewCoefficientDifficultyTreating(cdt);
     ArgumentCaptor<CoefficientDifficultyTreating> cdtArgumentCaptor = ArgumentCaptor.forClass(
         CoefficientDifficultyTreating.class);
@@ -155,10 +154,10 @@ class CoefficientDifficultyTreatingServiceTest {
         2F,
         ROUND_THE_CLOCK_CARE_FACILITY
     );
-    given(subjectService.findByNameSubject(cdt.getNameSubject())).willReturn(Optional.of(subject));
-    given(caseCdtService.save(cdt.getCaseCdt().getNominationCaseCdt())).willReturn(caseCdt);
-    given(cdtRepository.existByCaseCdtIdAndNameSubjectAndCareFacility(cdt.getCaseCdt().getIdCaseCdt(),
-        cdt.getNameSubject(), cdt.getCareFacility())).willReturn(true);
+    when(subjectService.findByNameSubject(cdt.getNameSubject())).thenReturn(Optional.of(subject));
+    when(caseCdtService.save(cdt.getCaseCdt().getNominationCaseCdt())).thenReturn(caseCdt);
+    when(cdtRepository.existByCaseCdtIdAndNameSubjectAndCareFacility(cdt.getCaseCdt().getIdCaseCdt(),
+        cdt.getNameSubject(), cdt.getCareFacility())).thenReturn(true);
     assertThatThrownBy(() -> underTest.addNewCoefficientDifficultyTreating(cdt))
         .isInstanceOf(BadRequestException.class)
         .hasMessage("КСЛП с таким id/именем/названием уже существует: " + caseCdt);
@@ -208,7 +207,7 @@ class CoefficientDifficultyTreatingServiceTest {
         1F,
         "ST"
     );
-    given(subjectService.findByNameSubject(cdt.getNameSubject())).willReturn(Optional.empty());
+    when(subjectService.findByNameSubject(cdt.getNameSubject())).thenReturn(Optional.empty());
     assertThatThrownBy(() -> underTest.addNewCoefficientDifficultyTreating(cdt))
         .isInstanceOf(NotFoundException.class)
         .hasMessage("Субъекта с таким id/именем/названием не существует: " + cdt.getNameSubject());

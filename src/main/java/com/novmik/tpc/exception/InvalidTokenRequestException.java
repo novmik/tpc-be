@@ -20,6 +20,6 @@ public class InvalidTokenRequestException extends RuntimeException {
   public InvalidTokenRequestException(final String tokenType,
       final String token,
       final String message) {
-    super(String.format("%s: [%s] token: [%s] ", message, tokenType, token));
+    super(String.format("%s: [%s] token: [%s]", message, tokenType, token));
   }
 }

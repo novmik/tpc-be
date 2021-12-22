@@ -5,7 +5,6 @@ import static org.springframework.http.HttpStatus.OK;
 
 import com.novmik.tpc.subject.Subject;
 import java.util.List;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

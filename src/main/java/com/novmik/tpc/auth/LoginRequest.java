@@ -1,6 +1,5 @@
 package com.novmik.tpc.auth;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**

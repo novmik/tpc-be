@@ -46,7 +46,7 @@ public class RoleService {
   public Optional<Role> findRoleByName(final String roleName) {
     final Optional<Role> roleByName = roleRepository.findRoleByName(roleName);
     if (roleByName.isEmpty()) {
-      throw new NotFoundException("Роль не найдена." + roleName);
+      throw new NotFoundException("Роль не найдена: " + roleName);
     }
     return roleByName;
   }
@@ -67,19 +67,9 @@ public class RoleService {
     )) {
       throw new BadRequestException("Некорректные данные о роли" + role);
     }
-    if (findRoleByName(role.getName()).isPresent()) {
+    if (roleRepository.findRoleByName(role.getName()).isPresent()) {
       throw new BadRequestException("Роль с таким id/названием уже существует: " + role.getName());
     }
-    return save(role);
-  }
-
-  /**
-   * Сохранение роли.
-   *
-   * @param role роль {@link Role}
-   * @return роль {@link Role}
-   */
-  protected Role save(final Role role) {
     return roleRepository.save(role);
   }
 
@@ -92,7 +82,7 @@ public class RoleService {
    *                           или полномочия не найдены
    */
   public void addPrivilegeToRole(final String roleName, final String privilegeName) {
-    final Optional<Role> roleByName = findRoleByName(roleName);
+    final Optional<Role> roleByName = roleRepository.findRoleByName(roleName);
     final Optional<Privilege> privilegeByName = privilegeService.findByPrivilegeName(privilegeName);
     if (roleByName.isPresent() && privilegeByName.isPresent()) {
       roleByName.get().getPrivileges().add(privilegeByName.get());

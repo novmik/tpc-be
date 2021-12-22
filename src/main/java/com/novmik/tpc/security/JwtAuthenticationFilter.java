@@ -33,8 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   /**
    * TOKEN_REQUEST_HEADER_PREFIX.
    */
-  private static final String TOKEN_REQUEST_HEADER_PREFIX =
-      "Bearer ";
+  private static final String TOKEN_REQUEST_HEADER_PREFIX = "Bearer ";
 
   /**
    * {@link JwtTokenProvider}.

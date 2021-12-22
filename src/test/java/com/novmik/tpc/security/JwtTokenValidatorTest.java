@@ -8,6 +8,8 @@ import com.novmik.tpc.client.Client;
 import com.novmik.tpc.client.CustomUserDetails;
 import com.novmik.tpc.exception.InvalidTokenRequestException;
 import com.novmik.tpc.role.Role;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,6 +55,15 @@ class JwtTokenValidatorTest {
     assertThatThrownBy(() -> underTest.validateToken(token + "-Damage"))
         .isInstanceOf(InvalidTokenRequestException.class)
         .hasMessageContaining("Неверный ключ: [JWT] token: ");
+  }
+
+  @Test
+  void willThrowWhenTokenIsNull() {
+    String token = null;
+    assertThatThrownBy(() -> underTest.validateToken(token))
+        .isInstanceOf(InvalidTokenRequestException.class)
+        .hasMessageContaining(
+            String.format("Illegal argument token: [JWT] token: [%s]", token));
   }
 
   private CustomUserDetails stubCustomClient() {
