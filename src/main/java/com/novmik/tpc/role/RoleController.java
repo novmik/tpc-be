@@ -7,7 +7,9 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,6 +51,17 @@ public class RoleController {
   @PostMapping
   public ResponseEntity<Role> addNewRole(@RequestBody final Role role) {
     return new ResponseEntity<>(roleService.addNewRole(role), CREATED);
+  }
+
+  /**
+   * Удаление {@link Role}.
+   * Delete-запрос "api/v1/role/{idRole}"
+   *
+   * @param idRole id {@link Role}
+   */
+  @DeleteMapping("/{idRole}")
+  public void deleteRoleById(@PathVariable("idRole") final Long idRole) {
+    roleService.deleteRoleById(idRole);
   }
 
   /**

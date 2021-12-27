@@ -1,9 +1,11 @@
 package com.novmik.tpc.schemepharmacotherapy;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.novmik.tpc.exception.BadRequestException;
 import com.novmik.tpc.exception.NotFoundException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,21 +18,27 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class SchemePharmacotherapyServiceTest {
 
   @Mock
-  private SchemePharmacotherapyRepository spRepository;
+  private SchemePharmacotherapyRepository schemeRepository;
   private SchemePharmacotherapyService underTest;
 
   @BeforeEach
   void setUp() {
-    underTest = new SchemePharmacotherapyService(spRepository);
+    underTest = new SchemePharmacotherapyService(schemeRepository);
+  }
+
+  @Test
+  void canGetAllSchemePharmacotherapy() {
+    underTest.getAllSchemes();
+    verify(schemeRepository).findAll();
   }
 
   @Test
   void canFindByCodeScheme() {
     String codescheme = "sh0001";
-    when(spRepository.findByCodeScheme(codescheme))
+    when(schemeRepository.findByCodeScheme(codescheme))
         .thenReturn(Optional.of(new SchemePharmacotherapy()));
     underTest.findByCodeScheme(codescheme);
-    verify(spRepository).findByCodeScheme(codescheme);
+    verify(schemeRepository).findByCodeScheme(codescheme);
   }
 
   @Test
@@ -39,5 +47,34 @@ class SchemePharmacotherapyServiceTest {
     assertThatThrownBy(() -> underTest.findByCodeScheme(codeScheme))
         .isInstanceOf(NotFoundException.class)
         .hasMessage("Схема лекарственной терапии не найдена: " + codeScheme);
+  }
+
+  @Test
+  void canUpdateScheme() {
+    SchemePharmacotherapy scheme = new SchemePharmacotherapy(
+        90L, "sh000", "МНН МП", "Описание СЛТ", 10, "st19.001", "ds19.001");
+    when(schemeRepository.existsById(scheme.getIdScheme())).thenReturn(true);
+    underTest.updateScheme(scheme);
+    verify(schemeRepository).save(scheme);
+  }
+
+  @Test
+  void willThrowWhenUpdateSchemeIsNull() {
+    SchemePharmacotherapy scheme = new SchemePharmacotherapy();
+    assertThatThrownBy(() -> underTest.updateScheme(scheme))
+        .isInstanceOf(BadRequestException.class)
+        .hasMessageContaining("Некорректные данные о СЛТ: ");
+  }
+
+  @Test
+  void willThrowWhenUpdateSchemeWhichNotExists() {
+    SchemePharmacotherapy scheme = new SchemePharmacotherapy(
+        90L, "sh000", "МНН МП", "Описание СЛТ", 10, "st19.001", "ds19.001");
+    when(schemeRepository.existsById(scheme.getIdScheme())).thenReturn(false);
+    assertThatThrownBy(() -> underTest.updateScheme(scheme))
+        .isInstanceOf(NotFoundException.class)
+        .hasMessage(
+            "СЛТ с таким id/именем/названием не существует: " + scheme.getIdScheme());
+    verify(schemeRepository, never()).save(scheme);
   }
 }

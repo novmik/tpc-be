@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  * {@link DiagnosisPrice} control layer.
  */
 @AllArgsConstructor
-@RequestMapping("api/v1")
+@RequestMapping("api/v1/dp")
 @RestController
 public class DiagnosisPriceController {
 
@@ -26,12 +26,12 @@ public class DiagnosisPriceController {
 
   /**
    * Список {@link DiagnosisPrice}.
-   * Get-запрос "api/v1/{idSubject}/dp"
+   * Get-запрос "api/v1/dp/{idSubject}"
    *
    * @param idSubject id {@link com.novmik.tpc.subject.Subject}
    * @return список {@link DiagnosisPrice}
    */
-  @GetMapping("/{idSubject}/dp")
+  @GetMapping("/{idSubject}")
   public ResponseEntity<List<DiagnosisPrice>> getDiagnosisPriceList(
       @PathVariable("idSubject") final Long idSubject) {
     return new ResponseEntity<>(dpService.getDiagnosisPriceList(idSubject), OK);

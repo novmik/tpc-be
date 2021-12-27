@@ -24,7 +24,7 @@ class DiagnosisPriceControllerTest {
 
   @Test
   void getDiagnosisPriceList() throws Exception {
-    mockMvc.perform(get("/api/v1/{idSubject}/dp", 100L)
+    mockMvc.perform(get("/api/v1/dp/{idSubject}", 100L)
             .accept(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk());

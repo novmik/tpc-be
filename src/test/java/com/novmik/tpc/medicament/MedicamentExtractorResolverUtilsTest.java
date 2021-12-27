@@ -42,10 +42,10 @@ class MedicamentExtractorResolverUtilsTest {
     assertThat(MedicamentExtractorResolverUtils
         .getMedicamentList(scheme).get(0).getDose()).isEqualTo(0);
     assertThat(MedicamentExtractorResolverUtils
-        .getMedicamentList(scheme).get(0).getNumberDaysDrug()).isEqualTo(2);
+        .getMedicamentList(scheme).get(0).getNumberDaysDrug()).isEqualTo(0);
     assertThat(MedicamentExtractorResolverUtils
         .getMedicamentList(scheme).get(1).getDose()).isEqualTo(0);
     assertThat(MedicamentExtractorResolverUtils
-        .getMedicamentList(scheme).get(1).getNumberDaysDrug()).isEqualTo(1);
+        .getMedicamentList(scheme).get(1).getNumberDaysDrug()).isEqualTo(0);
   }
 }

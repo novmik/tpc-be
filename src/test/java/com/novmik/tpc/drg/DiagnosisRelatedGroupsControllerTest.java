@@ -28,7 +28,7 @@ class DiagnosisRelatedGroupsControllerTest {
   private DiagnosisRelatedGroupsService drgService;
 
   @Test
-  void getDiagnosisRelatedGroups() throws Exception {
+  void canGetDiagnosisRelatedGroups() throws Exception {
     mockMvc.perform(get("/api/v1/drg/{drg}", "st19.062")
             .accept(MediaType.APPLICATION_JSON))
         .andDo(print())
@@ -36,7 +36,15 @@ class DiagnosisRelatedGroupsControllerTest {
   }
 
   @Test
-  void addNewDrg() throws Exception {
+  void canGetAllDrgs() throws Exception {
+    mockMvc.perform(get("/api/v1/drg")
+            .accept(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  void canAddNewDrg() throws Exception {
     DiagnosisRelatedGroups drg = new DiagnosisRelatedGroups(
         "st19.062", "Test", 10F, 20F);
     mockMvc.perform(post("/api/v1/drg")
@@ -47,7 +55,7 @@ class DiagnosisRelatedGroupsControllerTest {
   }
 
   @Test
-  void updateDrg() throws Exception {
+  void canUpdateDrg() throws Exception {
     DiagnosisRelatedGroups drg = new DiagnosisRelatedGroups(
         300L, "st19.062", "Test", 10F, 20F);
     mockMvc.perform(put("/api/v1/drg")
@@ -59,7 +67,7 @@ class DiagnosisRelatedGroupsControllerTest {
 
   @WithMockUser(authorities = "DELETE")
   @Test
-  void deleteDrgById() throws Exception {
+  void canDeleteDrgById() throws Exception {
     mockMvc.perform(delete("/api/v1/drg/{idDrg}", 100L))
         .andExpect(status().isOk());
   }

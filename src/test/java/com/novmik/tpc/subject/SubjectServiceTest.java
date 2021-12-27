@@ -30,6 +30,12 @@ class SubjectServiceTest {
   }
 
   @Test
+  void canGetAllSubject() {
+    underTest.getAllSubjects();
+    verify(subjectRepository).findAll();
+  }
+
+  @Test
   void canGetSubjectByNameSubject() {
     String nameSubject = "Test SubjectName";
     underTest.findByNameSubject(nameSubject);
@@ -134,7 +140,7 @@ class SubjectServiceTest {
     Subject subject = new Subject();
     assertThatThrownBy(() -> underTest.updateSubject(subject))
         .isInstanceOf(BadRequestException.class)
-        .hasMessageContaining("Некорректные данные о субъекте.");
+        .hasMessageContaining("Некорректные данные о субъекте: ");
     verify(subjectRepository, never()).save(subject);
   }
 
@@ -149,7 +155,8 @@ class SubjectServiceTest {
     when(subjectRepository.existsById(subject.getIdSubject())).thenReturn(false);
     assertThatThrownBy(() -> underTest.updateSubject(subject))
         .isInstanceOf(NotFoundException.class)
-        .hasMessage("Субъекта с таким id/именем/названием не существует: " + subject.getIdSubject());
+        .hasMessage(
+            "Субъекта с таким id/именем/названием не существует: " + subject.getIdSubject());
     verify(subjectRepository, never()).save(subject);
   }
 
@@ -177,11 +184,5 @@ class SubjectServiceTest {
         .isInstanceOf(BadRequestException.class)
         .hasMessage("Некорректные данные о субъекте.");
     verify(subjectRepository, never()).deleteById(anyLong());
-  }
-
-  @Test
-  void canGetAllSubject() {
-    underTest.getAllSubject();
-    verify(subjectRepository).findAll();
   }
 }

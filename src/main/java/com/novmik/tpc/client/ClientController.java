@@ -37,7 +37,7 @@ public class ClientController {
    *
    * @return список {@link Client}
    */
-  @GetMapping("/list")
+  @GetMapping()
   public ResponseEntity<List<Client>> getClients() {
     return new ResponseEntity<>(clientService.getClients(), OK);
   }

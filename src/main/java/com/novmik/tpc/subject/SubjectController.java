@@ -44,14 +44,12 @@ public class SubjectController {
   /**
    * Список {@link Subject}.
    * Get-запрос "api/v1/s/all"
-   * В теле ответа список {@link Subject},
-   * сортированные по id
    *
    * @return список {@link Subject}
    */
   @GetMapping("/all")
   public ResponseEntity<List<Subject>> getAllSubjects() {
-    return new ResponseEntity<>(subjectService.getAllSubject(), OK);
+    return new ResponseEntity<>(subjectService.getAllSubjects(), OK);
   }
 
   /**

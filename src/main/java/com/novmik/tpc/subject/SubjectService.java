@@ -64,17 +64,12 @@ public class SubjectService {
   }
 
   /**
-   * Список {@link Subject},
-   * сортированный по id.
+   * Список {@link Subject}.
    *
    * @return список {@link Subject}
    */
-  public List<Subject> getAllSubject() {
-    return subjectRepository
-        .findAll()
-        .stream()
-        .sorted(Comparator.comparing(Subject::getIdSubject))
-        .collect(Collectors.toList());
+  public List<Subject> getAllSubjects() {
+    return subjectRepository.findAll();
   }
 
   /**
@@ -130,7 +125,7 @@ public class SubjectService {
         subject.getBaseRateDs(),
         subject.getBaseRateSt()
     )) {
-      throw new BadRequestException("Некорректные данные о субъекте." + subject);
+      throw new BadRequestException("Некорректные данные о субъекте: " + subject);
     }
     if (!existsById(subject.getIdSubject())) {
       throw new NotFoundException(

@@ -3,6 +3,7 @@ package com.novmik.tpc.drg;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
+import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,18 @@ public class DiagnosisRelatedGroupsController {
   public ResponseEntity<Optional<DiagnosisRelatedGroups>> getDiagnosisRelatedGroups(
       @PathVariable("drg") final String drg) {
     return new ResponseEntity<>(drgService.byNumberDrg(drg), OK);
+  }
+
+  /**
+   * Список {@link DiagnosisRelatedGroups}.
+   * Get-запрос "api/v1/drg"
+   *
+   * @return список {@link DiagnosisRelatedGroups}
+   *
+   */
+  @GetMapping
+  public ResponseEntity<List<DiagnosisRelatedGroups>> getAllDrgs() {
+    return new ResponseEntity<>(drgService.getAllDrgs(), OK);
   }
 
   /**

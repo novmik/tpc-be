@@ -1,5 +1,6 @@
 package com.novmik.tpc.role;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -53,6 +54,12 @@ class RoleControllerTest {
             .content(asJsonString(request))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  void deleteRoleById() throws Exception {
+    mockMvc.perform(delete("/api/v1/role/{idRole}", 100L))
         .andExpect(status().isOk());
   }
 

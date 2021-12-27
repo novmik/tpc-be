@@ -32,7 +32,7 @@ public class SchemePharmacotherapy {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private Long idSp;
+  private Long idScheme;
   /**
    * Код СЛТ.
    * (схема лекарственной терапии)

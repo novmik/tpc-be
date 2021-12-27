@@ -2,6 +2,7 @@ package com.novmik.tpc.drg;
 
 import com.novmik.tpc.exception.BadRequestException;
 import com.novmik.tpc.exception.NotFoundException;
+import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
@@ -32,6 +33,15 @@ public class DiagnosisRelatedGroupsService {
       throw new NotFoundException("КСГ/КПГ не содержит: " + drg);
     }
     return byNumberDrg;
+  }
+
+  /**
+   * Список {@link DiagnosisRelatedGroups}.
+   *
+   * @return список {@link DiagnosisRelatedGroups}
+   */
+  public List<DiagnosisRelatedGroups> getAllDrgs() {
+    return drgRepository.findAll();
   }
 
   /**

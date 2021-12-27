@@ -48,8 +48,9 @@ public final class MedicamentExtractorResolverUtils {
       dose = DoseExtractorUtils.getDose(strWithDose);
       float doseMin;
       float doseMax;
-      doseMin = DoseExtractorUtils.getDoseMin(strWithDose);
-      doseMax = DoseExtractorUtils.getDoseMax(strWithDose);
+      float[] doseMinMax = DoseExtractorUtils.getDoseMinMax(strWithDose);
+      doseMin = doseMinMax[0];
+      doseMax = doseMinMax[1];
       if (dose == 0 && (doseMin == 0 || doseMax == 0)) {
         log.error("Объёмы дозирования лекарственного препарата не определены.");
       }

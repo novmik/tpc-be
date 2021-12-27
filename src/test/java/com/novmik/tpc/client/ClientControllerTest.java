@@ -32,7 +32,7 @@ class ClientControllerTest {
 
   @Test
   void getClients() throws Exception {
-    mockMvc.perform(get("/api/v1/client/list")
+    mockMvc.perform(get("/api/v1/client")
             .accept(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk());

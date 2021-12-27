@@ -28,7 +28,7 @@ class SubjectControllerTest {
   private SubjectService subjectService;
 
   @Test
-  void getIdAndNameSubjectFromTable() throws Exception {
+  void canGetIdAndNameSubjectFromTable() throws Exception {
     mockMvc.perform(get("/api/v1/s")
             .accept(MediaType.APPLICATION_JSON))
         .andDo(print())
@@ -36,7 +36,7 @@ class SubjectControllerTest {
   }
 
   @Test
-  void getAllSubjects() throws Exception {
+  void canGetAllSubjects() throws Exception {
     mockMvc.perform(get("/api/v1/s/all")
             .accept(MediaType.APPLICATION_JSON))
         .andDo(print())
@@ -44,7 +44,7 @@ class SubjectControllerTest {
   }
 
   @Test
-  void getSubjectById() throws Exception {
+  void canGetSubjectById() throws Exception {
     mockMvc.perform(get("/api/v1/s/{idSubject}", 100L)
             .accept(MediaType.APPLICATION_JSON))
         .andDo(print())
@@ -52,7 +52,7 @@ class SubjectControllerTest {
   }
 
   @Test
-  void addNewSubject() throws Exception {
+  void canAddNewSubject() throws Exception {
     Subject subject = new Subject("Test", 200D, 300D);
     mockMvc.perform(post("/api/v1/s")
             .content(asJsonString(subject))
@@ -62,7 +62,7 @@ class SubjectControllerTest {
   }
 
   @Test
-  void updateSubject() throws Exception {
+  void canUpdateSubject() throws Exception {
     Subject subject = new Subject("Test", 200D, 300D);
     mockMvc.perform(put("/api/v1/s")
             .content(asJsonString(subject))
@@ -73,7 +73,7 @@ class SubjectControllerTest {
 
   @WithMockUser(authorities = "DELETE")
   @Test
-  void deleteSubjectById() throws Exception {
+  void canDeleteSubjectById() throws Exception {
     mockMvc.perform(delete("/api/v1/s/{idSubject}", 100L))
         .andExpect(status().isOk());
   }

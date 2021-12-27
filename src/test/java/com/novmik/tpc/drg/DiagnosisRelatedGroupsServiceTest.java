@@ -30,6 +30,12 @@ class DiagnosisRelatedGroupsServiceTest {
   }
 
   @Test
+  void canGetAllDrgs() {
+    underTest.getAllDrgs();
+    verify(drgRepository).findAll();
+  }
+
+  @Test
   void canGetBooleanWhenDrgExistsById() {
     long id = 10;
     underTest.existsById(id);

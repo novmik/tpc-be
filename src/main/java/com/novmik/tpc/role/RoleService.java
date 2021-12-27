@@ -91,4 +91,21 @@ public class RoleService {
     }
   }
 
+  /**
+   * Удаление {@link Role}.
+   *
+   * @param idRole id {@link Role}
+   * @throws BadRequestException если id не корректный
+   * @throws NotFoundException   если {@link Role} не найден
+   */
+  protected void deleteRoleById(final Long idRole) {
+    if (idRole == null || idRole < 1) {
+      throw new BadRequestException("Некорректные данные о роли: " + idRole);
+    }
+    if (!roleRepository.existsById(idRole)) {
+      throw new NotFoundException("Роли с таким id/названием не существует: " + idRole);
+    }
+    roleRepository.deleteById(idRole);
+  }
+
 }

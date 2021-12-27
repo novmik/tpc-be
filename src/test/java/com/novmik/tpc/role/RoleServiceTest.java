@@ -109,4 +109,31 @@ class RoleServiceTest {
         .isInstanceOf(NotFoundException.class)
         .hasMessage("Роль/полномочия не найдены.");
   }
+
+  @Test
+  void canDeleteRoleById() {
+    long idRole = 70L;
+    when(roleRepository.existsById(idRole)).thenReturn(true);
+    underTest.deleteRoleById(idRole);
+    verify(roleRepository).deleteById(idRole);
+  }
+
+  @Test
+  void willThrowWhenDeleteRoleByIdIsNotCorrect() {
+    long idRole = 0;
+    assertThatThrownBy(() -> underTest.deleteRoleById(idRole))
+        .isInstanceOf(BadRequestException.class)
+        .hasMessage("Некорректные данные о роли: " + idRole);
+    verify(roleRepository, never()).deleteById(idRole);
+  }
+
+  @Test
+  void willThrowWhenDeleteRoleByIdIsNotExist() {
+    long idRole = 300L;
+    when(roleRepository.existsById(idRole)).thenReturn(false);
+    assertThatThrownBy(() -> underTest.deleteRoleById(idRole))
+        .isInstanceOf(NotFoundException.class)
+        .hasMessage("Роли с таким id/названием не существует: " + idRole);
+    verify(roleRepository, never()).deleteById(idRole);
+  }
 }
