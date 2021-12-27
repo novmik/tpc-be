@@ -3,7 +3,6 @@ package com.novmik.tpc.schemepharmacotherapy;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.util.List;
-import com.novmik.tpc.subject.Subject;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
