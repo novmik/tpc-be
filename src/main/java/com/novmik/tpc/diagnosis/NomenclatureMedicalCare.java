@@ -13,8 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Номенклатура медицинских услуг
- * entity class.
+ * Номенклатура медицинских услуг entity class.
  */
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,7 +35,7 @@ public class NomenclatureMedicalCare {
    * Код медицинской услуги.
    */
   @Column(name = "code_medical_care")
-  private String codeMedicalCara;
+  private String codeMedicalCare;
   /**
    * Название медицинской услуги.
    */
@@ -46,11 +45,11 @@ public class NomenclatureMedicalCare {
   /**
    * Ctor.
    *
-   * @param codeMedicalCara код медицинской услуги
+   * @param codeMedicalCare код медицинской услуги
    * @param nameMedicalCare название медицинской услуги
    */
-  public NomenclatureMedicalCare(final String codeMedicalCara, final String nameMedicalCare) {
-    this.codeMedicalCara = codeMedicalCara;
+  public NomenclatureMedicalCare(final String codeMedicalCare, final String nameMedicalCare) {
+    this.codeMedicalCare = codeMedicalCare;
     this.nameMedicalCare = nameMedicalCare;
   }
 }

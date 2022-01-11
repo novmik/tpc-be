@@ -15,10 +15,9 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,12 +39,8 @@ class JwtAuthenticationFilterTest {
   private HttpServletResponse response;
   @Mock
   private FilterChain filterChain;
-  private JwtAuthenticationFilter underTest;
-
-  @BeforeEach
-  void setUp() {
-    underTest = new JwtAuthenticationFilter();
-  }
+  @InjectMocks
+  private JwtAuthenticationFilter underTest = new JwtAuthenticationFilter();
 
   @Test
   void canDoFilterInternal() throws ServletException, IOException {
@@ -63,9 +58,8 @@ class JwtAuthenticationFilterTest {
     verify(request, never()).getHeader(anyString());
   }
 
-  @Disabled
   @Test
-  void willThrowWhenDoFilterInternal() throws ServletException, IOException {
+  void canDoFilterInternalWithHeader() throws ServletException, IOException {
     GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE");
     UserDetails userDetails = new CustomUserDetails(new Client());
     when(request.getServletPath()).thenReturn("/api/v1");
@@ -75,5 +69,16 @@ class JwtAuthenticationFilterTest {
     when(detailsService.loadUserByUsername(anyString())).thenReturn(userDetails);
     when(jwtTokenProvider.getPermissionsFromJwt(anyString())).thenReturn(List.of(grantedAuthority));
     underTest.doFilterInternal(request, response, filterChain);
+    verify(filterChain).doFilter(request, response);
+  }
+
+  @Test
+  void canDoFilterInternalWithoutHeader() throws ServletException, IOException {
+    GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE");
+    UserDetails userDetails = new CustomUserDetails(new Client());
+    when(request.getServletPath()).thenReturn("/api/v1");
+    when(request.getHeader(AUTHORIZATION)).thenReturn("");
+    underTest.doFilterInternal(request, response, filterChain);
+    verify(filterChain).doFilter(request, response);
   }
 }
