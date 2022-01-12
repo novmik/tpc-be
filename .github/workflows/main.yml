@@ -42,12 +42,17 @@ jobs:
   deploy:
     name: CD (continuous-deployment) part
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        app-name: [ 'code-deploy-tpc' ]
+        s3-bucket: [ 'tpc-s3-bucket' ]
+        s3-filename: [ '${{ github.sha }}' ]
+        deploy-group: [ 'tpc-code-deploy-group' ]
     needs: build
     steps:
 
       - name: Copy Jar
-        run: cp ./build/libs/*.jar ./deploy
+        run: cp ./target/*.jar ./deploy
         shell: bash
 
       - name: Make zip file
@@ -61,8 +66,26 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Upload to S3
-        run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
+      - name: AWS Deploy push
+        run: |
+          aws deploy push \
+          --application-name ${{ matrix.app-name }} \
+          --description "Revision of the ${{ matrix.appname }}-${{ github.sha }}" \
+          --ignore-hidden-files \
+          --s3-location s3://${{ matrix.s3-bucket }}/${{ matrix.s3-filename }}.zip \
+          --source ./deploy
+
+      - name: Creating AWS Deployment
+        run: |
+          aws deploy create-deployment \
+          --application-name ${{ matrix.app-name }} \
+          --deployment-config-name CodeDeployDefault.AllAtOnce \
+          --deployment-group-name ${{ matrix.deploy-group }} \
+          --file-exists-behavior OVERWRITE \
+          --s3-location bucket=${{ matrix.s3-bucket }},key=${{ matrix.s3-filename }}.zip,bundleType=zip \
+
+#      - name: Upload to S3
+#        run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
 
 #      - name: Create CodeDeploy Deployment
 #        id: deploy
