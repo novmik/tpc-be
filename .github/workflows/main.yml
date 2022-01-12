@@ -50,11 +50,11 @@ jobs:
         deploy-group: [ 'tpc-code-deploy-group' ]
     needs: build
     steps:
-      - name: Maven Package
-        run: mvn -B clean package -DskipTests
+#      - name: Maven Package
+#        run: mvn -B clean package -DskipTests
 
       - name: Copy Jar
-        run: cp ./target/*.jar ./deploy
+        run: cp /home/ec2-user/server/*.jar ./deploy
         shell: bash
 
       - name: Make zip file
