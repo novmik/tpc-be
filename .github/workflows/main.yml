@@ -50,16 +50,26 @@ jobs:
         deploy-group: [ 'tpc-code-deploy-group' ]
     needs: build
     steps:
-#      - name: Maven Package
-#        run: mvn -B clean package -DskipTests
+      - name: Maven Package
+        run: mvn -B clean package -DskipTests -DoutputDirectory=./deploy
 
-      - name: Copy Jar
-        run: cp /home/ec2-user/server/*.jar ./deploy
-        shell: bash
+#      - name: Copy Jar
+#        run: cp /home/ec2-user/server/*.jar ./deploy
+#        shell: bash
 
       - name: Make zip file
         run: zip -r ./$GITHUB_SHA.zip ./deploy
         shell: bash
+
+      - name: Copying appspec.yml
+        run: cp appspec.yml ./bin/app
+      - name: Copying scripts
+        run: cp -R ./scripts ./bin/app/scripts
+      - name: Install AWS CLI 2
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
