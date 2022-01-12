@@ -50,6 +50,8 @@ jobs:
         deploy-group: [ 'tpc-code-deploy-group' ]
     needs: build
     steps:
+      - name: Maven Package
+        run: mvn -B clean package -DskipTests
 
       - name: Copy Jar
         run: cp ./target/*.jar ./deploy
