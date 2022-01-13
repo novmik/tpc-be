@@ -34,15 +34,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-jdk-${{ matrix.java }}-maven-
 
-      - name: Maven Verify
-        run: mvn -B clean verify
-
-      - name: Copy Jar
-        run: target/*.jar ./deploy
-        shell: bash
-
-      - name: Test Coverage
-        run: mvn -B clean test
+#      - name: Maven Verify
+#        run: mvn -B clean verify
+#
+#      - name: Test Coverage
+#        run: mvn -B clean test
 
   deploy:
     name: CD (continuous-deployment) part
