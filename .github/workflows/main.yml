@@ -8,9 +8,6 @@ on:
 
   workflow_dispatch:
 
-env:
-  S3_BUCKET_NAME: tpc-s3-bucket
-
 jobs:
   build:
     name: CI (continuous-integration) part
