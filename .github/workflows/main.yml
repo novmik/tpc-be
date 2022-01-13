@@ -52,7 +52,7 @@ jobs:
     needs: build
     steps:
       - name: Maven Package
-        run: mvn -B clean verify -DskipTests -DoutputDirectory=./deploy
+        run: mvn clean package -DskipTests -DoutputDirectory=./deploy --file pom.xml
 
       #      - name: Copy Jar
       #        run: cp /home/ec2-user/server/*.jar ./deploy
