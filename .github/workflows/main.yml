@@ -57,8 +57,8 @@ jobs:
       - run: mkdir staging && cp target/*.jar deploy
       - uses: actions/upload-artifact@v2
         with:
-         name: tpc
-         path: deploy
+          name: tpc
+          path: deploy
 
       #      - name: Copy Jar
       #        run: cp /home/ec2-user/server/*.jar ./deploy
