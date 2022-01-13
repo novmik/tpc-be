@@ -53,8 +53,9 @@ jobs:
     steps:
       - name: Maven Package
 #        run: mvn clean package -DskipTests -DoutputDirectory=./deploy
-      - run: mvn --batch-mode --update-snapshots verify -DskipTest
-      - run: mkdir staging && cp target/*.jar deploy
+        run: mvn --batch-mode --update-snapshots verify -DskipTest
+      - name: Make dir and Copy
+        run: mkdir staging && cp target/*.jar deploy
       - uses: actions/upload-artifact@v2
         with:
           name: tpc
