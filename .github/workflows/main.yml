@@ -36,6 +36,11 @@ jobs:
 
       - name: Maven Verify
         run: mvn -B clean verify
+
+      - name: Copy Jar
+        run: target/*.jar ./deploy
+        shell: bash
+
       - name: Test Coverage
         run: mvn -B clean test
 
@@ -53,9 +58,9 @@ jobs:
       - name: Maven Package
         run: mvn -B clean package -DskipTests -DoutputDirectory=./deploy
 
-#      - name: Copy Jar
-#        run: cp /home/ec2-user/server/*.jar ./deploy
-#        shell: bash
+      #      - name: Copy Jar
+      #        run: cp /home/ec2-user/server/*.jar ./deploy
+      #        shell: bash
 
       - name: Make zip file
         run: zip -r ./$GITHUB_SHA.zip ./deploy
