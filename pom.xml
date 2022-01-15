@@ -209,5 +209,6 @@
         </executions>
       </plugin>
     </plugins>
+    <finalName>tpc-images</finalName>
   </build>
 </project>
