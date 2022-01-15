@@ -37,69 +37,69 @@ jobs:
 #      - name: Test Coverage
 #        run: mvn -B clean test
 
-  deploy:
-    name: CD (continuous-deployment) part
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        app-name: [ 'code-deploy-tpc' ]
-        s3-bucket: [ 'tpc-s3-bucket' ]
-        s3-filename: [ '${{ github.sha }}' ]
-        deploy-group: [ 'tpc-code-deploy-group' ]
-    needs: build
-    steps:
-      - name: Maven Package
-#        run: mvn clean package -DskipTests -DoutputDirectory=./deploy
-        run: mvn --batch-mode --update-snapshots verify -DskipTest
-      - name: Make dir and Copy
-        run: mkdir staging && cp target/*.jar deploy
-      - uses: actions/upload-artifact@v2
-        with:
-          name: tpc
-          path: deploy
+#  deploy:
+#    name: CD (continuous-deployment) part
+#    runs-on: ubuntu-latest
+#    strategy:
+#      matrix:
+#        app-name: [ 'code-deploy-tpc' ]
+#        s3-bucket: [ 'tpc-s3-bucket' ]
+#        s3-filename: [ '${{ github.sha }}' ]
+#        deploy-group: [ 'tpc-code-deploy-group' ]
+#    needs: build
+#    steps:
+#      - name: Maven Package
+##        run: mvn clean package -DskipTests -DoutputDirectory=./deploy
+#        run: mvn --batch-mode --update-snapshots verify -DskipTest
+#      - name: Make dir and Copy
+#        run: mkdir staging && cp target/*.jar deploy
+#      - uses: actions/upload-artifact@v2
+#        with:
+#          name: tpc
+#          path: deploy
 
       #      - name: Copy Jar
       #        run: cp /home/ec2-user/server/*.jar ./deploy
       #        shell: bash
 
-      - name: Make zip file
-        run: zip -r ./$GITHUB_SHA.zip ./deploy
-        shell: bash
-
-      - name: Copying appspec.yml
-        run: cp appspec.yml ./bin/app
-      - name: Copying scripts
-        run: cp -R ./scripts ./bin/app/scripts
-      - name: Install AWS CLI 2
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: AWS Deploy push
-        run: |
-          aws deploy push \
-          --application-name ${{ matrix.app-name }} \
-          --description "Revision of the ${{ matrix.appname }}-${{ github.sha }}" \
-          --ignore-hidden-files \
-          --s3-location s3://${{ matrix.s3-bucket }}/${{ matrix.s3-filename }}.zip \
-          --source ./deploy
-
-      - name: Creating AWS Deployment
-        run: |
-          aws deploy create-deployment \
-          --application-name ${{ matrix.app-name }} \
-          --deployment-config-name CodeDeployDefault.AllAtOnce \
-          --deployment-group-name ${{ matrix.deploy-group }} \
-          --file-exists-behavior OVERWRITE \
-          --s3-location bucket=${{ matrix.s3-bucket }},key=${{ matrix.s3-filename }}.zip,bundleType=zip \
+#      - name: Make zip file
+#        run: zip -r ./$GITHUB_SHA.zip ./deploy
+#        shell: bash
+#
+#      - name: Copying appspec.yml
+#        run: cp appspec.yml ./bin/app
+#      - name: Copying scripts
+#        run: cp -R ./scripts ./bin/app/scripts
+#      - name: Install AWS CLI 2
+#        run: |
+#          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+#          unzip awscliv2.zip
+#          sudo ./aws/install
+#
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: ${{ secrets.AWS_REGION }}
+#
+#      - name: AWS Deploy push
+#        run: |
+#          aws deploy push \
+#          --application-name ${{ matrix.app-name }} \
+#          --description "Revision of the ${{ matrix.appname }}-${{ github.sha }}" \
+#          --ignore-hidden-files \
+#          --s3-location s3://${{ matrix.s3-bucket }}/${{ matrix.s3-filename }}.zip \
+#          --source ./deploy
+#
+#      - name: Creating AWS Deployment
+#        run: |
+#          aws deploy create-deployment \
+#          --application-name ${{ matrix.app-name }} \
+#          --deployment-config-name CodeDeployDefault.AllAtOnce \
+#          --deployment-group-name ${{ matrix.deploy-group }} \
+#          --file-exists-behavior OVERWRITE \
+#          --s3-location bucket=${{ matrix.s3-bucket }},key=${{ matrix.s3-filename }}.zip,bundleType=zip \
 
 #      - name: Upload to S3
 #        run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
