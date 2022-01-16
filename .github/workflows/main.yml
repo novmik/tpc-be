@@ -31,11 +31,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-jdk-${{ matrix.java }}-maven-
 
-      - name: Maven Verify
-        run: mvn -B clean verify
-
-      - name: Test Coverage
-        run: mvn -B clean test
+#      - name: Maven Verify
+#        run: mvn -B clean verify
+#
+#      - name: Test Coverage
+#        run: mvn -B clean test
 
 #      - name: Build & push Docker image in https://hub.docker.com/
 #        uses: mr-smithers-excellent/docker-build-push@v5

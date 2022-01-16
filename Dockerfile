@@ -1,4 +1,4 @@
 FROM openjdk:17-oracle
-EXPOSE 8080
-ADD target/tpc-images.jar tpc-images.jar
-ENTRYPOINT ["java","-jar","/tpc-images.jar"]
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
