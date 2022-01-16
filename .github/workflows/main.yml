@@ -54,8 +54,8 @@ jobs:
     steps:
 
     - name: Build with Maven
-      run: mvn -DskipTests clean package
-#      run: mvn -B package -Pprod -DskipTests --file pom.xml
+#      run: mvn -DskipTests clean package
+      run: mvn -B package -Pprod -DskipTests --file pom.xml
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
