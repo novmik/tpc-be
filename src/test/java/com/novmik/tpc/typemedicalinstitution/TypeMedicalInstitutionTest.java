@@ -21,7 +21,7 @@ class TypeMedicalInstitutionTest {
 
   @Test
   void getDescription() {
-    assertThat(underTest.getDescription()).isEqualTo("Description Test");
+    assertThat(underTest.getDescription()).isEqualTo("Description Test1");
   }
 
   @Test
