@@ -27,7 +27,11 @@ jobs:
 #        run: mvn -B clean verify
 #
 #      - name: Test Coverage
-#        run: mvn -B clean test 1
+#        run: mvn -B clean test
+
+      - name: Set tag var
+        id: vars
+        run: echo ::set-output name=docker_tag::$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}
 
       - name: Build with Maven
         run: mvn -B clean package -DskipTests
@@ -48,8 +52,8 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: tpc-images
 #          IMAGE_TAG: ${{ github.sha }}
-#          IMAGE_TAG: ${{ github.repository }}:${{ steps.vars.outputs.tag }}
-          IMAGE_TAG: 1.0
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+#          IMAGE_TAG: 1.0
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
