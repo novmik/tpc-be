@@ -23,11 +23,11 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
-      - name: Maven Verify
-        run: mvn -B clean verify
-
-      - name: Test Coverage
-        run: mvn -B clean test
+#      - name: Maven Verify
+#        run: mvn -B clean verify
+#
+#      - name: Test Coverage
+#        run: mvn -B clean test
 
       - name: Build with Maven
         run: mvn -B clean package -DskipTests
@@ -48,7 +48,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: tpc-images
 #          IMAGE_TAG: ${{ github.sha }}
-          IMAGE_TAG: 'latest'
+          IMAGE_TAG: 1.0
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
