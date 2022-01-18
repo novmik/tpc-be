@@ -47,10 +47,11 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: tpc-images
-#          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: ${{ github.sha }}
 #          IMAGE_TAG: 1.0.0
-          IMAGE_TAG: 'latest'
+#          IMAGE_TAG: 'latest'
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
+          docker tag $ECR_REPOSITORY:latest, $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
