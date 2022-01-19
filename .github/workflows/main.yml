@@ -35,7 +35,7 @@ jobs:
         run: mvn -B clean package -DskipTests
 
       - name: Build the Docker image
-        run: docker build -t novmik/tpc-classifier -f Dockerfile .
+        run: docker build -t novmik/tpc-images -f Dockerfile .
 
       - name: Generate Deployment Package
         run: zip -r deploy.zip *
@@ -58,9 +58,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: tpc-eb-api
-          environment_name: Tpcebapi-env
-#          version_label: "tpc-classifier-api-${{ steps.format-time.outputs.replaced }}"
-          version_label: "tpc-classifier-api-${{ steps.format-time.outputs.replaced }}"
+          application_name: tpc
+          environment_name: Tpc-env
+          version_label: "tpc-${{ steps.format-time.outputs.replaced }}"
           region: eu-central-1
           deployment_package: deploy.zip
