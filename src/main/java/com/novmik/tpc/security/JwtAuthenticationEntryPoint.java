@@ -29,7 +29,7 @@ public class JwtAuthenticationEntryPoint extends Http403ForbiddenEntryPoint {
       final AuthenticationException exception) throws IOException {
     final HttpResponse httpResponse = new HttpResponse(FORBIDDEN.value(), FORBIDDEN,
         FORBIDDEN.getReasonPhrase().toUpperCase(Locale.ROOT),
-        "WOW !!!!Вам необходимо войти в систему, чтобы получить доступ к этой странице.");
+        "Вам необходимо войти в систему, чтобы получить доступ к этой странице.");
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.setStatus(FORBIDDEN.value());
     try (OutputStream outputStream = response.getOutputStream()) {
