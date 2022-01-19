@@ -61,6 +61,6 @@ jobs:
           application_name: tpc-eb-api
           environment_name: Tpcebapi-env
 #          version_label: "tpc-classifier-api-${{ steps.format-time.outputs.replaced }}"
-          version_label: "Sample Application"
+          version_label: "tpc-classifier-api-${{ steps.format-time.outputs.replaced }}"
           region: eu-central-1
           deployment_package: deploy.zip
