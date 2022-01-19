@@ -60,6 +60,7 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: tpc-eb-api
           environment_name: Tpcebapi-env
-          version_label: "tpc-classifier-api-${{ steps.format-time.outputs.replaced }}"
+#          version_label: "tpc-classifier-api-${{ steps.format-time.outputs.replaced }}"
+          version_label: "Sample Application"
           region: eu-central-1
           deployment_package: deploy.zip
