@@ -35,7 +35,7 @@ public class TreatmentPaymentCalculatorApplication {
   public CorsFilter corsFilter() {
     final CorsConfiguration corsConfiguration = new CorsConfiguration();
     corsConfiguration.setAllowCredentials(true);
-    corsConfiguration.setAllowedOrigins(List.of("http://localhost:4200", "http://novmik-tpc-fe.s3-website.eu-central-1.amazonaws.com"));
+    corsConfiguration.setAllowedOrigins(List.of("http://localhost:4200", "http://tpc-env.eba-u2m7eyq6.eu-central-1.elasticbeanstalk.com/"));
     corsConfiguration.setAllowedHeaders(
         Arrays.asList("Origin", "Access-Control-Allow-Origin", "Content-Type",
             "Accept", "Authorization", "Origin, Accept", "X-Requested-With",
