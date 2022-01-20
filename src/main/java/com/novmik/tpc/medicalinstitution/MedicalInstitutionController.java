@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1/mi")
 @RestController
 @SuppressWarnings("PMD.CommentSize")
-@CrossOrigin(origins = "*")
 public class MedicalInstitutionController {
 
   /**

@@ -65,8 +65,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .exceptionHandling().accessDeniedHandler(accessDenied)
         .authenticationEntryPoint(jwtEntryPoint).and()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-        .authorizeRequests().antMatchers(PUBLIC_URLS).permitAll().and()
-        .authorizeRequests().antMatchers("/api/v1/s/**").hasAuthority("ROLE_ADMIN")
+        .authorizeRequests().antMatchers(PUBLIC_URLS).permitAll()
+//        .and().authorizeRequests().antMatchers("/api/v1/s/**").hasAuthority("ROLE_ADMIN")
         .anyRequest().authenticated().and()
         .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
   }

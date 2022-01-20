@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("api/v1/auth")
 @RestController
-@CrossOrigin(origins = "*")
 @SuppressWarnings({"PMD.LawOfDemeter", "PMD.GuardLogStatement"})
 public class AuthController {
 

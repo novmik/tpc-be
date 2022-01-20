@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RequestMapping("api/v1/s")
 @RestController
-@CrossOrigin(origins = "*")
 public class SubjectController {
 
   /**
