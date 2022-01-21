@@ -57,7 +57,7 @@ public final class DescriptionSchemeTransformationUtils {
   }
 
   private static String removeCycleInEndStr(final String description) {
-    return description.split(";\\s\\D*\\s\\d*\\s\\D*$")[0];
+    return description.replaceAll("; цикл.*$", "");
   }
 
   private static String removeIntravenouslyAndNbps(final String description) {

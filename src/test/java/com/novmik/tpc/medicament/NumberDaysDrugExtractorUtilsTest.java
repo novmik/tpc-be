@@ -21,6 +21,14 @@ class NumberDaysDrugExtractorUtilsTest {
   }
 
   @Test
+  void canGetDaysDrugWhenLoadingDose() {
+    String innDescription = "Трастузумаб 6 мг/кг (нагрузочная доза 8 мг/кг) в 1-й день";
+    String unitOfMeasurement = "мг/кг";
+    assertThat(NumberDaysDrugExtractorUtils.getDaysDrug(innDescription, unitOfMeasurement))
+        .isEqualTo("в 1-й день");
+  }
+
+  @Test
   void canGetNumberDaysDrug() {
     String strNumberDaysDrug = "ежедневно";
     int numberDays = 30;

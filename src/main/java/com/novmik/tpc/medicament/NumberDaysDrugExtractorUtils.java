@@ -18,8 +18,9 @@ public final class NumberDaysDrugExtractorUtils {
    * @return строка с кол-ом дней ЛТ
    */
   public static String getDaysDrug(final String innDescription, final String unitOfMeasurement) {
-    String strDaysDrug = innDescription.substring(
-        innDescription.indexOf(unitOfMeasurement) + unitOfMeasurement.length());
+    String strDaysDrug = innDescription
+        .replaceAll("\\(нагрузочная доза \\d.*\\)", "")
+        .substring(innDescription.indexOf(unitOfMeasurement) + unitOfMeasurement.length());
     if (innDescription.contains(" auc ")) {
       strDaysDrug = innDescription.substring(innDescription.indexOf(" в"));
     }
