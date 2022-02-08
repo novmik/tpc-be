@@ -20,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Profile("!dev")
 @AllArgsConstructor
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @EnableGlobalMethodSecurity(
     securedEnabled = true,
     jsr250Enabled = true,
