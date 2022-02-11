@@ -54,6 +54,7 @@ class SubjectControllerTest {
   }
 
   @Test
+  @WithMockUser(authorities = "WRITE")
   void canAddNewSubject() throws Exception {
     Subject subject = new Subject("Test", 200D, 300D);
     mockMvc.perform(post("/api/v1/s")
@@ -64,6 +65,7 @@ class SubjectControllerTest {
   }
 
   @Test
+  @WithMockUser(authorities = "WRITE")
   void canUpdateSubject() throws Exception {
     Subject subject = new Subject("Test", 200D, 300D);
     mockMvc.perform(put("/api/v1/s")
@@ -73,8 +75,8 @@ class SubjectControllerTest {
         .andExpect(status().isOk());
   }
 
-  @WithMockUser(authorities = "DELETE")
   @Test
+  @WithMockUser(authorities = "DELETE")
   void canDeleteSubjectById() throws Exception {
     mockMvc.perform(delete("/api/v1/s/{idSubject}", 100L))
         .andExpect(status().isOk());

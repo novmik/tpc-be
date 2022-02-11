@@ -84,6 +84,7 @@ public class MedicalInstitutionController {
    * @return {@link MedicalInstitution}
    */
   @PostMapping
+  @PreAuthorize("hasAuthority('WRITE')")
   public ResponseEntity<MedicalInstitution> addNewMedicalInstitution(
       @RequestBody final MedicalInstitution medInstitution) {
     return new ResponseEntity<>(miService
@@ -98,6 +99,7 @@ public class MedicalInstitutionController {
    * @return {@link MedicalInstitution}
    */
   @PutMapping
+  @PreAuthorize("hasAuthority('WRITE')")
   public ResponseEntity<MedicalInstitution> updateMedicalInstitution(
       @RequestBody final MedicalInstitution medInstitution) {
     return new ResponseEntity<>(miService

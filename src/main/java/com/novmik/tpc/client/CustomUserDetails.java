@@ -36,8 +36,9 @@ public class CustomUserDetails extends Client implements UserDetails {
    */
   private Collection<? extends GrantedAuthority> getAuthorities(final Collection<Role> roles) {
     return Stream.concat(
-            roles.stream().map(Role::getName), roles.stream()
-                .flatMap(role -> role.getPrivileges().stream().map(Privilege::getName)))
+            roles.stream().map(Role::getName),
+            roles.stream().flatMap(role -> role.getPrivileges().stream().map(Privilege::getName))
+        ).distinct()
         .map(SimpleGrantedAuthority::new)
         .collect(Collectors.toList());
   }

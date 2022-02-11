@@ -63,8 +63,8 @@ class SubjectControllerSecurityTest {
         .andExpect(status().isOk());
   }
 
-  @WithMockUser(roles = "ADMIN")
   @Test
+  @WithMockUser(authorities = "WRITE")
   void addNewSubject() throws Exception {
     Subject subject = new Subject("Test", 200D, 300D);
     mockMvc.perform(post("/api/v1/s")
@@ -75,6 +75,7 @@ class SubjectControllerSecurityTest {
   }
 
   @Test
+  @WithMockUser(authorities = "WRITE")
   void updateSubject() throws Exception {
     Subject subject = new Subject("Test", 200D, 300D);
     mockMvc.perform(put("/api/v1/s")
@@ -84,8 +85,8 @@ class SubjectControllerSecurityTest {
         .andExpect(status().isOk());
   }
 
-  @WithMockUser(authorities = "DELETE")
   @Test
+  @WithMockUser(authorities = "DELETE")
   void deleteSubjectById() throws Exception {
     mockMvc.perform(delete("/api/v1/s/{idSubject}", 100L))
         .andExpect(status().isOk());

@@ -63,6 +63,7 @@ public class DiagnosisRelatedGroupsController {
    * @return {@link DiagnosisRelatedGroups}
    */
   @PostMapping
+  @PreAuthorize("hasAuthority('WRITE')")
   public ResponseEntity<DiagnosisRelatedGroups> addNewDrg(
       @RequestBody final DiagnosisRelatedGroups drg) {
     return new ResponseEntity<>(drgService.addNewDrg(drg), CREATED);
@@ -76,6 +77,7 @@ public class DiagnosisRelatedGroupsController {
    * @return {@link DiagnosisRelatedGroups}
    */
   @PutMapping
+  @PreAuthorize("hasAuthority('WRITE')")
   public ResponseEntity<DiagnosisRelatedGroups> updateDrg(
       @RequestBody final DiagnosisRelatedGroups drg) {
     return new ResponseEntity<>(drgService.updateDrg(drg), OK);

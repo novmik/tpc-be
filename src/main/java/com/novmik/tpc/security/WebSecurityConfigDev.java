@@ -17,7 +17,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Profile("dev")
 @Slf4j
 @EnableWebSecurity(debug = true)
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(
+    securedEnabled = true,
+    jsr250Enabled = true,
+    prePostEnabled = true)
 @SuppressWarnings({"PMD.LawOfDemeter", "PMD.AtLeastOneConstructor"})
 public class WebSecurityConfigDev extends WebSecurityConfigurerAdapter {
 

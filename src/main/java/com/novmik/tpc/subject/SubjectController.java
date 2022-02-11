@@ -73,6 +73,7 @@ public class SubjectController {
    * @return {@link Subject}
    */
   @PostMapping
+  @PreAuthorize("hasAuthority('WRITE')")
   public ResponseEntity<Subject> addNewSubject(@RequestBody final Subject subject) {
     return new ResponseEntity<>(subjectService.addNewSubject(subject), CREATED);
   }
@@ -85,6 +86,7 @@ public class SubjectController {
    * @return {@link Subject}
    */
   @PutMapping
+  @PreAuthorize("hasAuthority('WRITE')")
   public ResponseEntity<Subject> updateSubject(@RequestBody final Subject subject) {
     return new ResponseEntity<>(subjectService.updateSubject(subject), OK);
   }

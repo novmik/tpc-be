@@ -54,6 +54,7 @@ class MedicalInstitutionControllerTest {
   }
 
   @Test
+  @WithMockUser(authorities = "WRITE")
   void addNewMedicalInstitution() throws Exception {
     MedicalInstitution medicalInstitution = new MedicalInstitution(
         1L,
@@ -74,6 +75,7 @@ class MedicalInstitutionControllerTest {
   }
 
   @Test
+  @WithMockUser(authorities = "WRITE")
   void updateMedicalInstitution() throws Exception {
     MedicalInstitution medicalInstitution = new MedicalInstitution(
         1L,
@@ -93,8 +95,8 @@ class MedicalInstitutionControllerTest {
         .andExpect(status().isOk());
   }
 
-  @WithMockUser(authorities = "DELETE")
   @Test
+  @WithMockUser(authorities = "DELETE")
   void deleteMedicalInstitutionById() throws Exception {
     mockMvc.perform(delete("/api/v1/mi/{idMedicalInstitution}", 200L))
         .andExpect(status().isOk());

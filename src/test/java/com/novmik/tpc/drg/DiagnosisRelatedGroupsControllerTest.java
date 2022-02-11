@@ -46,6 +46,7 @@ class DiagnosisRelatedGroupsControllerTest {
   }
 
   @Test
+  @WithMockUser(authorities = "WRITE")
   void canAddNewDrg() throws Exception {
     DiagnosisRelatedGroups drg = new DiagnosisRelatedGroups(
         "st19.062", "Test", 10F, 20F);
@@ -57,6 +58,7 @@ class DiagnosisRelatedGroupsControllerTest {
   }
 
   @Test
+  @WithMockUser(authorities = "WRITE")
   void canUpdateDrg() throws Exception {
     DiagnosisRelatedGroups drg = new DiagnosisRelatedGroups(
         300L, "st19.062", "Test", 10F, 20F);
@@ -67,8 +69,8 @@ class DiagnosisRelatedGroupsControllerTest {
         .andExpect(status().isOk());
   }
 
-  @WithMockUser(authorities = "DELETE")
   @Test
+  @WithMockUser(authorities = "DELETE")
   void canDeleteDrgById() throws Exception {
     mockMvc.perform(delete("/api/v1/drg/{idDrg}", 100L))
         .andExpect(status().isOk());
